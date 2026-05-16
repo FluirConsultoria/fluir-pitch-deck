@@ -11,7 +11,12 @@ export function FluirLogo({ size = 40, className }: Props) {
       src={logo}
       alt="Fluir Consultoria"
       className={className}
-      style={{ height: size, width: "auto", objectFit: "contain" }}
+      style={{
+        height: size,
+        width: "auto",
+        objectFit: "contain",
+        filter: "brightness(0) invert(1)",
+      }}
     />
   );
 }
