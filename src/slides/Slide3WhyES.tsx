@@ -1,4 +1,4 @@
-import { SlideWrapper, SlideHeadline, GoldDivider } from "@/components/deck-primitives";
+import { SlideWrapper, GoldDivider } from "@/components/deck-primitives";
 
 function ProgramCard({
   label,
