@@ -5,9 +5,9 @@ export function Slide1Cover() {
   return (
     <SlideWrapper showLogo={false} gradient>
       <div className="flex-1 flex flex-col items-center justify-center text-center">
-        <FluirLogo size={180} />
+        <FluirLogo size={120} />
         <div
-          className="mt-6 text-3xl tracking-wide"
+          className="mt-4 text-3xl tracking-wide"
           style={{ color: "#F0D78C", fontWeight: 700 }}
         >
           Fluir Consultoria
