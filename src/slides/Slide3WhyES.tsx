@@ -122,13 +122,17 @@ function EsMap() {
 export function Slide3WhyES() {
   return (
     <SlideWrapper>
-      <SlideHeadline
-        className="max-w-5xl"
-        style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)" }}
+      <h1
+        className="max-w-5xl leading-tight tracking-tight"
+        style={{
+          color: "#F5F0F0",
+          fontWeight: 800,
+          fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+        }}
       >
         O Espírito Santo transformou incentivo fiscal em vantagem competitiva
         permanente.
-      </SlideHeadline>
+      </h1>
 
       <div className="grid grid-cols-2 gap-10 mt-8 flex-1 min-h-0">
         <div className="flex flex-col gap-4 justify-center">
