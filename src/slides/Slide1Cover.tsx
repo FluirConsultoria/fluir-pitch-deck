@@ -7,22 +7,26 @@ export function Slide1Cover() {
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         <FluirLogo size={120} />
         <div
-          className="mt-4 text-3xl tracking-wide"
+          className="mt-6 text-3xl tracking-wide"
           style={{ color: "#F0D78C", fontWeight: 700 }}
         >
           Fluir Consultoria
         </div>
-        <GoldDivider className="my-8" />
+        <GoldDivider className="my-12" />
         <h1
-          className="text-5xl md:text-6xl max-w-5xl leading-tight"
-          style={{ color: "#F5F0F0", fontWeight: 800 }}
+          className="max-w-5xl leading-tight"
+          style={{
+            color: "#F5F0F0",
+            fontWeight: 800,
+            fontSize: "clamp(2rem, 4vw, 3.5rem)",
+          }}
         >
           Conectamos Oportunidades.
           <br />
           Impulsionamos o Espírito Santo.
         </h1>
         <p
-          className="mt-8 text-lg md:text-xl max-w-3xl"
+          className="mt-12 text-lg md:text-xl max-w-3xl"
           style={{ color: "#E2E6E9", fontWeight: 400 }}
         >
           Consultoria especializada em estruturação tributária e atração de
