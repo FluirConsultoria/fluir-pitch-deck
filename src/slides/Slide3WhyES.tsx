@@ -135,15 +135,6 @@ export function Slide3WhyES() {
         </div>
       </div>
 
-      <div className="mt-6">
-        <GoldDivider className="mb-3" />
-        <div
-          className="text-center"
-          style={{ color: "#E2E6E9", fontSize: 12, fontWeight: 500 }}
-        >
-          Hub logístico estratégico — Porto de Vitória · Acesso ao Sudeste
-        </div>
-      </div>
     </SlideWrapper>
   );
 }

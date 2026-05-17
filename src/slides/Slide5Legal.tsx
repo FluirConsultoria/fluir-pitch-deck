@@ -47,34 +47,59 @@ function PressCard({
 }) {
   return (
     <div
-      className="rounded-lg p-4"
+      className="rounded-lg overflow-hidden flex"
       style={{
-        backgroundColor: "#09151A",
-        borderLeft: "3px solid #C9A84C",
+        backgroundColor: "#F5F0F0",
+        boxShadow: "0 8px 24px -10px rgba(0,0,0,0.5)",
+        borderLeft: "4px solid #C9A84C",
       }}
     >
-      <span
-        className="inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-widest"
+      {/* Source strip */}
+      <div
+        className="flex flex-col items-center justify-center px-4 py-3"
         style={{
           backgroundColor: sourceBg,
-          color: sourceColor,
-          fontWeight: 700,
-          letterSpacing: "0.12em",
+          minWidth: 90,
         }}
       >
-        {source}
-      </span>
-      <div
-        className="mt-3 rounded overflow-hidden"
-        style={{ backgroundColor: "#F5F0F0" }}
-      >
+        <span
+          style={{
+            color: sourceColor,
+            fontWeight: 800,
+            fontSize: 13,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            writingMode: "horizontal-tb",
+            textAlign: "center",
+            lineHeight: 1.1,
+          }}
+        >
+          {source}
+        </span>
+        <span
+          style={{
+            color: sourceColor,
+            opacity: 0.75,
+            fontSize: 9,
+            marginTop: 4,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+          }}
+        >
+          Imprensa
+        </span>
+      </div>
+
+      {/* Headline image */}
+      <div className="flex-1 flex items-center justify-center px-5 py-4">
         <img
           src={image}
           alt={alt}
           style={{
             width: "100%",
-            display: "block",
+            maxHeight: 140,
             objectFit: "contain",
+            objectPosition: "left center",
           }}
         />
       </div>
