@@ -18,7 +18,7 @@ export function Slide4Scale() {
   return (
     <SlideWrapper>
       <SlideHeadline className="text-4xl md:text-5xl max-w-5xl">
-        Mais de 4.600 empresas já descobriram. A sua ainda não.
+        +4.600 empresas já operam com incentivo fiscal no ES.
       </SlideHeadline>
 
       <div className="flex-1 mt-8 flex gap-8">
