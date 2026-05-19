@@ -1,10 +1,57 @@
+import { useState } from "react";
 import { SlideWrapper, SlideHeadline } from "@/components/deck-primitives";
 
-const brands = [
-  "O Boticário", "Adcos", "Princípia", "Amend",
-  "Lola", "Revlon", "Widi Care", "Alfaparf",
-  "Jequiti", "Unilever", "L'Oréal", "Arvensis",
+const brands: { name: string; logo: string }[] = [
+  { name: "O Boticário", logo: "https://logo.clearbit.com/grupoboticario.com.br" },
+  { name: "Adcos", logo: "https://logo.clearbit.com/adcos.com.br" },
+  { name: "Princípia", logo: "https://logo.clearbit.com/principia.com.br" },
+  { name: "Amend", logo: "https://logo.clearbit.com/amend.com.br" },
+  { name: "Lola", logo: "https://logo.clearbit.com/lolacosmetics.com.br" },
+  { name: "Revlon", logo: "https://logo.clearbit.com/revlon.com" },
+  { name: "Widi Care", logo: "https://logo.clearbit.com/widicare.com.br" },
+  { name: "Alfaparf", logo: "https://logo.clearbit.com/alfaparf.com.br" },
+  { name: "Jequiti", logo: "https://logo.clearbit.com/jequiti.com.br" },
+  { name: "Unilever", logo: "https://logo.clearbit.com/unilever.com" },
+  { name: "L'Oréal", logo: "https://logo.clearbit.com/loreal.com" },
+  { name: "Arvensis", logo: "https://logo.clearbit.com/arvensis.com.br" },
 ];
+
+function BrandCard({ name, logo }: { name: string; logo: string }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <div
+      className="rounded-lg flex items-center justify-center text-center transition-all duration-200 cursor-default px-4"
+      style={{
+        backgroundColor: "#09151A",
+        border: "1px solid #194A99",
+        minHeight: 90,
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#C9A84C")}
+      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#194A99")}
+    >
+      {failed ? (
+        <div
+          className="text-xl tracking-wide"
+          style={{ color: "#F5F0F0", fontWeight: 700 }}
+        >
+          {name}
+        </div>
+      ) : (
+        <img
+          src={logo}
+          alt={name}
+          onError={() => setFailed(true)}
+          style={{
+            maxHeight: 48,
+            maxWidth: "100%",
+            objectFit: "contain",
+            filter: "brightness(0) invert(1)",
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 export function Slide6Brands() {
   return (
@@ -15,28 +62,7 @@ export function Slide6Brands() {
 
       <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-5 mt-10 max-w-6xl mx-auto w-full">
         {brands.map((b) => (
-          <div
-            key={b}
-            className="rounded-lg flex items-center justify-center text-center transition-all duration-200 cursor-default"
-            style={{
-              backgroundColor: "#09151A",
-              border: "1px solid #194A99",
-              minHeight: 90,
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "#C9A84C")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "#194A99")
-            }
-          >
-            <div
-              className="text-xl tracking-wide px-3"
-              style={{ color: "#F5F0F0", fontWeight: 700 }}
-            >
-              {b}
-            </div>
-          </div>
+          <BrandCard key={b.name} name={b.name} logo={b.logo} />
         ))}
       </div>
     </SlideWrapper>
