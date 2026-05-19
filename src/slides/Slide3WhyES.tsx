@@ -81,7 +81,7 @@ export function Slide3WhyES() {
       </div>
 
       {/* Comparison panel */}
-      <div className="mt-8 flex-1 flex flex-col min-h-0">
+      <div className="mt-5 flex-1 flex flex-col min-h-0">
         <div
           style={{
             color: "#E2E6E9",
