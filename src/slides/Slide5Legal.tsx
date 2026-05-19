@@ -1,12 +1,10 @@
-import { Shield, Calendar, TrendingUp } from "lucide-react";
+import { Shield, Calendar, TrendingUp, Newspaper } from "lucide-react";
 import { ReactNode } from "react";
 import {
   SlideWrapper,
   SlideHeadline,
   LegalFooter,
 } from "@/components/deck-primitives";
-import pressGazeta from "@/assets/press-gazeta.png";
-import pressG1 from "@/assets/press-g1.png";
 
 function PillarCard({ icon, title }: { icon: ReactNode; title: string }) {
   return (
