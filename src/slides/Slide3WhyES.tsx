@@ -4,11 +4,11 @@ export function Slide3WhyES() {
   return (
     <SlideWrapper>
       <h1
-        className="max-w-5xl leading-tight tracking-tight mt-4"
+        className="max-w-5xl leading-tight tracking-tight -mt-6"
         style={{
           color: "#F5F0F0",
           fontWeight: 800,
-          fontSize: "clamp(1.6rem, 2.8vw, 2.2rem)",
+          fontSize: "clamp(1.4rem, 2.4vw, 1.9rem)",
         }}
       >
         O Espírito Santo transformou incentivo fiscal em vantagem competitiva
@@ -16,7 +16,7 @@ export function Slide3WhyES() {
       </h1>
 
       {/* Two program cards on top */}
-      <div className="grid grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-2 gap-5 mt-5">
         {[
           {
             label: "COMPETE-ES",
@@ -81,7 +81,7 @@ export function Slide3WhyES() {
       </div>
 
       {/* Comparison panel */}
-      <div className="mt-8 flex-1 flex flex-col min-h-0">
+      <div className="mt-5 flex-1 flex flex-col min-h-0">
         <div
           style={{
             color: "#E2E6E9",
