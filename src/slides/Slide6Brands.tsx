@@ -1,17 +1,27 @@
 import { useState } from "react";
 import { SlideWrapper, SlideHeadline } from "@/components/deck-primitives";
+import boticario from "@/assets/brands/boticario.png";
+import adcos from "@/assets/brands/adcos.png";
+import principia from "@/assets/brands/principia.webp";
+import amend from "@/assets/brands/amend.png";
+import lola from "@/assets/brands/lola.png";
+import revlon from "@/assets/brands/revlon.png";
+import widicare from "@/assets/brands/widicare.png";
+import alfaparf from "@/assets/brands/alfaparf.png";
+import jequiti from "@/assets/brands/jequiti.png";
+import unilever from "@/assets/brands/unilever.png";
 
 const brands: { name: string; logo: string }[] = [
-  { name: "O Boticário", logo: "https://logo.clearbit.com/grupoboticario.com.br" },
-  { name: "Adcos", logo: "https://logo.clearbit.com/adcos.com.br" },
-  { name: "Princípia", logo: "https://logo.clearbit.com/principia.com.br" },
-  { name: "Amend", logo: "https://logo.clearbit.com/amend.com.br" },
-  { name: "Lola", logo: "https://logo.clearbit.com/lolacosmetics.com.br" },
-  { name: "Revlon", logo: "https://logo.clearbit.com/revlon.com" },
-  { name: "Widi Care", logo: "https://logo.clearbit.com/widicare.com.br" },
-  { name: "Alfaparf", logo: "https://logo.clearbit.com/alfaparf.com.br" },
-  { name: "Jequiti", logo: "https://logo.clearbit.com/jequiti.com.br" },
-  { name: "Unilever", logo: "https://logo.clearbit.com/unilever.com" },
+  { name: "O Boticário", logo: boticario },
+  { name: "Adcos", logo: adcos },
+  { name: "Princípia", logo: principia },
+  { name: "Amend", logo: amend },
+  { name: "Lola", logo: lola },
+  { name: "Revlon", logo: revlon },
+  { name: "Widi Care", logo: widicare },
+  { name: "Alfaparf", logo: alfaparf },
+  { name: "Jequiti", logo: jequiti },
+  { name: "Unilever", logo: unilever },
   { name: "L'Oréal", logo: "https://logo.clearbit.com/loreal.com" },
   { name: "Arvensis", logo: "https://logo.clearbit.com/arvensis.com.br" },
 ];
