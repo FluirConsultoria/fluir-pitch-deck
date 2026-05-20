@@ -11,8 +11,7 @@ export function Slide3WhyES() {
           fontSize: "clamp(1.4rem, 2.4vw, 1.9rem)",
         }}
       >
-        O Espírito Santo transformou incentivo fiscal em vantagem competitiva
-        permanente.
+        O Espírito Santo transformou incentivo fiscal em vantagem competitiva permanente.
       </h1>
 
       {/* Two program cards on top */}
@@ -72,9 +71,7 @@ export function Slide3WhyES() {
               >
                 {p.audience}
               </span>
-              <span style={{ color: "#E2E6E9", fontSize: 12, marginTop: 4 }}>
-                {p.suffix}
-              </span>
+              <span style={{ color: "#E2E6E9", fontSize: 12, marginTop: 4 }}>{p.suffix}</span>
             </div>
           </div>
         ))}
@@ -95,10 +92,7 @@ export function Slide3WhyES() {
           A diferença na prática
         </div>
 
-        <div
-          className="grid items-stretch gap-4"
-          style={{ gridTemplateColumns: "1fr auto 1fr" }}
-        >
+        <div className="grid items-stretch gap-4" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
           {/* Sem ES */}
           <ComparePanel
             title="Sem ES"
@@ -134,7 +128,6 @@ export function Slide3WhyES() {
           />
         </div>
       </div>
-
     </SlideWrapper>
   );
 }

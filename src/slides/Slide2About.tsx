@@ -23,21 +23,21 @@ export function Slide2About() {
         incentivos fiscais mais competitivos do Brasil para atacado, e-commerce e importação. Não vendemos consultoria.
         Entregamos a operação funcionando, do incentivo aprovado à apuração mensal.
       </p>
-      <div className="grid grid-cols-3 gap-3 mt-4 max-w-5xl">
+      <div className="grid grid-cols-3 gap-4 mt-5 max-w-5xl flex-1">
         {[
-          { icon: <Shield size={20} strokeWidth={1.6} />, label: "Estruturação Tributária" },
-          { icon: <Truck size={20} strokeWidth={1.6} />, label: "Consultoria Logística" },
-          { icon: <Settings size={20} strokeWidth={1.6} />, label: "Operação Completa" },
+          { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
+          { icon: <Truck size={36} strokeWidth={1.4} />, label: "Consultoria Logística" },
+          { icon: <Settings size={36} strokeWidth={1.4} />, label: "Operação Completa" },
         ].map(({ icon, label }) => (
           <div
             key={label}
-            className="rounded-lg p-4 flex flex-col items-center text-center"
+            className="rounded-xl p-8 flex flex-col items-center justify-center text-center"
             style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
           >
-            <div className="mb-2" style={{ color: "#609DFF" }}>
+            <div className="mb-4" style={{ color: "#609DFF" }}>
               {icon}
             </div>
-            <div className="text-sm font-semibold" style={{ color: "#F5F0F0" }}>
+            <div className="text-base font-semibold" style={{ color: "#F5F0F0" }}>
               {label}
             </div>
           </div>
