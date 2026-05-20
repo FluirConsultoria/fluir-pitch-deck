@@ -81,7 +81,7 @@ export function Slide3WhyES() {
       </div>
 
       {/* Comparison panel */}
-      <div className="mt-5 flex-1 flex flex-col min-h-0">
+      <div className="mt-5 flex flex-col">
         <div
           style={{
             color: "#E2E6E9",
@@ -96,7 +96,7 @@ export function Slide3WhyES() {
         </div>
 
         <div
-          className="grid items-stretch gap-4 flex-1"
+          className="grid items-stretch gap-4"
           style={{ gridTemplateColumns: "1fr auto 1fr" }}
         >
           {/* Sem ES */}
