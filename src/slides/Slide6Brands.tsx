@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SlideWrapper, SlideHeadline } from "@/components/deck-primitives";
 import boticario from "@/assets/brands/boticario.png";
 import adcos from "@/assets/brands/adcos.png";
-import principia from "@/assets/brands/principia.webp";
+import principia from "@/assets/brands/principia.png";
 import amend from "@/assets/brands/amend.png";
 import lola from "@/assets/brands/lola.png";
 import revlon from "@/assets/brands/revlon.png";
