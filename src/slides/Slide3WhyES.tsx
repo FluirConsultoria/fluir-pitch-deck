@@ -170,7 +170,7 @@ function ComparePanel({
       >
         {title}
       </div>
-      <div className="flex flex-col gap-3 flex-1">
+      <div className="flex flex-col gap-3">
         {rows.map(([k, v]) => (
           <div key={k}>
             <div
