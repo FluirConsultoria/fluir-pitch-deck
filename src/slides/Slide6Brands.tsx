@@ -10,6 +10,8 @@ import widicare from "@/assets/brands/widicare.png";
 import alfaparf from "@/assets/brands/alfaparf.png";
 import jequiti from "@/assets/brands/jequiti.png";
 import unilever from "@/assets/brands/unilever.png";
+import loreal from "@/assets/brands/loreal.png";
+import arvensis from "@/assets/brands/arvensis.png";
 
 const brands: { name: string; logo: string }[] = [
   { name: "O Boticário", logo: boticario },
@@ -22,8 +24,8 @@ const brands: { name: string; logo: string }[] = [
   { name: "Alfaparf", logo: alfaparf },
   { name: "Jequiti", logo: jequiti },
   { name: "Unilever", logo: unilever },
-  { name: "L'Oréal", logo: "https://logo.clearbit.com/loreal.com" },
-  { name: "Arvensis", logo: "https://logo.clearbit.com/arvensis.com.br" },
+  { name: "L'Oréal", logo: loreal },
+  { name: "Arvensis", logo: arvensis },
 ];
 
 function BrandCard({ name, logo }: { name: string; logo: string }) {
