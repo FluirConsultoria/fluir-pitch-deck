@@ -32,18 +32,18 @@ function BrandCard({ name, logo }: { name: string; logo: string }) {
   const [failed, setFailed] = useState(false);
   return (
     <div
-      className="rounded-lg flex items-center justify-center text-center transition-all duration-200 cursor-default px-4"
+      className="rounded-lg flex items-center justify-center text-center transition-all duration-200 cursor-default px-6 py-5"
       style={{
         backgroundColor: "#09151A",
         border: "1px solid #194A99",
-        minHeight: 90,
+        minHeight: 130,
       }}
       onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#C9A84C")}
       onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#194A99")}
     >
       {failed ? (
         <div
-          className="text-xl tracking-wide"
+          className="text-2xl tracking-wide"
           style={{ color: "#F5F0F0", fontWeight: 700 }}
         >
           {name}
@@ -54,10 +54,11 @@ function BrandCard({ name, logo }: { name: string; logo: string }) {
           alt={name}
           onError={() => setFailed(true)}
           style={{
-            maxHeight: 48,
+            maxHeight: 80,
             maxWidth: "100%",
             objectFit: "contain",
             filter: "brightness(0) invert(1)",
+            mixBlendMode: "screen",
           }}
         />
       )}
@@ -72,7 +73,7 @@ export function Slide6Brands() {
         Grandes marcas já operam aqui.
       </SlideHeadline>
 
-      <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-5 mt-10 max-w-6xl mx-auto w-full">
+      <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-6 mt-8 max-w-6xl mx-auto w-full content-center">
         {brands.map((b) => (
           <BrandCard key={b.name} name={b.name} logo={b.logo} />
         ))}
