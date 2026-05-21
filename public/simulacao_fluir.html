@@ -341,9 +341,10 @@ tr.proj-head-row th { background: #1e4080; }
   .tab-bar, .actions { display: none !important; }
   body { background: white !important; margin: 0; padding: 0; }
 
-  /* Mostra todas as abas, cada uma numa página */
+  /* Mostra as 3 abas de simulação, cada uma numa página */
   .tab-content { display: block !important; }
-  .tab-content:not(:last-child) { page-break-after: always; }
+  #tab-enviar { display: none !important; }
+  .tab-content:not(#tab-enviar):not(:last-child) { page-break-after: always; }
 
   /* Layout */
   .sim-wrap, .resumo-wrap, .aliq-wrap { padding: 4px !important; }
@@ -395,6 +396,7 @@ tr.proj-head-row th { background: #1e4080; }
   <button class="tab-btn active" onclick="showTab('sim')">📊 Simulação Tributária</button>
   <button class="tab-btn" onclick="showTab('resumo')">📋 Resumo da Operação</button>
   <button class="tab-btn" onclick="showTab('aliq')">📈 Alíquotas ICMS</button>
+  <button class="tab-btn" onclick="showTab('enviar')">📨 Enviar por Email</button>
 </div>
 
 <!-- ================================================================ -->
@@ -810,6 +812,118 @@ tr.proj-head-row th { background: #1e4080; }
 
 </div><!-- /tab-aliq -->
 
+<!-- ================================================================ -->
+<!-- TAB 4: ENVIAR POR EMAIL                                          -->
+<!-- ================================================================ -->
+<div id="tab-enviar" class="tab-content">
+
+  <div class="sim-wrap" style="max-width:640px;margin:0 auto;">
+
+    <div class="panel" style="margin-bottom:12px;">
+      <div class="panel-header" style="font-size:13px;">📨 Enviar Simulação por Email</div>
+      <div style="padding:20px 24px;">
+
+        <p style="color:#4a5568;font-size:13px;line-height:1.6;margin-bottom:20px;">
+          Os dados da simulação são preenchidos automaticamente com os valores das abas anteriores.
+          Complete o contato do cliente e clique em enviar.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Nome do Contato *</label>
+            <input type="text" id="env_nome" placeholder="Ex: João Silva"
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Email do Contato *</label>
+            <input type="email" id="env_email" placeholder="joao@empresa.com"
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Empresa *</label>
+            <input type="text" id="env_empresa" placeholder="Ex: Distribuidora XYZ"
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Estado de Origem</label>
+            <select id="env_estado"
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
+              <option value="SP">SP — São Paulo</option>
+              <option value="RJ">RJ — Rio de Janeiro</option>
+              <option value="MG">MG — Minas Gerais</option>
+              <option value="PR">PR — Paraná</option>
+              <option value="RS">RS — Rio Grande do Sul</option>
+              <option value="SC">SC — Santa Catarina</option>
+              <option value="GO">GO — Goiás</option>
+              <option value="BA">BA — Bahia</option>
+              <option value="PE">PE — Pernambuco</option>
+              <option value="CE">CE — Ceará</option>
+              <option value="MT">MT — Mato Grosso</option>
+              <option value="MS">MS — Mato Grosso do Sul</option>
+              <option value="DF">DF — Distrito Federal</option>
+              <option value="PA">PA — Pará</option>
+              <option value="AC">AC — Acre</option>
+              <option value="AL">AL — Alagoas</option>
+              <option value="AM">AM — Amazonas</option>
+              <option value="AP">AP — Amapá</option>
+              <option value="MA">MA — Maranhão</option>
+              <option value="PB">PB — Paraíba</option>
+              <option value="PI">PI — Piauí</option>
+              <option value="RN">RN — Rio Grande do Norte</option>
+              <option value="RO">RO — Rondônia</option>
+              <option value="RR">RR — Roraima</option>
+              <option value="SE">SE — Sergipe</option>
+              <option value="TO">TO — Tocantins</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Observações (opcional)</label>
+            <textarea id="env_obs" rows="3" placeholder="Pontos discutidos na reunião, dúvidas do cliente..."
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;resize:vertical;"></textarea>
+          </div>
+
+        </div>
+
+        <!-- Dados automáticos da simulação -->
+        <div style="background:#f5f8fc;border:1px solid #b8cce0;border-radius:4px;padding:14px 16px;margin-top:20px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#1e4080;text-transform:uppercase;margin-bottom:10px;">
+            Dados da Simulação — preenchidos automaticamente
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#4a5568;">
+            <div>Faturamento: <strong id="env_fat_label" style="color:#0b1a35;">—</strong></div>
+            <div>Valor das Compras: <strong id="env_comp_label" style="color:#0b1a35;">—</strong></div>
+            <div>Alíq. ICMS Origem: <strong id="env_aliq_orig_label" style="color:#0b1a35;">—</strong></div>
+            <div>Alíq. ICMS Saída: <strong id="env_aliq_saida_label" style="color:#0b1a35;">—</strong></div>
+            <div>Meses de Contrato: <strong id="env_meses_label" style="color:#0b1a35;">—</strong></div>
+            <div>Economia Estimada: <strong id="env_econ_label" style="color:#1a7a3a;">—</strong></div>
+          </div>
+        </div>
+
+        <!-- Botão enviar -->
+        <button id="env_btn" onclick="enviarEmail()" class="btn btn-gold"
+          style="width:100%;margin-top:20px;padding:12px;font-size:14px;letter-spacing:0.3px;">
+          📨 Enviar Simulação por Email
+        </button>
+
+        <!-- Mensagem de status -->
+        <div id="env_status" style="display:none;margin-top:14px;padding:12px 16px;border-radius:4px;font-size:13px;font-weight:700;text-align:center;"></div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-blue" onclick="showTab('sim')">← Voltar à Simulação</button>
+  </div>
+
+</div><!-- /tab-enviar -->
+
 
 <!-- ================================================================ -->
 <!-- JAVASCRIPT                                                        -->
@@ -929,6 +1043,7 @@ function calc() {
   set('g25', brl(G25));
   set('g26', pct(G26, 1));
   set('g27', pct(G27, 2));
+  updateEnvLabels();
 
   // ===== RESUMO DA OPERAÇÃO =====
   set('r_b6',  brl(G25));
@@ -949,6 +1064,95 @@ function calc() {
   set('r_h16', brl(total));
 }
 
+// ===== ENVIAR POR EMAIL =====
+function updateEnvLabels() {
+  var fat   = parseFloat(document.getElementById('c11').value) || 0;
+  var comp  = parseFloat(document.getElementById('c7').value)  || 0;
+  var aliqO = parseFloat(document.getElementById('c8').value)  || 0;
+  var aliqS = parseFloat(document.getElementById('c12').value) || 0;
+  var meses = parseInt(document.getElementById('i9').value)    || 0;
+  var econEl = document.getElementById('g25');
+  document.getElementById('env_fat_label').textContent        = fat   ? brl(fat)   : '—';
+  document.getElementById('env_comp_label').textContent       = comp  ? brl(comp)  : '—';
+  document.getElementById('env_aliq_orig_label').textContent  = aliqO ? aliqO.toFixed(1).replace('.',',') + '%' : '—';
+  document.getElementById('env_aliq_saida_label').textContent = aliqS ? aliqS.toFixed(1).replace('.',',') + '%' : '—';
+  document.getElementById('env_meses_label').textContent      = meses ? meses + ' meses' : '—';
+  document.getElementById('env_econ_label').textContent       = econEl ? econEl.textContent : '—';
+}
+
+function enviarEmail() {
+  var nome    = document.getElementById('env_nome').value.trim();
+  var email   = document.getElementById('env_email').value.trim();
+  var empresa = document.getElementById('env_empresa').value.trim();
+  var estado  = document.getElementById('env_estado').value;
+  var obs     = document.getElementById('env_obs').value.trim();
+
+  if (!nome || !email || !empresa) {
+    showEnvStatus('error', '⚠️ Preencha os campos obrigatórios: Nome, Email e Empresa.');
+    return;
+  }
+  if (email.indexOf('@') === -1) {
+    showEnvStatus('error', '⚠️ Email inválido.');
+    return;
+  }
+
+  var fat    = parseFloat(document.getElementById('c11').value) || 0;
+  var comp   = parseFloat(document.getElementById('c7').value)  || 0;
+  var aliqO  = parseFloat(document.getElementById('c8').value)  || 0;
+  var aliqS  = parseFloat(document.getElementById('c12').value) || 0;
+  var meses  = parseInt(document.getElementById('i9').value)    || 24;
+
+  var payload = {
+    cliente_nome:          nome,
+    cliente_email:         email,
+    empresa:               empresa,
+    estado_origem:         estado,
+    faturamento_mensal:    fat,
+    valor_compras:         comp,
+    aliquota_icms_origem:  aliqO / 100,
+    aliquota_icms_saida:   aliqS / 100,
+    meses_contrato:        meses,
+    obs:                   obs
+  };
+
+  var btn = document.getElementById('env_btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando...';
+  showEnvStatus('', '');
+
+  fetch('https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pre-viabilidade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function() {
+    btn.disabled = false;
+    btn.textContent = '📨 Enviar Simulação por Email';
+    showEnvStatus('success', '✅ Email enviado com sucesso para ' + email + '!');
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = '📨 Enviar Simulação por Email';
+    showEnvStatus('error', '❌ Erro ao enviar. Verifique a conexão e tente novamente.');
+  });
+}
+
+function showEnvStatus(type, msg) {
+  var el = document.getElementById('env_status');
+  if (!msg) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  if (type === 'success') {
+    el.style.background = '#d4edda'; el.style.color = '#155724'; el.style.border = '1px solid #c3e6cb';
+  } else if (type === 'error') {
+    el.style.background = '#f8d7da'; el.style.color = '#721c24'; el.style.border = '1px solid #f5c6cb';
+  }
+  el.textContent = msg;
+}
+
 // ===== TABS =====
 function showTab(name) {
   document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
@@ -957,6 +1161,7 @@ function showTab(name) {
   document.querySelectorAll('.tab-btn').forEach(function(b){
     if (b.getAttribute('onclick').indexOf("'" + name + "'") !== -1) b.classList.add('active');
   });
+  if (name === 'enviar') updateEnvLabels();
 }
 
 // ===== ALÍQUOTAS ICMS (tabela 27×27) =====
