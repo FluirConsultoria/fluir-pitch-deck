@@ -23,7 +23,7 @@ export function Slide2About() {
         incentivos fiscais mais competitivos do Brasil para atacado, e-commerce e importação. Não vendemos consultoria.
         Entregamos a operação funcionando, do incentivo aprovado à apuração mensal.
       </p>
-      <div className="grid grid-cols-3 gap-4 mt-5 max-w-5xl">
+      <div className="grid grid-cols-3 gap-4 mt-8 max-w-5xl">
         {[
           { icon: <Shield size={32} strokeWidth={1.4} />, label: "Estruturação Tributária" },
           { icon: <Truck size={32} strokeWidth={1.4} />, label: "Consultoria Logística" },
@@ -31,7 +31,7 @@ export function Slide2About() {
         ].map(({ icon, label }) => (
           <div
             key={label}
-            className="rounded-xl p-6 h-40 flex flex-col items-center justify-center text-center"
+            className="rounded-xl p-6 h-48 flex flex-col items-center justify-center text-center"
             style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
           >
             <div className="mb-3" style={{ color: "#609DFF" }}>
