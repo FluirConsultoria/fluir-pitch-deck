@@ -23,7 +23,7 @@ export function Slide2About() {
         incentivos fiscais mais competitivos do Brasil para atacado, e-commerce e importação. Não vendemos consultoria.
         Entregamos a operação funcionando, do incentivo aprovado à apuração mensal.
       </p>
-      <div className="flex-1 flex items-end pb-4">
+      <div className="flex-1 flex items-end pb-16">
         <div className="grid grid-cols-3 gap-4 w-full max-w-5xl">
           {[
             { icon: <Shield size={32} strokeWidth={1.4} />, label: "Estruturação Tributária" },
