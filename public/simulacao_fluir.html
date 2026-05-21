@@ -823,85 +823,26 @@ tr.proj-head-row th { background: #1e4080; }
       <div class="panel-header" style="font-size:13px;">📨 Enviar Simulação por Email</div>
       <div style="padding:20px 24px;">
 
-        <p style="color:#4a5568;font-size:13px;line-height:1.6;margin-bottom:20px;">
-          Os dados da simulação são preenchidos automaticamente com os valores das abas anteriores.
-          Complete o contato do cliente e clique em enviar.
-        </p>
-
         <div style="display:flex;flex-direction:column;gap:14px;">
 
           <div>
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Nome do Contato *</label>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Nome *</label>
             <input type="text" id="env_nome" placeholder="Ex: João Silva"
               style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
           </div>
 
           <div>
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Email do Contato *</label>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Email *</label>
             <input type="email" id="env_email" placeholder="joao@empresa.com"
               style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
           </div>
 
           <div>
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Empresa *</label>
-            <input type="text" id="env_empresa" placeholder="Ex: Distribuidora XYZ"
-              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
-          </div>
-
-          <div>
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Estado de Origem</label>
-            <select id="env_estado"
-              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
-              <option value="SP">SP — São Paulo</option>
-              <option value="RJ">RJ — Rio de Janeiro</option>
-              <option value="MG">MG — Minas Gerais</option>
-              <option value="PR">PR — Paraná</option>
-              <option value="RS">RS — Rio Grande do Sul</option>
-              <option value="SC">SC — Santa Catarina</option>
-              <option value="GO">GO — Goiás</option>
-              <option value="BA">BA — Bahia</option>
-              <option value="PE">PE — Pernambuco</option>
-              <option value="CE">CE — Ceará</option>
-              <option value="MT">MT — Mato Grosso</option>
-              <option value="MS">MS — Mato Grosso do Sul</option>
-              <option value="DF">DF — Distrito Federal</option>
-              <option value="PA">PA — Pará</option>
-              <option value="AC">AC — Acre</option>
-              <option value="AL">AL — Alagoas</option>
-              <option value="AM">AM — Amazonas</option>
-              <option value="AP">AP — Amapá</option>
-              <option value="MA">MA — Maranhão</option>
-              <option value="PB">PB — Paraíba</option>
-              <option value="PI">PI — Piauí</option>
-              <option value="RN">RN — Rio Grande do Norte</option>
-              <option value="RO">RO — Rondônia</option>
-              <option value="RR">RR — Roraima</option>
-              <option value="SE">SE — Sergipe</option>
-              <option value="TO">TO — Tocantins</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Observações (opcional)</label>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Observação (opcional)</label>
             <textarea id="env_obs" rows="3" placeholder="Pontos discutidos na reunião, dúvidas do cliente..."
               style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;resize:vertical;"></textarea>
           </div>
 
-        </div>
-
-        <!-- Dados automáticos da simulação -->
-        <div style="background:#f5f8fc;border:1px solid #b8cce0;border-radius:4px;padding:14px 16px;margin-top:20px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#1e4080;text-transform:uppercase;margin-bottom:10px;">
-            Dados da Simulação — preenchidos automaticamente
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#4a5568;">
-            <div>Faturamento: <strong id="env_fat_label" style="color:#0b1a35;">—</strong></div>
-            <div>Valor das Compras: <strong id="env_comp_label" style="color:#0b1a35;">—</strong></div>
-            <div>Alíq. ICMS Origem: <strong id="env_aliq_orig_label" style="color:#0b1a35;">—</strong></div>
-            <div>Alíq. ICMS Saída: <strong id="env_aliq_saida_label" style="color:#0b1a35;">—</strong></div>
-            <div>Meses de Contrato: <strong id="env_meses_label" style="color:#0b1a35;">—</strong></div>
-            <div>Economia Estimada: <strong id="env_econ_label" style="color:#1a7a3a;">—</strong></div>
-          </div>
         </div>
 
         <!-- Botão enviar -->
@@ -1043,7 +984,7 @@ function calc() {
   set('g25', brl(G25));
   set('g26', pct(G26, 1));
   set('g27', pct(G27, 2));
-  updateEnvLabels();
+
 
   // ===== RESUMO DA OPERAÇÃO =====
   set('r_b6',  brl(G25));
@@ -1064,31 +1005,14 @@ function calc() {
   set('r_h16', brl(total));
 }
 
-// ===== ENVIAR POR EMAIL =====
-function updateEnvLabels() {
-  var fat   = parseFloat(document.getElementById('c11').value) || 0;
-  var comp  = parseFloat(document.getElementById('c7').value)  || 0;
-  var aliqO = parseFloat(document.getElementById('c8').value)  || 0;
-  var aliqS = parseFloat(document.getElementById('c12').value) || 0;
-  var meses = parseInt(document.getElementById('i9').value)    || 0;
-  var econEl = document.getElementById('g25');
-  document.getElementById('env_fat_label').textContent        = fat   ? brl(fat)   : '—';
-  document.getElementById('env_comp_label').textContent       = comp  ? brl(comp)  : '—';
-  document.getElementById('env_aliq_orig_label').textContent  = aliqO ? aliqO.toFixed(1).replace('.',',') + '%' : '—';
-  document.getElementById('env_aliq_saida_label').textContent = aliqS ? aliqS.toFixed(1).replace('.',',') + '%' : '—';
-  document.getElementById('env_meses_label').textContent      = meses ? meses + ' meses' : '—';
-  document.getElementById('env_econ_label').textContent       = econEl ? econEl.textContent : '—';
-}
 
 function enviarEmail() {
-  var nome    = document.getElementById('env_nome').value.trim();
-  var email   = document.getElementById('env_email').value.trim();
-  var empresa = document.getElementById('env_empresa').value.trim();
-  var estado  = document.getElementById('env_estado').value;
-  var obs     = document.getElementById('env_obs').value.trim();
+  var nome  = document.getElementById('env_nome').value.trim();
+  var email = document.getElementById('env_email').value.trim();
+  var obs   = document.getElementById('env_obs').value.trim();
 
-  if (!nome || !email || !empresa) {
-    showEnvStatus('error', '⚠️ Preencha os campos obrigatórios: Nome, Email e Empresa.');
+  if (!nome || !email) {
+    showEnvStatus('error', '⚠️ Preencha Nome e Email.');
     return;
   }
   if (email.indexOf('@') === -1) {
@@ -1096,23 +1020,21 @@ function enviarEmail() {
     return;
   }
 
-  var fat    = parseFloat(document.getElementById('c11').value) || 0;
-  var comp   = parseFloat(document.getElementById('c7').value)  || 0;
-  var aliqO  = parseFloat(document.getElementById('c8').value)  || 0;
-  var aliqS  = parseFloat(document.getElementById('c12').value) || 0;
-  var meses  = parseInt(document.getElementById('i9').value)    || 24;
+  var fat   = parseFloat(document.getElementById('c11').value) || 0;
+  var comp  = parseFloat(document.getElementById('c7').value)  || 0;
+  var aliqO = parseFloat(document.getElementById('c8').value)  || 0;
+  var aliqS = parseFloat(document.getElementById('c12').value) || 0;
+  var meses = parseInt(document.getElementById('i9').value)    || 24;
 
   var payload = {
-    cliente_nome:          nome,
-    cliente_email:         email,
-    empresa:               empresa,
-    estado_origem:         estado,
-    faturamento_mensal:    fat,
-    valor_compras:         comp,
-    aliquota_icms_origem:  aliqO / 100,
-    aliquota_icms_saida:   aliqS / 100,
-    meses_contrato:        meses,
-    obs:                   obs
+    cliente_nome:         nome,
+    cliente_email:        email,
+    faturamento_mensal:   fat,
+    valor_compras:        comp,
+    aliquota_icms_origem: aliqO / 100,
+    aliquota_icms_saida:  aliqS / 100,
+    meses_contrato:       meses,
+    obs:                  obs
   };
 
   var btn = document.getElementById('env_btn');
@@ -1161,7 +1083,7 @@ function showTab(name) {
   document.querySelectorAll('.tab-btn').forEach(function(b){
     if (b.getAttribute('onclick').indexOf("'" + name + "'") !== -1) b.classList.add('active');
   });
-  if (name === 'enviar') updateEnvLabels();
+
 }
 
 // ===== ALÍQUOTAS ICMS (tabela 27×27) =====
