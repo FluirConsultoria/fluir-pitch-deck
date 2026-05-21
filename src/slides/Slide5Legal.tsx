@@ -9,7 +9,7 @@ import {
 function PillarCard({ icon, title }: { icon: ReactNode; title: string }) {
   return (
     <div
-      className="rounded-xl flex items-center gap-4 px-6 py-5 w-full"
+      className="rounded-xl flex items-center gap-4 px-6 py-8 w-full"
       style={{
         backgroundColor: "#09151A",
         border: "1px solid #C9A84C",
