@@ -120,6 +120,8 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <BuildStatusIndicator />
     </QueryClientProvider>
   );
 }
+
