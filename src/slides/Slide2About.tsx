@@ -27,7 +27,7 @@ export function Slide2About() {
       </p>
 
       {/* Posição absoluta: bottom controla altura, ajuste em % para subir/descer */}
-      <div className="absolute left-16 right-16" style={{ bottom: "12%" }}>
+      <div className="absolute left-16 right-16" style={{ bottom: "28%" }}>
         <div className="grid grid-cols-3 gap-5 max-w-5xl">
           {[
             { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
