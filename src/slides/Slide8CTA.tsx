@@ -21,8 +21,11 @@ export function Slide8CTA() {
           economizar — agora mesmo.
         </p>
 
-        <button
-          className="mt-10 px-10 py-5 rounded-xl text-lg transition-transform hover:scale-105"
+        <a
+          href="https://espirit-boost-deck.lovable.app/simulacao_fluir.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-10 inline-block px-10 py-5 rounded-xl text-lg transition-transform hover:scale-105"
           style={{
             backgroundColor: "#C9A84C",
             color: "#041938",
@@ -31,7 +34,7 @@ export function Slide8CTA() {
           }}
         >
           → Abrir Planilha de Pré-Viabilidade
-        </button>
+        </a>
 
         <div
           className="mt-12 text-sm"
