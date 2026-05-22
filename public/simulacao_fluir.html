@@ -669,6 +669,7 @@ tr.proj-head-row th { background: #1e4080; }
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('resumo')">📋 Ver Resumo da Operação →</button>
     <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
+    <button class="btn" id="btn-salvar-sim" onclick="salvarProposta()" style="background:#5a3e99;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
 </div><!-- /tab-sim -->
@@ -783,6 +784,7 @@ tr.proj-head-row th { background: #1e4080; }
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('sim')">← Voltar à Simulação</button>
     <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
+    <button class="btn" id="btn-salvar-resumo" onclick="salvarProposta()" style="background:#5a3e99;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
 </div><!-- /tab-resumo -->
@@ -1013,13 +1015,29 @@ function calc() {
   window._anual     = Math.round(G25 * 12);
 }
 
+function _propostaParams() {
+  return "?icms_atual=" + (window._icmsAtual || 0)
+       + "&icms_es="    + (window._icmsES    || 0)
+       + "&economia="   + (window._economia  || 0)
+       + "&anual="      + (window._anual     || 0);
+}
+
 function abrirProposta() {
   var base = "https://fluent-boost-deck.lovable.app";
-  var params = "?icms_atual=" + (window._icmsAtual || 0)
-             + "&icms_es="    + (window._icmsES    || 0)
-             + "&economia="   + (window._economia  || 0)
-             + "&anual="      + (window._anual     || 0);
-  window.open(base + params, "_blank");
+  window.open(base + _propostaParams(), "_blank");
+}
+
+function salvarProposta() {
+  var url = "https://fluent-boost-deck.lovable.app" + _propostaParams();
+  navigator.clipboard.writeText(url).then(function() {
+    var ids = ["btn-salvar-sim", "btn-salvar-resumo"];
+    ids.forEach(function(id) {
+      var btn = document.getElementById(id);
+      if (btn) { btn.textContent = "✅ Link copiado!"; setTimeout(function(){ btn.textContent = "💾 Salvar Proposta"; }, 2500); }
+    });
+  }).catch(function() {
+    prompt("Copie o link abaixo:", url);
+  });
 }
 
 
