@@ -1160,11 +1160,23 @@ calc();
 function salvarProposta() {
   var fat   = parseFloat(document.getElementById('c11').value) || 0;
   var comp  = parseFloat(document.getElementById('c7').value)  || 0;
-  var aliqO = parseFloat(document.getElementById('c8').value)  || 0;
-  var aliqS = parseFloat(document.getElementById('c12').value) || 0;
-  var meses = parseInt(document.getElementById('i9').value)    || 24;
-  var url = 'https://espirit-boost-deck.lovable.app/simulacao_fluir.html?view=1' +
-    '&fat=' + fat + '&comp=' + comp + '&aliqO=' + aliqO + '&aliqS=' + aliqS + '&meses=' + meses;
+  var aliqO = parseFloat(document.getElementById('c8').value)  / 100 || 0;
+  var aliqS = parseFloat(document.getElementById('c12').value) / 100 || 0;
+
+  // Mesmo cálculo do n8n
+  var C9       = comp * aliqO;
+  var C13      = fat  * aliqS;
+  var icmsNorm = Math.max(C13 - C9, 0);
+  var icmsES   = fat  * 0.0114;
+  var economia = Math.max(icmsNorm - icmsES, 0);
+  var anual    = economia * 12;
+
+  var url = 'https://fluent-boost-deck.lovable.app' +
+    '?icms_atual=' + Math.round(icmsNorm) +
+    '&icms_es='    + Math.round(icmsES)   +
+    '&economia='   + Math.round(economia) +
+    '&anual='      + Math.round(anual);
+
   var btn = document.getElementById('save_btn');
   navigator.clipboard.writeText(url).then(function() {
     btn.textContent = '✅ Link copiado!';
