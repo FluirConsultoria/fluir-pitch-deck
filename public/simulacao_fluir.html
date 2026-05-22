@@ -668,8 +668,6 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('resumo')">📋 Ver Resumo da Operação →</button>
-    <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
-    <button class="btn" id="btn-salvar-sim" onclick="salvarProposta()" style="background:#5a3e99;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
 </div><!-- /tab-sim -->
@@ -783,8 +781,6 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('sim')">← Voltar à Simulação</button>
-    <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
-    <button class="btn" id="btn-salvar-resumo" onclick="salvarProposta()" style="background:#5a3e99;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
 </div><!-- /tab-resumo -->
@@ -832,6 +828,12 @@ tr.proj-head-row th { background: #1e4080; }
           <div>
             <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Nome *</label>
             <input type="text" id="env_nome" placeholder="Ex: João Silva"
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Empresa</label>
+            <input type="text" id="env_empresa" placeholder="Ex: Distribuidora Beleza Ltda"
               style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
           </div>
 
@@ -1007,44 +1009,14 @@ function calc() {
   set('r_h15', brl(12 * G25 * 0.6));
   var total = (i9*G25) + (12*G25*0.9) + (12*G25*0.8) + (12*G25*0.7) + (12*G25*0.6);
   set('r_h16', brl(total));
-
-  // Atualiza link da proposta com os valores calculados
-  window._icmsAtual = Math.round(C16);
-  window._icmsES    = Math.round(G16);
-  window._economia  = Math.round(G25);
-  window._anual     = Math.round(G25 * 12);
-}
-
-function _propostaParams() {
-  return "?icms_atual=" + (window._icmsAtual || 0)
-       + "&icms_es="    + (window._icmsES    || 0)
-       + "&economia="   + (window._economia  || 0)
-       + "&anual="      + (window._anual     || 0);
-}
-
-function abrirProposta() {
-  var base = "https://fluent-boost-deck.lovable.app";
-  window.open(base + _propostaParams(), "_blank");
-}
-
-function salvarProposta() {
-  var url = "https://fluent-boost-deck.lovable.app" + _propostaParams();
-  navigator.clipboard.writeText(url).then(function() {
-    var ids = ["btn-salvar-sim", "btn-salvar-resumo"];
-    ids.forEach(function(id) {
-      var btn = document.getElementById(id);
-      if (btn) { btn.textContent = "✅ Link copiado!"; setTimeout(function(){ btn.textContent = "💾 Salvar Proposta"; }, 2500); }
-    });
-  }).catch(function() {
-    prompt("Copie o link abaixo:", url);
-  });
 }
 
 
 function enviarEmail() {
-  var nome  = document.getElementById('env_nome').value.trim();
-  var email = document.getElementById('env_email').value.trim();
-  var obs   = document.getElementById('env_obs').value.trim();
+  var nome    = document.getElementById('env_nome').value.trim();
+  var empresa = document.getElementById('env_empresa').value.trim();
+  var email   = document.getElementById('env_email').value.trim();
+  var obs     = document.getElementById('env_obs').value.trim();
 
   if (!nome || !email) {
     showEnvStatus('error', '⚠️ Preencha Nome e Email.');
@@ -1063,6 +1035,7 @@ function enviarEmail() {
 
   var payload = {
     cliente_nome:         nome,
+    empresa:              empresa,
     cliente_email:        email,
     faturamento_mensal:   fat,
     valor_compras:        comp,
