@@ -668,6 +668,7 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('resumo')">📋 Ver Resumo da Operação →</button>
+    <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
   </div>
 
 </div><!-- /tab-sim -->
@@ -781,6 +782,7 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('sim')">← Voltar à Simulação</button>
+    <button class="btn" onclick="abrirProposta()" style="background:#1a7a4a;color:#fff;">📊 Gerar Proposta Comercial</button>
   </div>
 
 </div><!-- /tab-resumo -->
@@ -1003,6 +1005,21 @@ function calc() {
   set('r_h15', brl(12 * G25 * 0.6));
   var total = (i9*G25) + (12*G25*0.9) + (12*G25*0.8) + (12*G25*0.7) + (12*G25*0.6);
   set('r_h16', brl(total));
+
+  // Atualiza link da proposta com os valores calculados
+  window._icmsAtual = Math.round(C16);
+  window._icmsES    = Math.round(G16);
+  window._economia  = Math.round(G25);
+  window._anual     = Math.round(G25 * 12);
+}
+
+function abrirProposta() {
+  var base = "https://fluent-boost-deck.lovable.app";
+  var params = "?icms_atual=" + (window._icmsAtual || 0)
+             + "&icms_es="    + (window._icmsES    || 0)
+             + "&economia="   + (window._economia  || 0)
+             + "&anual="      + (window._anual     || 0);
+  window.open(base + params, "_blank");
 }
 
 
