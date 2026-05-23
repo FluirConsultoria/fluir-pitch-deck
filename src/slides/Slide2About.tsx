@@ -33,13 +33,13 @@ export function Slide2About() {
         {/* Caixas inferiores */}
         <div className="grid grid-cols-3 gap-5 max-w-5xl w-full">
           {[
-            { icon: <Shield size={32} strokeWidth={1.4} />, label: "Estruturação Tributária" },
-            { icon: <Truck size={32} strokeWidth={1.4} />, label: "Consultoria Logística" },
-            { icon: <Settings size={32} strokeWidth={1.4} />, label: "Operação Completa" },
+            { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
+            { icon: <Truck size={36} strokeWidth={1.4} />, label: "Consultoria Logística" },
+            { icon: <Settings size={36} strokeWidth={1.4} />, label: "Operação Completa" },
           ].map(({ icon, label }) => (
             <div
               key={label}
-              className="rounded-xl p-6 flex flex-col items-center justify-center text-center"
+              className="rounded-xl px-6 py-12 flex flex-col items-center justify-center text-center"
               style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
             >
               <div className="mb-4" style={{ color: "#609DFF" }}>
