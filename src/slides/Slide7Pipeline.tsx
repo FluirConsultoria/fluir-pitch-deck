@@ -19,28 +19,28 @@ const steps: Step[] = [
 function StepNode({ step }: { step: Step }) {
   const Icon = step.icon;
   return (
-    <div className="flex flex-col items-center text-center w-40 relative z-10">
+    <div className="flex flex-col items-center text-center w-44 relative z-10">
       <div
         className="relative flex items-center justify-center"
         style={{
-          width: 64,
-          height: 64,
+          width: 72,
+          height: 72,
           borderRadius: "50%",
           backgroundColor: "#09151A",
           border: "2px solid #609DFF",
-          boxShadow: "0 0 20px #609DFF40",
+          boxShadow: "0 0 24px #609DFF40",
         }}
       >
-        <Icon size={26} strokeWidth={1.8} color="#C9A84C" />
+        <Icon size={30} strokeWidth={1.8} color="#C9A84C" />
         <div
           className="absolute -top-2 -right-2 flex items-center justify-center"
           style={{
-            width: 22,
-            height: 22,
+            width: 24,
+            height: 24,
             borderRadius: "50%",
             backgroundColor: "#C9A84C",
             color: "#041938",
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: 800,
           }}
         >
@@ -48,14 +48,14 @@ function StepNode({ step }: { step: Step }) {
         </div>
       </div>
       <div
-        className="mt-4"
-        style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 16 }}
+        className="mt-5"
+        style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 18 }}
       >
         {step.label}
       </div>
       <div
-        className="mt-1"
-        style={{ color: "#E2E6E9", fontSize: 13, lineHeight: 1.35 }}
+        className="mt-2"
+        style={{ color: "#E2E6E9", fontSize: 14, lineHeight: 1.4 }}
       >
         {step.desc}
       </div>
@@ -66,21 +66,21 @@ function StepNode({ step }: { step: Step }) {
 export function Slide7Pipeline() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-3xl md:text-4xl max-w-5xl mt-3">
+      <SlideHeadline className="text-3xl md:text-4xl max-w-5xl mt-6">
         Da decisão à operação: entregamos tudo, de ponta a ponta.
       </SlideHeadline>
 
-      <div className="flex-1 flex items-center justify-center mt-2">
+      <div className="flex-1 flex items-center justify-center mt-4">
         <div
           className="w-full max-w-6xl rounded-2xl"
-          style={{ backgroundColor: "#09151A", padding: 48, border: "1px solid #194A99" }}
+          style={{ backgroundColor: "#09151A", padding: 56, border: "1px solid #194A99" }}
         >
           <div className="relative">
             {/* Animated gradient connector */}
             <div
               className="absolute left-[8%] right-[8%] h-[3px] rounded-full"
               style={{
-                top: 32,
+                top: 36,
                 background:
                   "linear-gradient(90deg, #194A99 0%, #609DFF 50%, #194A99 100%)",
                 backgroundSize: "200% 100%",
