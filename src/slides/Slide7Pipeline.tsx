@@ -66,7 +66,7 @@ function StepNode({ step }: { step: Step }) {
 export function Slide7Pipeline() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-3xl md:text-4xl max-w-5xl mt-6">
+      <SlideHeadline className="text-3xl md:text-4xl max-w-5xl mt-3">
         Da decisão à operação: entregamos tudo, de ponta a ponta.
       </SlideHeadline>
 
