@@ -23,7 +23,7 @@ export function Slide2About() {
             </div>
           </div>
 
-          <p className="mt-8 max-w-4xl text-base leading-relaxed" style={{ color: "#E2E6E9" }}>
+          <p className="mt-8 max-w-4xl text-lg leading-relaxed" style={{ color: "#E2E6E9" }}>
             A Fluir é uma consultoria full-service especializada em estruturar operações no Espírito Santo — o estado com os
             incentivos fiscais mais competitivos do Brasil para atacado, e-commerce e importação. Não vendemos consultoria.
             Entregamos a operação funcionando, do incentivo aprovado à apuração mensal.
