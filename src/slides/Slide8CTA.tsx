@@ -18,7 +18,7 @@ export function Slide8CTA() {
           style={{ color: "#F5F0F0", fontWeight: 400 }}
         >
           Em 15 minutos, calculamos juntos o quanto a sua operação pode
-          economizar — agora mesmo.
+          economizar, agora mesmo.
         </p>
 
         <a
@@ -40,7 +40,7 @@ export function Slide8CTA() {
           className="mt-12 text-sm"
           style={{ color: "#E2E6E9", fontWeight: 400 }}
         >
-          contato@fluirconsultoria.com.br · Vitória — Espírito Santo
+          contato@fluirconsultoria.com.br · Vitória, Espírito Santo
         </div>
       </div>
     </SlideWrapper>

@@ -96,7 +96,7 @@ export function Slide4Scale() {
                   Com incentivo ES
                 </div>
                 <div style={{ color: "#E2E6E9", fontSize: 14, marginTop: 4 }}>
-                  ICMS de 1,14% — economia real mensal
+                  ICMS de 1,14%, economia real mensal
                 </div>
               </div>
             </div>

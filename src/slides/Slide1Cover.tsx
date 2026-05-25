@@ -34,9 +34,9 @@ export function Slide1Cover() {
             fontSize: "clamp(2rem, 4vw, 3.5rem)",
           }}
         >
-          Conectamos Oportunidades.
+          Menos ICMS. Mais margem.
           <br />
-          Impulsionamos o Espírito Santo.
+          Operação estruturada no ES.
         </h1>
         <p
           className="mt-10 text-lg md:text-xl max-w-3xl"
