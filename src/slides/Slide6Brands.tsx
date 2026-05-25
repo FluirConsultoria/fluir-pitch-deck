@@ -69,7 +69,7 @@ export function Slide6Brands() {
   return (
     <SlideWrapper>
       <SlideHeadline className="text-2xl md:text-3xl max-w-4xl">
-        Grandes marcas já operam aqui.
+        Marcas do setor que já operam com o incentivo.
       </SlideHeadline>
 
       <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-6 mt-8 max-w-6xl mx-auto w-full content-center">
