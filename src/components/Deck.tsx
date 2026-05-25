@@ -57,8 +57,8 @@ export function Deck() {
           className="relative shadow-2xl"
           style={{
             aspectRatio: "16 / 9",
-            width: "min(100vw, calc(100vh * 16 / 9), 1366px)",
-            height: "min(100vh, calc(100vw * 9 / 16), 768px)",
+            width: "min(100vw, calc(100vh * 16 / 9))",
+            height: "min(100vh, calc(100vw * 9 / 16))",
           }}
         >
           <div
