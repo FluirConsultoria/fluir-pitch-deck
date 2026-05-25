@@ -43,7 +43,7 @@ export function Deck() {
   return (
     <div
       className="w-screen h-screen overflow-hidden relative"
-      style={{ backgroundColor: "#020D1F", padding: "clamp(8px, 2.5vh, 28px) clamp(8px, 2.5vw, 28px)" }}
+      style={{ backgroundColor: "#020D1F" }}
       onClick={(e) => {
         // Don't advance when clicking buttons
         const t = e.target as HTMLElement;
@@ -57,8 +57,8 @@ export function Deck() {
           className="relative shadow-2xl"
           style={{
             aspectRatio: "16 / 9",
-            width: "min(100vw, calc(100vh * 16 / 9))",
-            height: "min(100vh, calc(100vw * 9 / 16))",
+            width: "min(calc(100vw - 5vmin), calc((100vh - 5vmin) * 16 / 9))",
+            height: "min(calc(100vh - 5vmin), calc((100vw - 5vmin) * 9 / 16))",
           }}
         >
           <div
