@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluir — Proposta Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#041938; --card:#09151A; --accent:#609DFF; --border-blue:#194A99;
+  --text-white:#F5F0F0; --text-gray:#E2E6E9;
+  --grad-accent:linear-gradient(135deg,#609DFF 0%,#194A99 100%);
+  --grad-card:linear-gradient(145deg,rgba(25,74,153,.18) 0%,rgba(9,21,26,.95) 100%);
+  --shadow-card:0 10px 40px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(96,157,255,.15);
+  --shadow-prem:0 20px 60px -20px rgba(96,157,255,.35),0 0 0 1px rgba(96,157,255,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:radial-gradient(ellipse at top,#0A2A5C 0%,#041938 55%,#020D1F 100%) fixed;min-height:100vh;color:var(--text-white);font-family:'Merriweather',serif;overflow-x:hidden}
+.slide{display:none;min-height:100vh;position:relative;z-index:1}
+.slide.active{display:block}
+.sc{position:relative;z-index:10;min-height:100vh;padding:80px 96px}
+@media(max-width:768px){.sc{padding:80px 24px}}
+
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .5s ease-out both}
+@keyframes ci{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+.ci{animation:ci .6s ease-out both}
+@keyframes cu{from{opacity:0;transform:translateY(-6px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+.cu{animation:cu .5s ease-out .4s both}
+@keyframes gp{0%,100%{box-shadow:0 0 20px rgba(96,157,255,.3)}50%{box-shadow:0 0 40px rgba(96,157,255,.6)}}
+.gp{animation:gp 3s ease-in-out infinite}
+
+/* orbs */
+.orbs{pointer-events:none;position:fixed;inset:0;z-0}
+.o1{position:absolute;top:-160px;left:-160px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,#609DFF 0%,transparent 70%);opacity:.2;filter:blur(60px)}
+.o2{position:absolute;bottom:-160px;right:-160px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,#194A99 0%,transparent 70%);opacity:.15;filter:blur(60px)}
+
+/* logo */
+.logo{display:flex;align-items:center;gap:8px}
+.logo-abs{position:absolute;top:24px;left:40px;z-index:10}
+.logo-ctr{justify-content:center}
+.li{width:48px;height:48px;border-radius:50%;background:var(--grad-accent);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;box-shadow:0 0 14px rgba(96,157,255,.7);flex-shrink:0}
+.lt{font-size:22px;font-weight:900;letter-spacing:.3em;color:var(--text-white)}
+.la{color:var(--accent)}
+
+/* nav */
+.nb{position:fixed;top:50%;transform:translateY(-50%);z-index:20;padding:12px;border-radius:50%;border:1px solid var(--border-blue);background:rgba(9,21,26,.6);backdrop-filter:blur(8px);cursor:pointer;color:var(--accent);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.nb:hover{background:rgba(9,21,26,.9)}
+.nb:disabled{opacity:.3;cursor:default}
+#bp{left:16px} #bn{right:16px}
+.fb{position:fixed;top:16px;right:16px;z-index:20;padding:8px;border-radius:8px;border:1px solid var(--border-blue);background:rgba(9,21,26,.6);backdrop-filter:blur(8px);cursor:pointer;color:var(--accent);font-size:16px;line-height:1}
+.dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:8px;align-items:center}
+.dot{height:8px;width:8px;border-radius:4px;background:var(--border-blue);cursor:pointer;transition:all .3s;border:none}
+.dot.on{width:32px;background:var(--accent)}
+
+/* card */
+.card{background:var(--grad-card);border:1px solid rgba(96,157,255,.25);box-shadow:var(--shadow-card);border-radius:16px}
+
+/* chevron */
+.chv{position:relative;height:96px;display:flex;align-items:center;justify-content:space-between;padding:0 80px 0 40px;color:#fff;box-shadow:0 10px 30px -5px rgba(0,0,0,.4);clip-path:polygon(0 0,calc(100% - 50px) 0,100% 50%,calc(100% - 50px) 100%,0 100%)}
+
+/* timeline */
+.tl{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.tl::before{content:'';position:absolute;top:68px;left:5%;right:5%;height:3px;border-radius:2px;background:var(--grad-accent);box-shadow:0 0 20px rgba(96,157,255,.5)}
+
+/* modal */
+.mo{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.mo.open{display:flex}
+.mb{width:100%;max-width:448px;border-radius:16px;padding:32px;background:var(--grad-card);border:1px solid rgba(96,157,255,.35);box-shadow:var(--shadow-prem)}
+input{width:100%;border-radius:8px;padding:12px 16px;font-size:14px;color:var(--text-white);background:rgba(9,21,26,.8);border:1px solid rgba(96,157,255,.3);outline:none;font-family:'Merriweather',serif}
+input:focus{box-shadow:0 0 0 1px var(--accent)}
+.btn-acc{padding:12px 24px;border-radius:12px;font-size:13px;font-weight:700;color:#fff;border:none;background:var(--grad-accent);cursor:pointer;font-family:'Merriweather',serif}
+.btn-sec{padding:12px;border-radius:12px;font-size:13px;font-weight:600;color:var(--text-gray);border:1px solid var(--border-blue);background:transparent;cursor:pointer;font-family:'Merriweather',serif}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="o1"></div><div class="o2"></div></div>
+<button class="nb" id="bp" onclick="prev()" disabled aria-label="Anterior">
+  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+<button class="nb" id="bn" onclick="next()" aria-label="Próximo">
+  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+</button>
+<button class="fb" onclick="toggleFS()" aria-label="Tela cheia">⛶</button>
+<div class="dots" id="dots"></div>
+
+<!-- S1: Capa -->
+<div class="slide active" id="s0">
+  <div class="sc" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div class="logo logo-ctr fi" style="margin-bottom:48px"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="max-width:768px">
+      <p class="fi" style="font-size:18px;letter-spacing:.4em;color:var(--accent);margin-bottom:40px">PROPOSTA COMERCIAL</p>
+      <h1 class="fi" style="font-size:clamp(36px,5vw,62px);font-weight:900;line-height:1.2;margin-bottom:32px">
+        Reestruturação Tributária<br>
+        <span style="background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent">via incentivos</span>
+      </h1>
+      <p class="fi" style="font-size:22px;color:var(--text-gray);font-weight:300;font-style:italic">Compete-ES · Invest-ES · Modelo Full-Service</p>
+      <div class="fi" style="margin:48px auto 0;width:96px;height:2px;background:var(--grad-accent)"></div>
+    </div>
+    <p class="fi" style="position:absolute;bottom:64px;font-size:16px;font-style:italic;color:var(--text-gray)">
+      Preparado para: <strong style="color:var(--text-white)">[NOME DA EMPRESA]</strong> · <span id="mesano"></span>
+    </p>
+  </div>
+</div>
+
+<!-- S2: ICMS -->
+<div class="slide" id="s1">
+  <div class="sc" style="display:flex;flex-direction:column">
+    <div class="logo logo-abs fi"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="margin-top:64px;margin-bottom:16px">
+      <p style="font-size:11px;letter-spacing:.3em;color:var(--accent)">CENÁRIO</p>
+      <h2 style="font-size:34px;font-weight:700;margin-top:8px">O Cenário Identificado <span style="color:var(--accent)">— ICMS</span></h2>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:28px;padding:16px 0">
+      <div id="a1" style="opacity:0;width:45%"><div class="chv" style="background:linear-gradient(135deg,#7a2828,#c44545)">
+        <div><p style="font-size:11px;letter-spacing:.25em;opacity:.8;text-transform:uppercase">Situação Atual</p><p style="font-size:24px;font-weight:900;margin-top:4px" id="v1"></p></div>
+        <p style="font-size:12px;opacity:.9;font-style:italic;margin-right:32px">ICMS / mês</p>
+      </div></div>
+      <div id="a2" style="opacity:0;width:65%"><div class="chv" style="background:linear-gradient(135deg,#194A99,#609DFF)">
+        <div><p style="font-size:11px;letter-spacing:.25em;opacity:.8;text-transform:uppercase">Operação pelo ES</p><p style="font-size:24px;font-weight:900;margin-top:4px" id="v2"></p></div>
+        <p style="font-size:12px;opacity:.9;font-style:italic;margin-right:32px">ICMS / mês</p>
+      </div></div>
+      <div id="a3" style="opacity:0;width:92%"><div class="chv" style="background:linear-gradient(135deg,#0d7a4a,#2dd47e)">
+        <div><p style="font-size:11px;letter-spacing:.25em;opacity:.8;text-transform:uppercase">Resultado · Economia</p><p style="font-size:24px;font-weight:900;margin-top:4px" id="v3"></p></div>
+        <p style="font-size:12px;opacity:.9;font-style:italic;margin-right:32px">ICMS / mês</p>
+      </div></div>
+    </div>
+    <div id="acard" style="display:none;margin:16px auto;padding:20px 40px;border-radius:16px;border:1px solid rgba(96,157,255,.4);background:rgba(9,21,26,.7);backdrop-filter:blur(8px);box-shadow:var(--shadow-prem)" class="cu">
+      <p style="font-size:11px;letter-spacing:.3em;color:var(--accent);text-align:center;margin-bottom:4px">ECONOMIA ANUAL ESTIMADA</p>
+      <p id="v4" style="font-size:40px;font-weight:900;text-align:center;background:linear-gradient(135deg,#2dd47e,#8FB8FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent"></p>
+    </div>
+    <p style="text-align:center;font-size:14px;font-style:italic;color:var(--text-gray);margin-top:16px">Valores ilustrativos da pré-viabilidade; esta proposta detalha como capturá-los.</p>
+    <p id="hint" style="position:absolute;bottom:80px;right:64px;font-size:12px;color:var(--accent)">Clique para continuar →</p>
+  </div>
+</div>
+
+<!-- S3: Metodologia -->
+<div class="slide" id="s2">
+  <div class="sc">
+    <div class="logo logo-abs fi"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="margin-top:64px;margin-bottom:40px">
+      <p style="font-size:13px;letter-spacing:.3em;color:var(--accent)">METODOLOGIA</p>
+      <h2 style="font-size:42px;font-weight:700;margin-top:8px">Como Trabalhamos</h2>
+      <p style="font-size:24px;color:var(--text-gray);margin-top:8px;font-style:italic">De ponta a ponta — entregamos a solução completa.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px">
+      <div class="card fi" style="padding:40px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-accent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0;width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--grad-accent);box-shadow:0 8px 20px -5px rgba(96,157,255,.5)">
+            <svg width="36" height="36" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6"/></svg>
+          </div>
+          <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:900;color:var(--accent)">01</span><div style="height:1px;flex:1;background:rgba(25,74,153,.5)"></div></div>
+          <h3 style="font-weight:700;font-size:22px;margin-bottom:12px;line-height:1.3">Projeção Atacadista</h3>
+          <p style="font-size:16px;color:var(--text-gray);line-height:1.7">Projetamos o volume da operação atual da empresa para o Espírito Santo, identificando o ganho real com os incentivos fiscais. Inclui análise de NCMs e estimativa de custos com operadores e transportadores.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card fi" style="padding:40px;position:relative;overflow:hidden;animation-delay:.1s">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-accent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0;width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--grad-accent);box-shadow:0 8px 20px -5px rgba(96,157,255,.5)">
+            <svg width="36" height="36" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:900;color:var(--accent)">02</span><div style="height:1px;flex:1;background:rgba(25,74,153,.5)"></div></div>
+          <h3 style="font-weight:700;font-size:22px;margin-bottom:12px;line-height:1.3">Consultoria Logística</h3>
+          <p style="font-size:16px;color:var(--text-gray);line-height:1.7">Recebemos o cliente no ES e conduzimos visitas estratégicas aos principais operadores e transportadores. Coordenamos orçamentos e garantimos negociação com os decisores certos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card fi" style="padding:40px;position:relative;overflow:hidden;animation-delay:.2s">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-accent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0;width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--grad-accent);box-shadow:0 8px 20px -5px rgba(96,157,255,.5)">
+            <svg width="36" height="36" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:900;color:var(--accent)">03</span><div style="height:1px;flex:1;background:rgba(25,74,153,.5)"></div></div>
+          <h3 style="font-weight:700;font-size:22px;margin-bottom:12px;line-height:1.3">Abertura de CNPJ + Incentivo</h3>
+          <p style="font-size:16px;color:var(--text-gray);line-height:1.7">Conduzimos todo o processo: Junta Comercial, Receita Federal, SEFAZ-ES e Prefeitura. Gerenciamos a solicitação do Compete Atacadista até a publicação do benefício.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card fi" style="padding:40px;position:relative;overflow:hidden;animation-delay:.3s">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-accent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="flex-shrink:0;width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--grad-accent);box-shadow:0 8px 20px -5px rgba(96,157,255,.5)">
+            <svg width="36" height="36" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:12px;font-weight:900;color:var(--accent)">04</span><div style="height:1px;flex:1;background:rgba(25,74,153,.5)"></div></div>
+          <h3 style="font-weight:700;font-size:22px;margin-bottom:12px;line-height:1.3">Acompanhamento da Operação</h3>
+          <p style="font-size:16px;color:var(--text-gray);line-height:1.7">Atuamos como parceiro estratégico no ES. Gestão completa das áreas Fiscal, Contábil, Trabalhista e Societária. Você expande. Nós sustentamos a base.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4: Cronograma -->
+<div class="slide" id="s3">
+  <div class="sc" style="display:flex;flex-direction:column">
+    <div class="logo logo-abs fi"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="margin-top:64px;margin-bottom:16px">
+      <p style="font-size:13px;letter-spacing:.3em;color:var(--accent)">JORNADA</p>
+      <h2 style="font-size:42px;font-weight:700;margin-top:8px">Cronograma</h2>
+    </div>
+    <div style="flex:1;display:flex;align-items:center">
+      <div class="tl" style="width:100%">
+        <div class="fi" style="display:flex;flex-direction:column;align-items:center;text-align:center">
+          <div style="padding:8px 20px;border-radius:24px;background:rgba(96,157,255,.3);border:2px solid #609DFF;box-shadow:0 0 16px rgba(96,157,255,.5);margin-bottom:12px"><p style="font-size:15px;color:white;font-weight:900;white-space:nowrap">15 dias úteis</p></div>
+          <div style="width:96px;height:96px;border-radius:50%;background:var(--grad-accent);box-shadow:0 10px 30px -5px rgba(96,157,255,.6);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <div style="position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" fill="none" stroke="#609DFF" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6"/></svg>
+            </div>
+          </div>
+          <p style="font-size:16px;font-weight:700;line-height:1.3">Planilha Atacadista</p><p style="font-size:14px;color:var(--text-gray);margin-top:4px">Etapa 1</p>
+        </div>
+        <div class="fi" style="display:flex;flex-direction:column;align-items:center;text-align:center;animation-delay:.1s">
+          <div style="padding:8px 20px;border-radius:24px;background:rgba(96,157,255,.3);border:2px solid #609DFF;box-shadow:0 0 16px rgba(96,157,255,.5);margin-bottom:12px"><p style="font-size:15px;color:white;font-weight:900;white-space:nowrap">20 dias úteis</p></div>
+          <div style="width:96px;height:96px;border-radius:50%;background:var(--grad-accent);box-shadow:0 10px 30px -5px rgba(96,157,255,.6);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <div style="position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" fill="none" stroke="#609DFF" stroke-width="1.5" viewBox="0 0 24 24"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+          </div>
+          <p style="font-size:16px;font-weight:700;line-height:1.3">Consultoria Logística</p><p style="font-size:14px;color:var(--text-gray);margin-top:4px">Etapa 2</p>
+        </div>
+        <div class="fi" style="display:flex;flex-direction:column;align-items:center;text-align:center;animation-delay:.2s">
+          <div style="padding:8px 20px;border-radius:24px;background:rgba(96,157,255,.3);border:2px solid #609DFF;box-shadow:0 0 16px rgba(96,157,255,.5);margin-bottom:12px"><p style="font-size:15px;color:white;font-weight:900;white-space:nowrap">10 dias úteis</p></div>
+          <div style="width:96px;height:96px;border-radius:50%;background:var(--grad-accent);box-shadow:0 10px 30px -5px rgba(96,157,255,.6);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <div style="position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" fill="none" stroke="#609DFF" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+          </div>
+          <p style="font-size:16px;font-weight:700;line-height:1.3">Abertura de CNPJ</p><p style="font-size:14px;color:var(--text-gray);margin-top:4px">Etapa 3</p>
+        </div>
+        <div class="fi" style="display:flex;flex-direction:column;align-items:center;text-align:center;animation-delay:.3s">
+          <div style="padding:8px 20px;border-radius:24px;background:rgba(96,157,255,.3);border:2px solid #609DFF;box-shadow:0 0 16px rgba(96,157,255,.5);margin-bottom:12px"><p style="font-size:15px;color:white;font-weight:900;white-space:nowrap">Imediato</p></div>
+          <div style="width:96px;height:96px;border-radius:50%;background:var(--grad-accent);box-shadow:0 10px 30px -5px rgba(96,157,255,.6);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <div style="position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" fill="none" stroke="#609DFF" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+          </div>
+          <p style="font-size:16px;font-weight:700;line-height:1.3">Solicitação de Incentivo</p><p style="font-size:14px;color:var(--text-gray);margin-top:4px">Etapa 4</p>
+        </div>
+        <div class="fi" style="display:flex;flex-direction:column;align-items:center;text-align:center;animation-delay:.4s">
+          <div style="padding:8px 20px;border-radius:24px;background:rgba(96,157,255,.3);border:2px solid #609DFF;box-shadow:0 0 16px rgba(96,157,255,.5);margin-bottom:12px"><p style="font-size:15px;color:white;font-weight:900;white-space:nowrap">45–60 dias</p></div>
+          <div style="width:96px;height:96px;border-radius:50%;background:var(--grad-accent);box-shadow:0 10px 30px -5px rgba(96,157,255,.6);position:relative;z-index:1;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <div style="position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" fill="none" stroke="#609DFF" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+          </div>
+          <p style="font-size:16px;font-weight:700;line-height:1.3">Início da Operação</p><p style="font-size:14px;color:var(--text-gray);margin-top:4px">Etapa 5</p>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;padding:16px 32px;border-radius:12px;background:var(--grad-card);border:1px solid rgba(96,157,255,.3)">
+      <p style="font-weight:700;font-size:15px">Processo sequencial · Prazo total estimado: <span style="color:var(--accent)">aproximadamente 4 meses</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- S5: Investimento -->
+<div class="slide" id="s4">
+  <div class="sc">
+    <div class="logo logo-abs fi"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="margin-top:64px;margin-bottom:56px"><h2 style="font-size:34px;font-weight:700">Investimento</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:32px">
+      <div class="fi" style="position:relative">
+        <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:900;font-size:18px;z-index:10;background:var(--grad-accent);border:4px solid #041938;box-shadow:0 8px 20px -5px rgba(96,157,255,.6)">01</div>
+        <div class="card" style="border-radius:16px;overflow:hidden;padding-top:32px">
+          <div style="height:4px;background:var(--grad-accent)"></div>
+          <div style="padding:36px;display:flex;flex-direction:column">
+            <p style="font-size:12px;letter-spacing:.15em;color:var(--text-gray);margin-bottom:8px">ETAPA 01</p>
+            <h3 style="font-size:19px;font-weight:700;margin-bottom:16px;line-height:1.4;min-height:52px">Projeção Atacadista e Consultoria Logística</h3>
+            <p id="e1" style="font-size:28px;font-weight:900;margin-bottom:20px;background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent"></p>
+            <p style="font-size:17px;color:var(--text-gray);line-height:1.6;flex:1">Apuração do ganho real; base para termos da parceria.</p>
+            <p style="font-size:13px;color:var(--accent);font-style:italic;padding-top:16px;border-top:1px solid var(--border-blue)">50% na contratação — 50% na entrega da projeção.</p>
+          </div>
+        </div>
+      </div>
+      <div class="fi" style="position:relative;animation-delay:.12s">
+        <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:900;font-size:18px;z-index:10;background:var(--grad-accent);border:4px solid #041938;box-shadow:0 8px 20px -5px rgba(96,157,255,.6)">02</div>
+        <div class="card" style="border-radius:16px;overflow:hidden;padding-top:32px">
+          <div style="height:4px;background:var(--grad-accent)"></div>
+          <div style="padding:36px;display:flex;flex-direction:column">
+            <p style="font-size:12px;letter-spacing:.15em;color:var(--text-gray);margin-bottom:8px">ETAPA 02</p>
+            <h3 style="font-size:19px;font-weight:700;margin-bottom:16px;line-height:1.4;min-height:52px">Abertura de CNPJ e Solicitação do Incentivo</h3>
+            <p id="e2" style="font-size:28px;font-weight:900;margin-bottom:20px;background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent"></p>
+            <p style="font-size:17px;color:var(--text-gray);line-height:1.6;flex:1">• Constituição societária no ES<br>• Protocolo junto à SEFAZ-ES<br>• Após aprovação da Projeção Atacadista</p>
+            <p style="font-size:13px;color:var(--accent);font-style:italic;padding-top:16px;border-top:1px solid var(--border-blue)">50% após definição do operador — 50% com o incentivo deferido.</p>
+          </div>
+        </div>
+      </div>
+      <div class="fi" style="position:relative;animation-delay:.24s">
+        <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:900;font-size:18px;z-index:10;background:var(--grad-accent);border:4px solid #041938;box-shadow:0 8px 20px -5px rgba(96,157,255,.6)">03</div>
+        <div class="card" style="border-radius:16px;overflow:hidden;padding-top:32px">
+          <div style="height:4px;background:var(--grad-accent)"></div>
+          <div style="padding:36px;display:flex;flex-direction:column">
+            <p style="font-size:12px;letter-spacing:.15em;color:var(--text-gray);margin-bottom:8px">ETAPA 03</p>
+            <h3 style="font-size:19px;font-weight:700;margin-bottom:16px;line-height:1.4;min-height:52px">Success Fee</h3>
+            <p id="e3" style="font-size:28px;font-weight:900;margin-bottom:20px;background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent"></p>
+            <p id="e3b" style="font-size:17px;color:var(--text-gray);line-height:1.6;flex:1"></p>
+            <p style="font-size:15px;color:var(--accent);font-weight:900;padding-top:16px;border-top:1px solid var(--border-blue)">Só ganhamos quando você ganha.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6: CTA -->
+<div class="slide" id="s5">
+  <div class="sc" style="display:flex;align-items:center;justify-content:center">
+    <div class="logo logo-abs fi"><div class="li">F</div><span class="lt">FLU<span class="la">I</span>R</span></div>
+    <div style="max-width:896px;text-align:center">
+      <p class="fi" style="font-size:11px;letter-spacing:.4em;color:var(--accent);margin-bottom:24px">PRÓXIMOS PASSOS</p>
+      <h2 class="fi" style="font-size:clamp(34px,4.5vw,52px);font-weight:900;line-height:1.3">
+        A oportunidade está mapeada.<br>
+        <span style="background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent">O próximo passo é simples.</span>
+      </h2>
+      <p class="fi" style="font-size:20px;color:var(--text-gray);margin-top:32px;max-width:672px;margin-left:auto;margin-right:auto">
+        Iniciamos pela Projeção Atacadista — apuramos o benefício real para a sua operação. Sem compromisso com as etapas seguintes.
+      </p>
+      <div class="fi gp" style="margin-top:48px;display:inline-flex;align-items:center;gap:12px;padding:20px 32px;border-radius:40px;background:var(--grad-accent)">
+        <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
+        <span style="color:white;font-weight:700;font-size:18px">Agende o kick-off</span>
+        <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <p class="fi" style="font-size:17px;color:var(--text-gray);margin-top:24px;font-style:italic">Em dias, você tem os números na mão.</p>
+      <br>
+      <button onclick="openModal()" class="fi" style="margin-top:24px;display:inline-flex;align-items:center;gap:8px;padding:16px 28px;border-radius:12px;border:1px solid rgba(96,157,255,.4);color:var(--accent);font-weight:600;font-size:15px;background:transparent;cursor:pointer;font-family:'Merriweather',serif" onmouseover="this.style.background='rgba(96,157,255,.1)'" onmouseout="this.style.background='transparent'">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        Enviar Proposta ao Cliente
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="mo" id="modal" onclick="closeModal()">
+  <div class="mb" onclick="event.stopPropagation()">
+    <p style="font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:4px">FLUIR</p>
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:24px">Enviar Proposta ao Cliente</h3>
+    <div id="mform">
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
+        <div><label style="display:block;font-size:11px;font-weight:600;color:var(--text-gray);margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase">Nome do contato</label><input type="text" id="fn" placeholder="João Silva"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;color:var(--text-gray);margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase">Email</label><input type="email" id="fe" placeholder="joao@empresa.com.br"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;color:var(--text-gray);margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase">Empresa</label><input type="text" id="fep" placeholder="Distribuidora Alfa Ltda"></div>
+      </div>
+      <p id="merr" style="color:#f87171;font-size:13px;margin-bottom:16px;display:none">Erro ao enviar. Tente novamente.</p>
+      <div style="display:flex;gap:12px">
+        <button class="btn-sec" style="flex:1" onclick="closeModal()">Cancelar</button>
+        <button class="btn-acc" style="flex:1" id="benv" onclick="enviar()">Enviar</button>
+      </div>
+    </div>
+    <div id="mok" style="display:none;text-align:center;padding:24px 0">
+      <p style="font-size:24px;font-weight:900;color:var(--accent);margin-bottom:8px">✓ Enviado!</p>
+      <p style="font-size:13px;color:var(--text-gray)">O cliente receberá o email com o link desta proposta.</p>
+      <button class="btn-acc" style="margin-top:24px" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const icmsAtual = q.get('icms_atual') ? +q.get('icms_atual') : 340000;
+const icmsES    = q.get('icms_es')    ? +q.get('icms_es')    : 22800;
+const economia  = q.get('economia')   ? +q.get('economia')   : 317200;
+const anual     = q.get('anual')      ? +q.get('anual')      : economia * 12;
+const etapa1    = q.get('etapa1');
+const etapa2    = q.get('etapa2');
+const pct       = q.get('pct');
+const meses     = q.get('meses') || '24';
+
+function brl(v){ return 'R$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+
+document.getElementById('v1').textContent = brl(icmsAtual);
+document.getElementById('v2').textContent = brl(icmsES);
+document.getElementById('v3').textContent = brl(economia);
+document.getElementById('v4').textContent = brl(anual);
+document.getElementById('e1').textContent = etapa1 ? brl(etapa1) : 'R$ [X.XXX]';
+document.getElementById('e2').textContent = etapa2 ? brl(etapa2) : 'R$ [X.XXX]';
+document.getElementById('e3').textContent = pct ? pct+'% sobre a economia' : '% sobre a economia';
+document.getElementById('e3b').innerHTML  = 'Mínimo de R$ 2.000/mês.<br>Contrato de '+meses+' meses.<br>Inicia somente com a operação ativa.';
+
+const mns=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const nd=new Date();
+document.getElementById('mesano').textContent = mns[nd.getMonth()]+' '+nd.getFullYear();
+
+const TOTAL=6; let cur=0, step=0;
+
+function buildDots(){
+  const d=document.getElementById('dots');
+  for(let i=0;i<TOTAL;i++){const b=document.createElement('button');b.className='dot'+(i===0?' on':'');b.setAttribute('aria-label','Slide '+(i+1));b.onclick=()=>goTo(i);d.appendChild(b);}
+}
+function updDots(){ document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur)); }
+function updNav(){ document.getElementById('bp').disabled=cur===0; document.getElementById('bn').disabled=cur===TOTAL-1&&step>=3; }
+function showSlide(n){ document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n)); updDots(); updNav(); if(n===1)updChevrons(); }
+function goTo(n){ if(n<0||n>=TOTAL)return; cur=n; step=(n===1)?1:0; showSlide(n); }
+
+function next(){
+  if(cur===1&&step<3){ step++; updChevrons(); updNav(); return; }
+  if(cur<TOTAL-1){ cur++; step=(cur===1)?1:0; showSlide(cur); }
+}
+function prev(){ if(cur>0){ cur--; step=0; showSlide(cur); } }
+
+function updChevrons(){
+  ['a1','a2','a3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(step>i){ el.style.opacity='1'; el.classList.add('ci'); }
+    else{ el.style.opacity='0'; el.classList.remove('ci'); }
+  });
+  const ac=document.getElementById('acard'), h=document.getElementById('hint');
+  if(step>=3){ ac.style.display='block'; if(h)h.style.display='none'; }
+  else{ ac.style.display='none'; if(h)h.style.display='block'; }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); next(); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); prev(); }
+  else if(e.key==='f'||e.key==='F') toggleFS();
+  else if(e.key==='Escape') closeModal();
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('button')||e.target.closest('.mo')) return;
+  next();
+});
+function toggleFS(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+
+function openModal(){ document.getElementById('modal').classList.add('open'); document.getElementById('mform').style.display='block'; document.getElementById('mok').style.display='none'; document.getElementById('merr').style.display='none'; }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+async function enviar(){
+  const n=document.getElementById('fn').value.trim(), em=document.getElementById('fe').value.trim(), ep=document.getElementById('fep').value.trim();
+  if(!n||!em||!ep) return;
+  const b=document.getElementById('benv'); b.textContent='Enviando...'; b.disabled=true;
+  document.getElementById('merr').style.display='none';
+  try{
+    const r=await fetch('https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pos-proposta',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cliente_nome:n,cliente_email:em,empresa:ep,economia_mensal:economia,link_proposta:location.href})});
+    if(!r.ok) throw 0;
+    document.getElementById('mform').style.display='none'; document.getElementById('mok').style.display='block';
+  } catch{ document.getElementById('merr').style.display='block'; b.textContent='Enviar'; b.disabled=false; }
+}
+
+buildDots(); showSlide(0);
+</script>
+</body>
+</html>
