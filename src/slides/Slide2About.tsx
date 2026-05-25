@@ -4,8 +4,7 @@ import { SlideWrapper, SlideHeadline } from "@/components/deck-primitives";
 export function Slide2About() {
   return (
     <SlideWrapper>
-      <div className="flex-1 flex flex-col pb-6">
-        {/* Conteúdo superior */}
+      <div className="flex-1 flex flex-col justify-between pb-6">
         <div>
           <SlideHeadline className="text-xl md:text-2xl max-w-4xl">
             Você provavelmente está pagando mais ICMS do que precisa.
@@ -30,8 +29,7 @@ export function Slide2About() {
           </p>
         </div>
 
-        {/* Caixas inferiores */}
-        <div className="grid grid-cols-3 gap-5 max-w-5xl w-full mt-auto pt-8">
+        <div className="grid grid-cols-3 gap-5 max-w-5xl w-full">
           {[
             { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
             { icon: <Truck size={36} strokeWidth={1.4} />, label: "Consultoria Logística" },
