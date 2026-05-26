@@ -6,7 +6,7 @@ export function Slide2About() {
     <SlideWrapper>
       <div className="flex-1 flex flex-col justify-center gap-[clamp(20px,4vh,48px)]">
         <div>
-          <SlideHeadline className="text-xl md:text-2xl max-w-4xl">
+          <SlideHeadline className="text-3xl md:text-4xl max-w-4xl">
             O que fazemos
           </SlideHeadline>
 

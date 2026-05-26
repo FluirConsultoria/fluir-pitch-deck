@@ -98,7 +98,7 @@ export function Slide3WhyES() {
             title="Sem ES"
             color="#c44545"
             rows={[
-              ["ICMS Atacado / E-commerce", "12% a 18%"],
+              ["ICMS Atacado / E-commerce", "7% a 18%"],
               ["ICMS Importação (entrada)", "Cobrado integral"],
             ]}
             result="Margem comprimida"
