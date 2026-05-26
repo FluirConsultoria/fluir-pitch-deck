@@ -7,7 +7,7 @@ export function Slide2About() {
       <div className="flex-1 flex flex-col justify-center gap-[clamp(20px,4vh,48px)]">
         <div>
           <SlideHeadline className="text-xl md:text-2xl max-w-4xl">
-            Você provavelmente está pagando mais ICMS do que precisa.
+            O que fazemos
           </SlideHeadline>
 
           <div
