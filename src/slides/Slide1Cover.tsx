@@ -5,23 +5,22 @@ import porto from "@/assets/porto-vitoria.jpeg";
 export function Slide1Cover() {
   return (
     <SlideWrapper gradient showLogo={false}>
-      {/* Blurred port background */}
+      {/* Port background */}
       <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: `url(${porto})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(14px) brightness(0.35)",
-          transform: "scale(1.1)",
-          opacity: 0.55,
+          filter: "brightness(0.55)",
         }}
       />
+      {/* Premium gradient overlay */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(10,42,92,0.55) 0%, rgba(2,13,31,0.85) 100%)",
+            "linear-gradient(180deg, rgba(4,25,56,0.35) 0%, rgba(2,10,28,0.72) 100%)",
         }}
       />
 
