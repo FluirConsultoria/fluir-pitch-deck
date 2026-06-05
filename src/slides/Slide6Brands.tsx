@@ -13,7 +13,7 @@ import unilever from "@/assets/brands/unilever.png";
 import bioterra from "@/assets/brands/bioterra.png";
 import arvensis from "@/assets/brands/arvensis.png";
 
-const brands: { name: string; logo: string; maxHeight?: number }[] = [
+const brands: { name: string; logo: string }[] = [
   { name: "O Boticário", logo: boticario },
   { name: "Adcos", logo: adcos },
   { name: "Princípia", logo: principia },
@@ -24,11 +24,11 @@ const brands: { name: string; logo: string; maxHeight?: number }[] = [
   { name: "Alfaparf", logo: alfaparf },
   { name: "Jequiti", logo: jequiti },
   { name: "Unilever", logo: unilever },
-  { name: "Bioterra", logo: bioterra, maxHeight: 135 },
+  { name: "Bioterra", logo: bioterra },
   { name: "Arvensis", logo: arvensis },
 ];
 
-function BrandCard({ name, logo, maxHeight = 80 }: { name: string; logo: string; maxHeight?: number }) {
+function BrandCard({ name, logo }: { name: string; logo: string }) {
   const [failed, setFailed] = useState(false);
   return (
     <div
@@ -54,7 +54,7 @@ function BrandCard({ name, logo, maxHeight = 80 }: { name: string; logo: string;
           alt={name}
           onError={() => setFailed(true)}
           style={{
-            maxHeight,
+            maxHeight: 80,
             maxWidth: "100%",
             objectFit: "contain",
             filter: "brightness(0) invert(1)",
@@ -74,7 +74,7 @@ export function Slide6Brands() {
 
       <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-6 mt-8 max-w-6xl mx-auto w-full content-center">
         {brands.map((b) => (
-          <BrandCard key={b.name} name={b.name} logo={b.logo} maxHeight={b.maxHeight} />
+          <BrandCard key={b.name} name={b.name} logo={b.logo} />
         ))}
       </div>
     </SlideWrapper>
