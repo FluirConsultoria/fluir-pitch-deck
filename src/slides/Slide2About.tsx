@@ -1,10 +1,26 @@
 import { Shield, Truck, Settings } from "lucide-react";
 import { SlideWrapper, SlideHeadline } from "@/components/deck-primitives";
+import baiaVitoria from "@/assets/baia-vitoria.jpg";
 
 export function Slide2About() {
   return (
     <SlideWrapper>
-      <div className="flex-1 flex flex-col justify-center gap-[clamp(20px,4vh,48px)]">
+      <img
+        src={baiaVitoria}
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          filter: "blur(6px)",
+          transform: "scale(1.05)",
+          opacity: 0.18,
+          zIndex: 0,
+        }}
+      />
+      <div className="flex-1 flex flex-col justify-center gap-[clamp(20px,4vh,48px)]" style={{ position: "relative", zIndex: 1 }}>
         <div>
           <SlideHeadline className="text-3xl md:text-4xl max-w-4xl">
             O que fazemos
