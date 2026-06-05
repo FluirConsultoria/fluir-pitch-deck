@@ -16,7 +16,7 @@ export function Slide2About() {
           objectFit: "cover",
           filter: "blur(6px)",
           transform: "scale(1.05)",
-          opacity: 0.18,
+          opacity: 0.32,
           zIndex: 0,
         }}
       />
