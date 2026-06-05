@@ -24,7 +24,7 @@ const brands: { name: string; logo: string; maxHeight?: number }[] = [
   { name: "Alfaparf", logo: alfaparf },
   { name: "Jequiti", logo: jequiti },
   { name: "Unilever", logo: unilever },
-  { name: "Bioterra", logo: bioterra, maxHeight: 110 },
+  { name: "Bioterra", logo: bioterra, maxHeight: 135 },
   { name: "Arvensis", logo: arvensis },
 ];
 
