@@ -14,6 +14,7 @@ export function Slide2About() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          objectPosition: "center 70%",
           transform: "scale(1.03)",
           opacity: 0.9,
           zIndex: 0,
