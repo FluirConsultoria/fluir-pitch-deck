@@ -162,7 +162,7 @@ export function Slide5Legal() {
             sourceBg="rgba(30, 58, 138, 0.12)"
             sourceColor="#1e3a8a"
             date="Reforma Tributária"
-            headline="ES poderá manter incentivos fiscais até 2032 após reforma"
+            headline="ES poderá manter incentivos fiscais até 2032"
             highlight="até 2032"
           />
           <PressCard

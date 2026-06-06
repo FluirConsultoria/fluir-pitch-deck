@@ -218,7 +218,7 @@ export async function exportToPptx() {
     const pressW = CW - pillarW - 0.3;
     const pressH = 0.95;
     [
-      { source: "Gazeta ES", date: "REFORMA TRIBUTÁRIA", headline: 'ES poderá manter incentivos fiscais "até 2032" após reforma', srcBg: "D8E4F5", srcTxt: "1e3a8a" },
+      { source: "Gazeta ES", date: "REFORMA TRIBUTÁRIA", headline: 'ES poderá manter incentivos fiscais "até 2032"', srcBg: "D8E4F5", srcTxt: "1e3a8a" },
       { source: "G1",        date: "SENADO FEDERAL",     headline: "Senado aprova projeto que prorroga incentivos fiscais do ICMS até 2032", srcBg: "c4202a", srcTxt: "FFFFFF" },
     ].forEach((pc, i) => {
       const py = pillarY + i * (pressH + 0.2);
