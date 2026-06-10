@@ -420,25 +420,7 @@ tr.proj-head-row th { background: #1e4080; }
 
       <!-- ====== PAINEL ESQUERDO: OPERAÇÃO ATUAL ====== -->
       <div class="panel">
-        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between;text-align:left;">
-          <span>Operação Atual</span>
-          <div style="display:flex;align-items:center;gap:6px;font-weight:600;letter-spacing:normal;text-transform:none;">
-            <span style="font-size:11px;opacity:0.75;">Markup</span>
-            <div style="position:relative;display:inline-flex;align-items:center;">
-              <input type="number" id="markup_pct" min="0" max="10000" step="0.1" placeholder="%"
-                style="width:70px;padding:3px 20px 3px 8px;border-radius:4px;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.3);font-size:12px;font-weight:600;outline:none;">
-              <span style="position:absolute;right:6px;color:rgba(255,255,255,0.7);font-size:11px;pointer-events:none;">%</span>
-            </div>
-            <button onclick="applyMarkup('compra')"
-              style="padding:3px 9px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:4px;font-size:11px;cursor:pointer;font-weight:600;">
-              → Compra
-            </button>
-            <button onclick="applyMarkup('venda')"
-              style="padding:3px 9px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:4px;font-size:11px;cursor:pointer;font-weight:600;">
-              → Venda
-            </button>
-          </div>
-        </div>
+        <div class="panel-header">Operação Atual</div>
         <table>
           <colgroup><col class="desc"><col class="valor"><col class="pct"></colgroup>
           <thead><tr>
@@ -1301,19 +1283,6 @@ function salvarProposta() {
   });
 })();
 
-// Markup calculator
-function applyMarkup(direction) {
-  var markup = parseFloat(document.getElementById('markup_pct').value);
-  if (isNaN(markup) || markup <= 0) return;
-  if (direction === 'compra') {
-    var c11val = parseFloat(document.getElementById('c11').value) || 0;
-    if (c11val > 0) document.getElementById('c7').value = (c11val / (1 + markup / 100)).toFixed(2);
-  } else {
-    var c7val = parseFloat(document.getElementById('c7').value) || 0;
-    if (c7val > 0) document.getElementById('c11').value = (c7val * (1 + markup / 100)).toFixed(2);
-  }
-  calc();
-}
 </script>
 </body>
 </html>
