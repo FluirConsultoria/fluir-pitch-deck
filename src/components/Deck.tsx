@@ -42,7 +42,7 @@ export function Deck() {
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
-    const update = () => setScale(Math.min(1, el.offsetWidth / BASE_W));
+    const update = () => setScale(el.offsetWidth / BASE_W);
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
