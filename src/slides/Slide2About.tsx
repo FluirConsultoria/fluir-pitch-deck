@@ -27,6 +27,19 @@ export function Slide2About() {
           </p>
         </div>
 
+        <div className="flex flex-col gap-2">
+          {[
+            "Equipe dedicada do início ao fim",
+            "Acompanhamento contínuo durante o contrato",
+            "Especialistas em tributário, logística e jurídico",
+          ].map((item) => (
+            <div key={item} className="flex items-center gap-3">
+              <span style={{ color: "#609DFF", fontWeight: 700, fontSize: 16 }}>✓</span>
+              <span style={{ color: "#E2E6E9", fontSize: 15 }}>{item}</span>
+            </div>
+          ))}
+        </div>
+
         <div className="grid grid-cols-3 gap-4">
           {[
             { icon: <Shield size={32} strokeWidth={1.4} />, label: "Estruturação Tributária" },
