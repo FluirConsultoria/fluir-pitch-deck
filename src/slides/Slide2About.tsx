@@ -1,6 +1,6 @@
 import { Shield, Truck, Settings } from "lucide-react";
 import { SlideHeader, SlideHeadline } from "@/components/deck-primitives";
-import vitoriaNoite from "@/assets/vitoria-noite.png";
+import vitoriaPorto from "@/assets/vitoria-porto.png";
 
 export function Slide2About() {
   return (
@@ -61,24 +61,36 @@ export function Slide2About() {
       {/* Right column — image */}
       <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
         <img
-          src={vitoriaNoite}
+          src={vitoriaPorto}
           alt=""
           style={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            objectPosition: "center 70%",
+            objectPosition: "center center",
           }}
         />
-        {/* Blend gradient on left edge */}
+        {/* Blend gradient — left fade into text column */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: 120,
+            width: 200,
             height: "100%",
-            background: "linear-gradient(to right, #041938, transparent)",
+            background: "linear-gradient(to right, #041938 0%, rgba(4,25,56,0.80) 50%, transparent 100%)",
+            zIndex: 1,
+          }}
+        />
+        {/* Bottom fade */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: 80,
+            background: "linear-gradient(to top, #041938, transparent)",
             zIndex: 1,
           }}
         />
