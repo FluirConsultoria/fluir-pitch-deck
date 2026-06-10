@@ -16,7 +16,7 @@ function ESCard({ icon, tag, title, body, color }: CardProps) {
     <div
       style={{
         flex: 1,
-        backgroundColor: "rgba(9,21,26,0.82)",
+        backgroundColor: "#09151a",
         border: "1px solid #1a3f70",
         borderRadius: 10,
         padding: "12px 16px",
@@ -113,23 +113,25 @@ export function SlideESVantagens() {
         {/* Right — title + cards */}
         <div
           style={{
-            width: 408,
+            width: 420,
             flexShrink: 0,
             display: "flex",
             flexDirection: "column",
-            padding: "20px 32px 20px 0",
+            padding: "18px 28px 18px 16px",
+            backgroundColor: "#010f1c",
+            overflow: "hidden",
           }}
         >
-          <div style={{ marginBottom: 14 }}>
-            <div style={{ color: "#F5F0F0", fontWeight: 800, fontSize: 38, lineHeight: 1.15 }}>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: "#F5F0F0", fontWeight: 800, fontSize: 30, lineHeight: 1.15 }}>
               Por que o
             </div>
-            <div style={{ color: "#2dd47e", fontWeight: 800, fontSize: 38, lineHeight: 1.1 }}>
+            <div style={{ color: "#2dd47e", fontWeight: 800, fontSize: 30, lineHeight: 1.1 }}>
               Espírito Santo?
             </div>
           </div>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10, minHeight: 0 }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, minHeight: 0, overflow: "hidden" }}>
             {cards.map((c) => (
               <ESCard key={c.tag} {...c} />
             ))}
