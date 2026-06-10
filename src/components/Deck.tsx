@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Slide1Cover } from "@/slides/Slide1Cover";
 import { Slide2About } from "@/slides/Slide2About";
@@ -24,14 +24,30 @@ const slides = [
   Slide8CTA,
 ];
 
+const BASE_W = 1280;
+const BASE_H = 720;
+
 export function Deck() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [scale, setScale] = useState(1);
+  const stageRef = useRef<HTMLDivElement>(null);
+
   const go = (next: number) => {
     if (next < 0 || next >= slides.length) return;
     setDirection(next > index ? 1 : -1);
     setIndex(next);
   };
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const update = () => setScale(el.offsetWidth / BASE_W);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -49,7 +65,6 @@ export function Deck() {
       className="w-screen h-screen overflow-hidden relative"
       style={{ backgroundColor: "#020D1F" }}
       onClick={(e) => {
-        // Don't advance when clicking buttons
         const t = e.target as HTMLElement;
         if (t.closest("button")) return;
         go(index + 1);
@@ -58,21 +73,35 @@ export function Deck() {
       {/* 16:9 stage */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div
-          className="relative shadow-2xl"
+          ref={stageRef}
+          className="relative shadow-2xl overflow-hidden"
           style={{
             aspectRatio: "16 / 9",
             width: "min(calc(100vw - 12vmin), calc((100vh - 12vmin) * 16 / 9))",
             height: "min(calc(100vh - 12vmin), calc((100vw - 12vmin) * 9 / 16))",
           }}
         >
+          {/* Fixed 1280×720 canvas scaled to fit the container */}
           <div
-            key={index}
-            className="absolute inset-0"
             style={{
-              animation: `slideIn-${direction === 1 ? "right" : "left"} 0.45s ease-out`,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: BASE_W,
+              height: BASE_H,
+              transformOrigin: "top left",
+              transform: `scale(${scale})`,
             }}
           >
-            <Current />
+            <div
+              key={index}
+              className="absolute inset-0"
+              style={{
+                animation: `slideIn-${direction === 1 ? "right" : "left"} 0.45s ease-out`,
+              }}
+            >
+              <Current />
+            </div>
           </div>
         </div>
       </div>
