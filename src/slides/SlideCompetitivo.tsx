@@ -15,7 +15,7 @@ const data = [
   { name: "Lola", rate: 1.14, isClient: false },
   { name: "Amend", rate: 1.14, isClient: false },
   { name: "Widi Care", rate: 1.14, isClient: false },
-  { name: "Alfaparf", rate: 1.14, isClient: false },
+  { name: "Bio Extratus", rate: 1.14, isClient: false },
   { name: " ", rate: 0, isClient: false },
   { name: "Sua empresa", rate: 12, isClient: true },
 ];
