@@ -34,18 +34,6 @@ export function Slide2About() {
             O que fazemos
           </SlideHeadline>
 
-          <div
-            className="mt-8 rounded-lg p-4 max-w-4xl"
-            style={{ backgroundColor: "#09151A", border: "2px solid #C9A84C" }}
-          >
-            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: "#F0D78C", fontWeight: 600 }}>
-              Nossa Missão
-            </div>
-            <div className="text-base leading-snug" style={{ color: "#F5F0F0", fontWeight: 600 }}>
-              Transformar incentivo fiscal em vantagem competitiva real, da estruturação ao dia a dia da operação.
-            </div>
-          </div>
-
           <p className="mt-8 max-w-4xl text-lg leading-relaxed" style={{ color: "#E2E6E9" }}>
             A Fluir é uma consultoria full-service especializada em estruturar operações no Espírito Santo: estrutura,
             processo e resultado, do início ao dia a dia da operação. Cada etapa conduzida com os especialistas certos,
