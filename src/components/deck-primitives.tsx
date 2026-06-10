@@ -33,9 +33,9 @@ export function SlideWrapper({
 }) {
   return (
     <div
-      className={`relative w-full h-full overflow-hidden px-16 pb-14 flex flex-col ${className}`}
+      className={`relative w-full h-full overflow-hidden px-16 pb-8 flex flex-col ${className}`}
       style={{
-        paddingTop: gradient ? 56 : showLogo ? 130 : 56,
+        paddingTop: gradient ? 48 : showLogo ? 96 : 48,
         ...(gradient
           ? {
               background: "linear-gradient(180deg, #0A2A5C 0%, #020D1F 100%)",

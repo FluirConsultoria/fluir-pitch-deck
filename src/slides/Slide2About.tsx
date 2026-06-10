@@ -28,39 +28,59 @@ export function Slide2About() {
           zIndex: 1,
         }}
       />
-      <div className="flex-1 flex flex-col justify-center gap-[clamp(12px,2.5vh,28px)]" style={{ position: "relative", zIndex: 2 }}>
+      <div className="flex-1 flex flex-col justify-center gap-[clamp(14px,2.5vh,32px)]" style={{ position: "relative", zIndex: 2 }}>
+
+        {/* Quem Somos */}
         <div>
           <SlideHeadline className="text-3xl md:text-4xl max-w-4xl">
             Quem Somos
           </SlideHeadline>
-
           <p className="mt-4 max-w-4xl text-lg leading-relaxed" style={{ color: "#E2E6E9" }}>
-            A Fluir é uma consultoria full-service especializada em atrair e estruturar empresas no Espírito Santo.
-            Nossa missão é transformar incentivo fiscal em vantagem competitiva real, cuidando de todo o processo,
-            da estruturação à operação plena. Cada etapa com os especialistas certos, assegurando o sucesso de cada entrega.
+            A Fluir é uma consultoria full-service especializada em estruturar operações de distribuidores
+            e atacadistas de cosméticos no Espírito Santo — transformando incentivos fiscais em vantagem
+            competitiva mensurável.
           </p>
+          <div
+            className="mt-4 rounded-lg p-4 max-w-3xl"
+            style={{ backgroundColor: "#09151A", border: "2px solid #C9A84C" }}
+          >
+            <div className="text-xs uppercase tracking-widest mb-1" style={{ color: "#F0D78C", fontWeight: 600 }}>
+              Nossa Missão
+            </div>
+            <div className="text-base leading-snug" style={{ color: "#F5F0F0", fontWeight: 600 }}>
+              Conduzir cada etapa — da análise tributária ao operacional rodando — com os especialistas certos,
+              garantindo resultado real desde o primeiro mês.
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-5 max-w-5xl w-full">
-          {[
-            { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
-            { icon: <Truck size={36} strokeWidth={1.4} />, label: "Consultoria Logística" },
-            { icon: <Settings size={36} strokeWidth={1.4} />, label: "Operação Completa" },
-          ].map(({ icon, label }) => (
-            <div
-              key={label}
-              className="rounded-xl px-6 py-12 flex flex-col items-center justify-center text-center"
-              style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
-            >
-              <div className="mb-4" style={{ color: "#609DFF" }}>
-                {icon}
+        {/* O que fazemos */}
+        <div>
+          <div className="text-xs uppercase tracking-widest mb-3" style={{ color: "#8FB8FF", fontWeight: 700, letterSpacing: "0.18em" }}>
+            O que fazemos
+          </div>
+          <div className="grid grid-cols-3 gap-5 max-w-5xl w-full">
+            {[
+              { icon: <Shield size={36} strokeWidth={1.4} />, label: "Estruturação Tributária" },
+              { icon: <Truck size={36} strokeWidth={1.4} />, label: "Consultoria Logística" },
+              { icon: <Settings size={36} strokeWidth={1.4} />, label: "Operação Completa" },
+            ].map(({ icon, label }) => (
+              <div
+                key={label}
+                className="rounded-xl px-6 py-10 flex flex-col items-center justify-center text-center"
+                style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
+              >
+                <div className="mb-4" style={{ color: "#609DFF" }}>
+                  {icon}
+                </div>
+                <div className="text-base font-semibold" style={{ color: "#F5F0F0" }}>
+                  {label}
+                </div>
               </div>
-              <div className="text-base font-semibold" style={{ color: "#F5F0F0" }}>
-                {label}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </SlideWrapper>
   );
