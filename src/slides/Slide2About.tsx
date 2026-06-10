@@ -19,8 +19,8 @@ export function Slide2About() {
         }}
       >
         <div>
-          <SlideHeadline className="text-4xl">Quem Somos</SlideHeadline>
-          <p className="mt-6 text-base leading-relaxed" style={{ color: "#E2E6E9" }}>
+          <SlideHeadline className="text-5xl">Quem Somos</SlideHeadline>
+          <p className="mt-6 text-lg leading-relaxed" style={{ color: "#E2E6E9" }}>
             A Fluir é uma consultoria full-service especializada em atrair e estruturar empresas no Espírito Santo.
             Nossa missão é transformar incentivo fiscal em vantagem competitiva real, cuidando de todo o processo,
             da estruturação à operação plena. Cada etapa com os especialistas certos, assegurando o sucesso de cada entrega.
@@ -34,8 +34,8 @@ export function Slide2About() {
             "Especialistas em tributário, logística e jurídico",
           ].map((item) => (
             <div key={item} className="flex items-center gap-3">
-              <span style={{ color: "#609DFF", fontWeight: 700, fontSize: 16 }}>✓</span>
-              <span style={{ color: "#E2E6E9", fontSize: 15 }}>{item}</span>
+              <span style={{ color: "#609DFF", fontWeight: 700, fontSize: 18 }}>✓</span>
+              <span style={{ color: "#E2E6E9", fontSize: 17 }}>{item}</span>
             </div>
           ))}
         </div>
@@ -52,7 +52,7 @@ export function Slide2About() {
               style={{ backgroundColor: "#09151A", border: "1px solid #194A99" }}
             >
               <div className="mb-3" style={{ color: "#609DFF" }}>{icon}</div>
-              <div className="text-base font-semibold" style={{ color: "#F5F0F0" }}>{label}</div>
+              <div className="text-lg font-semibold" style={{ color: "#F5F0F0" }}>{label}</div>
             </div>
           ))}
         </div>
