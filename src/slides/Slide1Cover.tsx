@@ -31,7 +31,7 @@ export function Slide1Cover() {
           <span
             style={{
               fontWeight: 700,
-              fontSize: "clamp(4rem, 8vw, 7rem)",
+              fontSize: 96,
               letterSpacing: "0.15em",
               color: "#F5F0F0",
               lineHeight: 1,
@@ -42,7 +42,7 @@ export function Slide1Cover() {
         </div>
         <GoldDivider className="mt-10 mb-8" />
         <p
-          className="text-lg md:text-xl max-w-3xl"
+          className="text-xl max-w-3xl"
           style={{ color: "#E2E6E9", fontWeight: 400 }}
         >
           Consultoria especializada em estruturação tributária e atração de

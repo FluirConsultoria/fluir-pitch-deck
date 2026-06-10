@@ -68,7 +68,7 @@ function BrandCard({ name, logo, maxHeight = 80 }: { name: string; logo: string;
 export function Slide6Brands() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-2xl md:text-3xl max-w-4xl">
+      <SlideHeadline className="text-3xl max-w-4xl">
         Marcas do setor que já operam com o incentivo.
       </SlideHeadline>
 

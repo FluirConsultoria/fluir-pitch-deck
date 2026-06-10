@@ -8,7 +8,7 @@ export function Slide3WhyES() {
         style={{
           color: "#F5F0F0",
           fontWeight: 800,
-          fontSize: "clamp(1.4rem, 2.4vw, 1.9rem)",
+          fontSize: 30,
         }}
       >
         Você provavelmente está pagando mais ICMS do que precisa.
@@ -53,7 +53,7 @@ export function Slide3WhyES() {
               <span
                 style={{
                   color: "#8FB8FF",
-                  fontSize: 11,
+                  fontSize: 13,
                   letterSpacing: "0.14em",
                   fontWeight: 700,
                   textTransform: "uppercase",
@@ -64,14 +64,14 @@ export function Slide3WhyES() {
               <span
                 style={{
                   color: "#F5F0F0",
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: 700,
                   marginTop: 2,
                 }}
               >
                 {p.audience}
               </span>
-              <span style={{ color: "#E2E6E9", fontSize: 13, marginTop: 4 }}>{p.suffix}</span>
+              <span style={{ color: "#E2E6E9", fontSize: 15, marginTop: 4 }}>{p.suffix}</span>
             </div>
           </div>
         ))}
@@ -82,7 +82,7 @@ export function Slide3WhyES() {
         <div
           style={{
             color: "#E2E6E9",
-            fontSize: 13,
+            fontSize: 15,
             textTransform: "uppercase",
             letterSpacing: "0.14em",
             fontWeight: 600,
@@ -155,7 +155,7 @@ function ComparePanel({
         <div
           style={{
             color,
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: 800,
             textTransform: "uppercase",
             letterSpacing: "0.12em",
@@ -170,7 +170,7 @@ function ComparePanel({
               <div
                 style={{
                   color: "#8FB8FF",
-                  fontSize: 11,
+                  fontSize: 13,
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
                 }}
@@ -180,7 +180,7 @@ function ComparePanel({
               <div
                 style={{
                   color: "#F5F0F0",
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: 700,
                   marginTop: 3,
                 }}
@@ -196,7 +196,7 @@ function ComparePanel({
         style={{
           borderTop: "1px solid rgba(255,255,255,0.06)",
           color,
-          fontSize: 15,
+          fontSize: 17,
           fontWeight: 700,
           fontStyle: "italic",
         }}

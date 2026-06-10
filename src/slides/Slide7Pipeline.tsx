@@ -40,7 +40,7 @@ function StepNode({ step }: { step: Step }) {
             borderRadius: "50%",
             backgroundColor: "#C9A84C",
             color: "#041938",
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: 800,
           }}
         >
@@ -49,13 +49,13 @@ function StepNode({ step }: { step: Step }) {
       </div>
       <div
         className="mt-5"
-        style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 18 }}
+        style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 21 }}
       >
         {step.label}
       </div>
       <div
         className="mt-2"
-        style={{ color: "#E2E6E9", fontSize: 14, lineHeight: 1.4 }}
+        style={{ color: "#E2E6E9", fontSize: 17, lineHeight: 1.4 }}
       >
         {step.desc}
       </div>
@@ -66,7 +66,7 @@ function StepNode({ step }: { step: Step }) {
 export function Slide7Pipeline() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-3xl md:text-4xl max-w-5xl mt-6">
+      <SlideHeadline className="text-4xl max-w-5xl mt-6">
         Da decisão à operação: entregamos tudo, de ponta a ponta.
       </SlideHeadline>
 

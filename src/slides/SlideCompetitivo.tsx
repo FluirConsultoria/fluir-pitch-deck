@@ -39,7 +39,7 @@ const CustomYTick = ({ x, y, payload }: any) => {
         textAnchor="end"
         fill={isClient ? "#e06060" : "#F5F0F0"}
         fontWeight={isClient ? 800 : 600}
-        fontSize={14}
+        fontSize={17}
       >
         {payload.value}
       </text>
@@ -50,10 +50,10 @@ const CustomYTick = ({ x, y, payload }: any) => {
 export function SlideCompetitivo() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-2xl md:text-3xl max-w-4xl">
+      <SlideHeadline className="text-3xl max-w-4xl">
         Seus concorrentes já se posicionaram.
       </SlideHeadline>
-      <p className="mt-1 text-sm" style={{ color: "#8FB8FF", fontWeight: 500 }}>
+      <p className="mt-1 text-base" style={{ color: "#8FB8FF", fontWeight: 500 }}>
         Taxa efetiva de ICMS — operações interestaduais
       </p>
 
@@ -79,7 +79,7 @@ export function SlideCompetitivo() {
                 type="number"
                 domain={[0, 14]}
                 tickFormatter={(v) => `${v}%`}
-                tick={{ fill: "#8FB8FF", fontSize: 12 }}
+                tick={{ fill: "#8FB8FF", fontSize: 14 }}
                 axisLine={false}
                 tickLine={false}
                 ticks={[0, 4, 8, 12]}
@@ -116,7 +116,7 @@ export function SlideCompetitivo() {
                   dataKey="rate"
                   position="right"
                   formatter={(v: any) => formatRate(Number(v))}
-                  style={{ fill: "#F5F0F0", fontSize: 13, fontWeight: 700 }}
+                  style={{ fill: "#F5F0F0", fontSize: 15, fontWeight: 700 }}
                 />
               </Bar>
             </BarChart>
@@ -131,7 +131,7 @@ export function SlideCompetitivo() {
             <div
               style={{
                 color: "#F0D78C",
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: 700,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
@@ -140,7 +140,7 @@ export function SlideCompetitivo() {
             >
               Momento
             </div>
-            <div style={{ color: "#E2E6E9", fontSize: 12, lineHeight: 1.5 }}>
+            <div style={{ color: "#E2E6E9", fontSize: 14, lineHeight: 1.5 }}>
               Com a exclusão dos cosméticos do ICMS-ST em SP, a estruturação no ES ficou ainda mais acessível.
             </div>
           </div>

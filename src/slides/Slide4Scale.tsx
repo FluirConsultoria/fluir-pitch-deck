@@ -17,7 +17,7 @@ const data = [
 export function Slide4Scale() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-4xl md:text-5xl max-w-5xl">
+      <SlideHeadline className="text-5xl max-w-5xl">
         +4.600 empresas já operam com incentivo fiscal no ES.
       </SlideHeadline>
 
@@ -43,7 +43,7 @@ export function Slide4Scale() {
               <YAxis
                 type="category"
                 dataKey="name"
-                tick={{ fill: "#F5F0F0", fontSize: 17, fontWeight: 600 }}
+                tick={{ fill: "#F5F0F0", fontSize: 20, fontWeight: 600 }}
                 axisLine={false}
                 tickLine={false}
                 width={150}
@@ -55,7 +55,7 @@ export function Slide4Scale() {
                 <LabelList
                   dataKey="label"
                   position="right"
-                  style={{ fill: "#F5F0F0", fontSize: 22, fontWeight: 800 }}
+                  style={{ fill: "#F5F0F0", fontSize: 25, fontWeight: 800 }}
                 />
               </Bar>
             </BarChart>
@@ -73,13 +73,13 @@ export function Slide4Scale() {
             <div className="flex items-start gap-3">
               <div style={{ color: "#C9A84C", fontSize: 26, lineHeight: 1 }}>◆</div>
               <div>
-                <div style={{ color: "#F0D78C", fontWeight: 700, fontSize: 13, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                <div style={{ color: "#F0D78C", fontWeight: 700, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                   Setor de Cosméticos
                 </div>
                 <div style={{ color: "#F5F0F0", fontWeight: 800, fontSize: 22, marginTop: 2, lineHeight: 1 }}>
                   +600 empresas
                 </div>
-                <div style={{ color: "#E2E6E9", fontSize: 13, marginTop: 3 }}>
+                <div style={{ color: "#E2E6E9", fontSize: 15, marginTop: 3 }}>
                   14,4% das empresas com incentivo ES são do setor
                 </div>
               </div>
@@ -95,10 +95,10 @@ export function Slide4Scale() {
             <div className="flex items-start gap-3">
               <div style={{ color: "#c44545", fontSize: 26, lineHeight: 1 }}>↓</div>
               <div>
-                <div style={{ color: "#c44545", fontWeight: 700, fontSize: 15 }}>
+                <div style={{ color: "#c44545", fontWeight: 700, fontSize: 17 }}>
                   Sem incentivo
                 </div>
-                <div style={{ color: "#E2E6E9", fontSize: 13, marginTop: 3 }}>
+                <div style={{ color: "#E2E6E9", fontSize: 15, marginTop: 3 }}>
                   ICMS cheio sobre todas as operações
                 </div>
               </div>
@@ -114,10 +114,10 @@ export function Slide4Scale() {
             <div className="flex items-start gap-3">
               <div style={{ color: "#2dd47e", fontSize: 26, lineHeight: 1 }}>↑</div>
               <div>
-                <div style={{ color: "#2dd47e", fontWeight: 700, fontSize: 15 }}>
+                <div style={{ color: "#2dd47e", fontWeight: 700, fontSize: 17 }}>
                   Com incentivo ES
                 </div>
-                <div style={{ color: "#E2E6E9", fontSize: 13, marginTop: 3 }}>
+                <div style={{ color: "#E2E6E9", fontSize: 15, marginTop: 3 }}>
                   ICMS de 1,14%, economia real mensal
                 </div>
               </div>

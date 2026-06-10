@@ -20,7 +20,7 @@ function PillarCard({ icon, title }: { icon: ReactNode; title: string }) {
         style={{
           color: "#F5F0F0",
           fontWeight: 600,
-          fontSize: 15,
+          fontSize: 18,
           lineHeight: 1.25,
         }}
       >
@@ -71,7 +71,7 @@ function PressCard({
           style={{
             color: sourceColor,
             fontWeight: 800,
-            fontSize: 14,
+            fontSize: 16,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             marginTop: 6,
@@ -85,7 +85,7 @@ function PressCard({
           style={{
             color: sourceColor,
             opacity: 0.7,
-            fontSize: 9,
+            fontSize: 11,
             marginTop: 3,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
@@ -100,7 +100,7 @@ function PressCard({
         <div
           style={{
             color: "#8B7355",
-            fontSize: 10,
+            fontSize: 12,
             fontWeight: 700,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
@@ -113,7 +113,7 @@ function PressCard({
           style={{
             color: "#1a1a1a",
             fontWeight: 700,
-            fontSize: 15,
+            fontSize: 17,
             lineHeight: 1.3,
             fontFamily: "Georgia, 'Times New Roman', serif",
           }}
@@ -130,11 +130,11 @@ function PressCard({
 export function Slide5Legal() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-2xl md:text-3xl max-w-4xl">
+      <SlideHeadline className="text-3xl max-w-4xl">
         Base legal consolidada. Incentivos válidos até 2032.
       </SlideHeadline>
       <p
-        className="mt-2 text-sm max-w-3xl"
+        className="mt-2 text-base max-w-3xl"
         style={{ color: "#E2E6E9", fontWeight: 500 }}
       >
         Convalidados via LC 160/2017 e Convênio ICMS 190/2017 do CONFAZ

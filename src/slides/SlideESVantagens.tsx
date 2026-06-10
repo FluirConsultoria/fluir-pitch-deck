@@ -25,7 +25,7 @@ function ESCard({
         <span
           style={{
             color,
-            fontSize: 11,
+            fontSize: 13,
             fontWeight: 700,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
@@ -34,10 +34,10 @@ function ESCard({
           {tag}
         </span>
       </div>
-      <div style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 17, lineHeight: 1.25 }}>
+      <div style={{ color: "#F5F0F0", fontWeight: 700, fontSize: 20, lineHeight: 1.25 }}>
         {title}
       </div>
-      <div style={{ color: "#E2E6E9", fontSize: 13, lineHeight: 1.5 }}>
+      <div style={{ color: "#E2E6E9", fontSize: 15, lineHeight: 1.5 }}>
         {body}
       </div>
     </div>
@@ -78,7 +78,7 @@ const cards = [
 export function SlideESVantagens() {
   return (
     <SlideWrapper>
-      <SlideHeadline className="text-2xl md:text-3xl max-w-4xl">
+      <SlideHeadline className="text-3xl max-w-4xl">
         Por que o Espírito Santo?
       </SlideHeadline>
       <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-5 mt-6">
