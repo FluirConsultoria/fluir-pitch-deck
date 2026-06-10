@@ -123,7 +123,7 @@ export function SlideCompetitivo() {
                 tick={{ fill: "#8FB8FF", fontSize: 14 }}
                 axisLine={false}
                 tickLine={false}
-                ticks={[0, 4, 8, 12, 20, 25]}
+                ticks={[0, 4, 8, 12, 18, 25]}
               />
               <YAxis
                 type="category"
