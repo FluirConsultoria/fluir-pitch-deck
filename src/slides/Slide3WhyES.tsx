@@ -95,7 +95,7 @@ export function Slide3WhyES() {
         <div className="flex-1 grid items-stretch gap-4" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
           {/* Sem ES */}
           <ComparePanel
-            title="Sem ES"
+            title="Sem Incentivo"
             color="#c44545"
             rows={[
               ["ICMS Atacado / E-commerce", "7% a 18%"],
@@ -118,7 +118,7 @@ export function Slide3WhyES() {
 
           {/* Com ES */}
           <ComparePanel
-            title="Com ES"
+            title="Com Incentivo"
             color="#2dd47e"
             rows={[
               ["ICMS Atacado / E-commerce", "1,14%"],

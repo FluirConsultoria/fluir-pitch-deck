@@ -58,7 +58,7 @@ const cards: CardProps[] = [
   {
     icon: <Truck size={16} strokeWidth={1.5} />,
     tag: "Hub Logístico Nacional",
-    title: "1.200 km de 60% do PIB nacional",
+    title: "No raio de 1.200 km: 60% do PIB nacional",
     bullets: [
       "Portos + EFVM + posição costeira estratégica",
       "Menor custo e prazo de distribuição",
@@ -70,8 +70,8 @@ const cards: CardProps[] = [
     tag: "Governo que Investe",
     title: "R$ 137,6 bi em investimentos até 2029",
     bullets: [
-      "Recorde histórico — 70% já em execução",
-      "Indústria e logística no centro do ciclo",
+      "70% já aportado",
+      "Indústria e logística no centro do ciclo de investimento",
     ],
     color: "#2dd47e",
   },
