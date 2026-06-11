@@ -40,7 +40,7 @@ export function Slide8CTA() {
           className="mt-12 text-base"
           style={{ color: "#E2E6E9", fontWeight: 400 }}
         >
-          contato@fluirconsultoria.com.br · Vitória, Espírito Santo
+          carlos@fluirconsultoriaes.com.br · Vitória, Espírito Santo
         </div>
       </div>
     </SlideWrapper>
