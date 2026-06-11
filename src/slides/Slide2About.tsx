@@ -31,7 +31,7 @@ export function Slide2About() {
           {[
             "Equipe dedicada à empresa do início ao fim",
             "Acompanhamento contínuo durante o contrato",
-            "Especialistas em tributário, logística e jurídico",
+            "Especialistas em tributação, logística e jurídico",
           ].map((item) => (
             <div key={item} className="flex items-center gap-3">
               <span style={{ color: "#609DFF", fontWeight: 700, fontSize: 20 }}>✓</span>

@@ -27,7 +27,7 @@ export function Slide3WhyES() {
             label: "INVEST-ES",
             audience: "Importadores",
             rate: "1,085%",
-            suffix: "na saída · 100% diferido na entrada",
+            suffix: "nas vendas interestaduais · 100% diferido na entrada",
           },
         ].map((p) => (
           <div
