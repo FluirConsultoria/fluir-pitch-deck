@@ -1259,6 +1259,30 @@ function salvarProposta() {
   });
 }
 
+// ===== VIEW MODE (link do email) =====
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if (p.get('view') !== '1') return;
+  var setRO = function(id, v) {
+    var el = document.getElementById(id);
+    if (!el || v === null) return;
+    el.value = v;
+    el.readOnly = true;
+    el.style.background = '#f0f4f8';
+    el.style.cursor = 'default';
+    el.style.pointerEvents = 'none';
+  };
+  setRO('c11', p.get('fat'));
+  setRO('c7',  p.get('comp'));
+  setRO('c8',  p.get('aliqO'));
+  setRO('c12', p.get('aliqS'));
+  setRO('i9',  p.get('meses'));
+  calc();
+  document.querySelectorAll('.tab-btn').forEach(function(t){
+    if (t.textContent.indexOf('Enviar') > -1) t.style.display = 'none';
+  });
+})();
+
 </script>
 </body>
 </html>
