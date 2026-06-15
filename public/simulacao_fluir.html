@@ -1281,6 +1281,10 @@ function salvarProposta() {
   document.querySelectorAll('.tab-btn').forEach(function(t){
     if (t.textContent.indexOf('Enviar') > -1) t.style.display = 'none';
   });
+  ['btn-salvar-sim', 'btn-salvar-resumo', 'save_btn'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 })();
 
 </script>
