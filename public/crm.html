@@ -266,6 +266,13 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
       <div class="fld"><label>Próxima ação</label><input id="f_proxacao" placeholder="Reunião de pré-viabilidade"></div>
       <div class="fld"><label>Data da próxima ação</label><input id="f_proxdata" type="date"></div>
       <div class="fld full"><label>Observações</label><textarea id="f_obs" placeholder="Regime tributário, estados de venda, dores, histórico..."></textarea></div>
+      <div class="fld full" style="border-top:1px solid var(--line);padding-top:12px;margin-top:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label>👥 Contatos adicionais</label>
+          <button type="button" class="btn ghost sm" onclick="addExtraContactRow()">+ Adicionar</button>
+        </div>
+        <div id="extra-contacts-list"></div>
+      </div>
     </div>
     <div class="atv-panel" id="modal-ativs" style="display:none">
       <div class="atv-form-box" id="atv-form" style="display:none">
@@ -338,7 +345,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const N8N={fl01:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pre-viabilidade",fl02:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pos-proposta"};
 const STAGES=["Prospecção","Qualificação","Pré-viabilidade","Proposta","Negociação","Contrato","Kickoff","Implementação","Operação ativa"];
 const PTYPES=["Contador","Operador logístico","Transportadora","Outro"];
-let leads=[], parceiros=[], pFilter="Todos";
+let leads=[], parceiros=[], pFilter="Todos", _extraContacts=[];
 
 /* ===== helpers ===== */
 function uid(){ return (crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)); }
@@ -352,6 +359,36 @@ function maskTel(el){let v=el.value.replace(/\D/g,"");if(v.length>11)v=v.slice(0
 function maskCNPJ(el){let v=el.value.replace(/\D/g,"");if(v.length>14)v=v.slice(0,14);v=v.replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2");el.value=v;}
 function cnaeToSeg(desc){const d=desc.toLowerCase();if(d.includes("cosmético")||d.includes("perfume")||d.includes("higiene pessoal"))return"Cosméticos";if(d.includes("higiene"))return"Higiene & Beleza";if(d.includes("suplemento")||d.includes("vitamina"))return"Suplementos";if(d.includes("limpeza"))return"Limpeza e Higiene Doméstica";if(d.includes("farmacêut")||d.includes("medicamento"))return"Farmacêutico";if(d.includes("alimento"))return"Alimentos e Bebidas";if(d.includes("bebida"))return"Bebidas";if(d.includes("pet ")||d.includes("veterinário")||d.includes("animal"))return"Pet / Veterinário";if(d.includes("embalagem"))return"Embalagens";if(d.includes("papelaria")||d.includes("escritório"))return"Papelaria e Escritório";if(d.includes("eletrônico")||d.includes("informática"))return"Eletrônicos e Informática";if(d.includes("têxtil")||d.includes("confecção")||d.includes("vestuário"))return"Têxtil / Confecção";if(d.includes("construção"))return"Materiais de Construção";if(d.includes("automotivo")||d.includes("veículo"))return"Automotivo";return null;}
 async function buscaCNPJ(){const cnpj=val("f_cnpj").replace(/\D/g,"");if(cnpj.length!==14){toast("CNPJ deve ter 14 dígitos",true);return;}const btn=document.getElementById("cnpjBtn");btn.disabled=true;btn.textContent="Buscando…";try{const r=await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);if(!r.ok)throw new Error("CNPJ não encontrado");const d=await r.json();if(d.razao_social||d.nome_fantasia)document.getElementById("f_empresa").value=d.nome_fantasia||d.razao_social;const UFS_=["SP","RJ","RS","MG","PR","SC","BA","GO","ES"];if(d.uf)document.getElementById("f_estado").value=UFS_.includes(d.uf)?d.uf:"Outro";if(d.cnae_fiscal_descricao){const seg=cnaeToSeg(d.cnae_fiscal_descricao);if(seg)document.getElementById("f_segmento").value=seg;}const parts=[];if(d.municipio&&d.uf)parts.push(`Município: ${d.municipio}/${d.uf}`);if(d.descricao_situacao_cadastral)parts.push(`Situação CNPJ: ${d.descricao_situacao_cadastral}`);if(parts.length){const obs=document.getElementById("f_obs");obs.value=(obs.value?obs.value+"\n":"")+parts.join(" | ");}toast("Dados preenchidos via BrasilAPI");}catch(err){toast(err.message||"Erro ao buscar CNPJ",true);}finally{btn.disabled=false;btn.textContent="Buscar";}}
+
+/* ===== WHATSAPP + GOOGLE AGENDA ===== */
+function openWA(inputId){const tel=(document.getElementById(inputId)?.value||'').replace(/\D/g,'');if(!tel){toast('Informe o telefone',true);return;}window.open('https://wa.me/55'+tel,'_blank');}
+function openGCal(l,atv){
+  const ymd=(atv.data||'').replace(/-/g,'');if(!ymd)return;
+  let ds=ymd,de;
+  if(atv.hora){const [h,m]=atv.hora.split(':');const h2=String((parseInt(h)+1)%24).padStart(2,'0');ds=ymd+'T'+h+m+'00';de=ymd+'T'+h2+m+'00';}
+  else{const nx=new Date(atv.data+'T00:00:00');nx.setDate(nx.getDate()+1);de=nx.toISOString().slice(0,10).replace(/-/g,'');}
+  const title=encodeURIComponent('[Fluir] '+atv.desc+' — '+l.empresa);
+  const det=encodeURIComponent('Empresa: '+l.empresa+'\nContato: '+(l.contato||'—')+(l.cargo?' ('+l.cargo+')':'')+'\nE-mail: '+(l.email||'—')+' · Tel: '+(l.telefone||'—')+'\nEtapa: '+(l.etapa||'—'));
+  window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+title+'&dates='+ds+'/'+de+'&details='+det,'_blank');
+  toast('📅 Reunião enviada para o Google Agenda!');
+}
+
+/* ===== CONTATOS ADICIONAIS ===== */
+function renderExtraContacts(){
+  const list=document.getElementById('extra-contacts-list');if(!list)return;
+  if(!_extraContacts.length){list.innerHTML='';return;}
+  list.innerHTML=_extraContacts.map((c,i)=>
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px;background:#f8fafb;border:1px solid var(--line);border-radius:8px;position:relative;margin-bottom:6px">'+
+    '<span onclick="removeExtraContact('+i+')" style="position:absolute;top:7px;right:8px;color:#ccc;cursor:pointer;font-size:13px" title="Remover">✕</span>'+
+    '<div class="fld"><label>Nome</label><input value="'+esc(c.nome||'')+'" oninput="_extraContacts['+i+'].nome=this.value" placeholder="Nome"></div>'+
+    '<div class="fld"><label>Cargo</label><input value="'+esc(c.cargo||'')+'" oninput="_extraContacts['+i+'].cargo=this.value" placeholder="Cargo"></div>'+
+    '<div class="fld"><label>E-mail</label><input value="'+esc(c.email||'')+'" oninput="_extraContacts['+i+'].email=this.value" placeholder="email@empresa.com"></div>'+
+    '<div class="fld"><label>Tel / WhatsApp</label><div style="display:flex;gap:5px"><input id="ect_'+i+'" value="'+esc(c.telefone||'')+'" oninput="_extraContacts['+i+'].telefone=this.value" placeholder="(27) 99999-9999" style="flex:1"><button type="button" onclick="openWA(\'ect_'+i+'\')" class="btn ghost sm" style="padding:6px 9px" title="WhatsApp">💬</button></div></div>'+
+    '</div>'
+  ).join('');
+}
+function addExtraContactRow(){_extraContacts.push({id:uid(),nome:'',cargo:'',email:'',telefone:''});renderExtraContacts();}
+function removeExtraContact(i){_extraContacts.splice(i,1);renderExtraContacts();}
 
 /* ===== AUTH ===== */
 async function doLogin(){
@@ -453,6 +490,7 @@ function render(){
     board.appendChild(col);
   });
   renderParc();
+  if (document.getElementById('view-agenda').style.display !== 'none') renderAgenda();
 }
 function cardEl(l){
   const el=document.createElement("div"); el.className="card"; el.draggable=true;
@@ -486,13 +524,16 @@ function cardEl(l){
   if(l.economia) tags.push(`<span class="tag eco">Econ ${brl(l.economia)}/mês</span>`);
   if(actCount) tags.push(`<span class="tag" style="background:#eef2f4;color:var(--muted)" title="${actDone} concluída(s) de ${actCount}">📋 ${actDone}/${actCount}</span>`);
   if(dStage!==null&&dStage>14&&l.etapa!=="Operação ativa") tags.push(`<span class="tag" style="background:var(--red-l);color:var(--red)" title="Lead parado nesta etapa há ${dStage} dias">⏳ ${dStage}d parado</span>`);
+  const waNum=(l.telefone||'').replace(/\D/g,'');
+  const extraCnt=(l.contatos_extras||[]).length;
   el.innerHTML=`<span class="menu" onclick="event.stopPropagation();openModal('${l.id}')">⋯</span>
     <div class="empresa" title="${temp.title}">${esc(l.empresa)}</div>
-    ${l.contato?`<div class="contato">${esc(l.contato)}${l.cargo?" · "+esc(l.cargo):""}</div>`:""}
+    ${l.contato?`<div class="contato">${esc(l.contato)}${l.cargo?" · "+esc(l.cargo):""}${extraCnt?` <span style="font-size:10px;background:var(--teal-l);color:var(--teal-d);border-radius:10px;padding:1px 5px;font-weight:700">+${extraCnt}</span>`:""}</div>`:""}
     <div class="row">${tags.join("")}</div>
     ${nt?`<div class="next ${nc}">${nt}</div>`:""}
     <div class="acts">
       <button class="cal" onclick="event.stopPropagation();addToCalendar('${l.id}')">📅 Agenda</button>
+      ${waNum?`<button onclick="event.stopPropagation();window.open('https://wa.me/55${waNum}','_blank')" class="cal" style="color:#25D366">💬 WA</button>`:''}
       <button class="fl" onclick="event.stopPropagation();fireFL('${l.id}','fl01')">📨 FL-01</button>
       <button class="fl" onclick="event.stopPropagation();fireFL('${l.id}','fl02')">📨 FL-02</button>
     </div>`;
@@ -520,6 +561,8 @@ function openModal(id){
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
   document.getElementById("f_etapa").value=g("etapa",STAGES[0]);
   _ativLeadId=isE?id:null;
+  _extraContacts=(l.contatos_extras||[]).map(c=>({...c}));
+  renderExtraContacts();
   document.getElementById("modalTabs").style.display=isE?"flex":"none";
   modalTab("dados"); cancelAtiv();
   document.getElementById("overlay").classList.add("show");
@@ -531,7 +574,7 @@ async function saveLead(){
   const existing=leads.find(x=>x.id===id);
   const etapa=val("f_etapa")||STAGES[0];
   const etapa_desde=existing?.etapa===etapa?(existing?.etapa_desde||new Date().toISOString().slice(0,10)):new Date().toISOString().slice(0,10);
-  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],ordem:existing?.ordem||0};
+  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
@@ -640,7 +683,7 @@ async function saveAtiv(){
   if(_ativEditing){ const idx=l.atividades.findIndex(a=>a.id===atv.id); if(idx>=0) l.atividades[idx]=atv; else l.atividades.push(atv); }
   else l.atividades.push(atv);
   const ok=await upsertRow("crm_leads",l);
-  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Atividade salva"); cancelAtiv(); renderAtivs(_ativLeadId); render(); }
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Atividade salva"); cancelAtiv(); renderAtivs(_ativLeadId); render(); if(atv.tipo==='reuniao'&&atv.data&&!_ativEditing){const ld=leads.find(x=>x.id===_ativLeadId);if(ld)openGCal(ld,atv);} }
 }
 async function toggleAtiv(leadId,ativId){
   const l=leads.find(x=>x.id===leadId); if(!l||!l.atividades) return;
@@ -722,6 +765,18 @@ function renderAgenda(){
       ev.addEventListener("dragstart",e=>{e.dataTransfer.setData("text",l.id);e.stopPropagation();});
       ev.onclick=()=>openModal(l.id);
       cell.appendChild(ev);
+    });
+    leads.forEach(l=>{
+      (l.atividades||[]).filter(a=>a.data===ds&&!a.done).forEach(a=>{
+        const info=ATIVOS[a.tipo]||{icon:"📌",label:a.tipo};
+        const ev=document.createElement("div");
+        ev.className="cal-event "+(dt<today?"past":isTod?"now":"upcoming");
+        const hora=a.hora?" · "+a.hora:"";
+        ev.title=(info.label||a.tipo)+" — "+l.empresa+": "+a.desc+hora;
+        ev.textContent=info.icon+" "+esc(l.empresa)+hora;
+        ev.onclick=()=>openModal(l.id);
+        cell.appendChild(ev);
+      });
     });
     grid.appendChild(cell);
   }
