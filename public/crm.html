@@ -275,6 +275,17 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
       </div>
     </div>
     <div class="atv-panel" id="modal-ativs" style="display:none">
+      <div style="background:#f8fafb;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Links da empresa</div>
+        <div style="margin-bottom:8px">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">🔗 Planilha de pré-viabilidade</label>
+          <div style="display:flex;gap:6px"><input id="f_link_planilha" type="url" placeholder="Cole o link aqui..." style="flex:1;font-size:13px"><button type="button" class="btn ghost sm" onclick="openLink('f_link_planilha')">Abrir</button></div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">📄 Proposta comercial</label>
+          <div style="display:flex;gap:6px"><input id="f_link_proposta" type="url" placeholder="Cole o link aqui..." style="flex:1;font-size:13px"><button type="button" class="btn ghost sm" onclick="openLink('f_link_proposta')">Abrir</button></div>
+        </div>
+      </div>
       <div class="atv-form-box" id="atv-form" style="display:none">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="fld"><label>Tipo</label>
@@ -558,13 +569,15 @@ function openModal(id){
   const l=isE?leads.find(x=>x.id===id):{}; const g=(k,d="")=>l[k]!==undefined&&l[k]!==null?l[k]:d;
   document.getElementById("f_id").value=isE?id:"";
   ["cnpj","empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","proxacao","proxdata","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
+  document.getElementById("f_link_planilha").value=g("link_planilha");
+  document.getElementById("f_link_proposta").value=g("link_proposta");
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
   document.getElementById("f_etapa").value=g("etapa",STAGES[0]);
   _ativLeadId=isE?id:null;
   _extraContacts=(l.contatos_extras||[]).map(c=>({...c}));
   renderExtraContacts();
   document.getElementById("modalTabs").style.display=isE?"flex":"none";
-  modalTab("dados"); cancelAtiv();
+  modalTab(isE?"ativs":"dados"); cancelAtiv();
   document.getElementById("overlay").classList.add("show");
 }
 function closeModal(){ document.getElementById("overlay").classList.remove("show"); }
@@ -574,7 +587,7 @@ async function saveLead(){
   const existing=leads.find(x=>x.id===id);
   const etapa=val("f_etapa")||STAGES[0];
   const etapa_desde=existing?.etapa===etapa?(existing?.etapa_desde||new Date().toISOString().slice(0,10)):new Date().toISOString().slice(0,10);
-  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
+  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),link_planilha:val("f_link_planilha"),link_proposta:val("f_link_proposta"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
@@ -675,6 +688,7 @@ function showAtivForm(){
   document.getElementById("atv_desc").focus();
 }
 function cancelAtiv(){ document.getElementById("atv-form").style.display="none"; _ativEditing=null; }
+function openLink(inputId){const u=(document.getElementById(inputId)?.value||'').trim();if(!u){toast('Nenhum link salvo ainda',true);return;}window.open(u,'_blank');}
 function editAtiv(leadId,ativId){
   const l=leads.find(x=>x.id===leadId); if(!l) return;
   const a=(l.atividades||[]).find(x=>x.id===ativId); if(!a) return;
