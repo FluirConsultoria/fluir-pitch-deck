@@ -675,6 +675,18 @@ function showAtivForm(){
   document.getElementById("atv_desc").focus();
 }
 function cancelAtiv(){ document.getElementById("atv-form").style.display="none"; _ativEditing=null; }
+function editAtiv(leadId,ativId){
+  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const a=(l.atividades||[]).find(x=>x.id===ativId); if(!a) return;
+  _ativLeadId=leadId; _ativEditing=a;
+  const f=document.getElementById("atv-form"); f.style.display="block";
+  document.getElementById("atv_tipo").value=a.tipo||"ligacao";
+  document.getElementById("atv_desc").value=a.desc||"";
+  document.getElementById("atv_data").value=a.data||"";
+  document.getElementById("atv_hora").value=a.hora||"";
+  document.getElementById("atv_done").checked=!!a.done;
+  document.getElementById("atv_desc").focus();
+}
 async function saveAtiv(){
   const l=leads.find(x=>x.id===_ativLeadId); if(!l) return;
   const desc=document.getElementById("atv_desc").value.trim(); if(!desc){ toast("Informe a descrição",true); return; }
@@ -722,6 +734,7 @@ function ativHtml(a,leadId){
       ${dt||a.hora?`<div class="atv-date">${dt}${a.hora?" às "+a.hora:""}</div>`:""}
     </div>
     <input type="checkbox" class="atv-chk" ${a.done?"checked":""} onchange="toggleAtiv('${leadId}','${a.id}')" title="${a.done?"Marcar como pendente":"Marcar como concluída"}">
+    <span onclick="editAtiv('${leadId}','${a.id}')" title="Editar" style="cursor:pointer;color:var(--muted);font-size:13px;margin-right:4px">✏️</span>
     <span class="atv-del" onclick="delAtiv('${leadId}','${a.id}')" title="Excluir">✕</span>
   </div>`;
 }
