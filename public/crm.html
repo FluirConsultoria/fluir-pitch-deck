@@ -567,7 +567,7 @@ function openModal(id){
   document.getElementById("delBtn").style.display=isE?"inline-block":"none";
   const l=isE?leads.find(x=>x.id===id):{}; const g=(k,d="")=>l[k]!==undefined&&l[k]!==null?l[k]:d;
   document.getElementById("f_id").value=isE?id:"";
-  ["cnpj","empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","proxacao","proxdata","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
+  ["cnpj","empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
   document.getElementById("f_link_planilha").value=g("link_planilha");
   document.getElementById("f_link_proposta").value=g("link_proposta");
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
@@ -586,7 +586,7 @@ async function saveLead(){
   const existing=leads.find(x=>x.id===id);
   const etapa=val("f_etapa")||STAGES[0];
   const etapa_desde=existing?.etapa===etapa?(existing?.etapa_desde||new Date().toISOString().slice(0,10)):new Date().toISOString().slice(0,10);
-  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),link_planilha:val("f_link_planilha"),link_proposta:val("f_link_proposta"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
+  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:existing?.proxacao||'',proxdata:existing?.proxdata||'',obs:val("f_obs"),link_planilha:val("f_link_planilha"),link_proposta:val("f_link_proposta"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
