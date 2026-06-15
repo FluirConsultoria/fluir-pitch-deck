@@ -196,6 +196,7 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
     <div class="ttl">Funil comercial</div>
     <label style="font-size:12px;color:var(--muted);font-weight:600">Segmento:</label>
     <select id="segFilter" onchange="render()"></select>
+    <input type="search" id="searchLead" placeholder="Buscar…" oninput="render()" style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;background:#fff;width:150px">
     <div class="spacer"></div>
     <button class="btn primary sm" onclick="openModal()">+ Novo lead</button>
   </div>
@@ -244,6 +245,7 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
     </div>
     <div class="body" id="modal-dados">
       <input type="hidden" id="f_id">
+      <div class="fld full"><label>CNPJ</label><div style="display:flex;gap:8px"><input id="f_cnpj" placeholder="00.000.000/0001-00" inputmode="numeric" oninput="maskCNPJ(this)" style="flex:1"><button type="button" class="btn ghost sm" id="cnpjBtn" onclick="buscaCNPJ()">Buscar</button></div></div>
       <div class="fld full"><label>Empresa *</label><input id="f_empresa" placeholder="Ex.: Bella Distribuidora"></div>
       <div class="fld"><label>Segmento</label><input id="f_segmento" list="segmentos" placeholder="Cosméticos" onfocus="this.select()">
         <datalist id="segmentos"><option>Cosméticos</option><option>Higiene &amp; Beleza</option><option>Suplementos</option><option>Limpeza e Higiene Doméstica</option><option>Farmacêutico</option><option>Alimentos e Bebidas</option><option>Bebidas</option><option>Pet / Veterinário</option><option>Embalagens</option><option>Papelaria e Escritório</option><option>Eletrônicos e Informática</option><option>Têxtil / Confecção</option><option>Materiais de Construção</option><option>Automotivo</option><option>Outro</option></datalist>
@@ -344,6 +346,9 @@ function sync(state){ const s=document.getElementById("sync"); if(state==="savin
 function val(id){ return document.getElementById(id).value.trim(); }
 function num(id){ const v=document.getElementById(id).value; return v===""?null:Number(v); }
 function maskTel(el){let v=el.value.replace(/\D/g,"");if(v.length>11)v=v.slice(0,11);if(v.length<=10)v=v.replace(/^(\d{2})(\d{4})(\d{0,4})$/,"($1) $2-$3");else v=v.replace(/^(\d{2})(\d{5})(\d{0,4})$/,"($1) $2-$3");el.value=v.replace(/-$/,"");}
+function maskCNPJ(el){let v=el.value.replace(/\D/g,"");if(v.length>14)v=v.slice(0,14);v=v.replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2");el.value=v;}
+function cnaeToSeg(desc){const d=desc.toLowerCase();if(d.includes("cosmético")||d.includes("perfume")||d.includes("higiene pessoal"))return"Cosméticos";if(d.includes("higiene"))return"Higiene & Beleza";if(d.includes("suplemento")||d.includes("vitamina"))return"Suplementos";if(d.includes("limpeza"))return"Limpeza e Higiene Doméstica";if(d.includes("farmacêut")||d.includes("medicamento"))return"Farmacêutico";if(d.includes("alimento"))return"Alimentos e Bebidas";if(d.includes("bebida"))return"Bebidas";if(d.includes("pet ")||d.includes("veterinário")||d.includes("animal"))return"Pet / Veterinário";if(d.includes("embalagem"))return"Embalagens";if(d.includes("papelaria")||d.includes("escritório"))return"Papelaria e Escritório";if(d.includes("eletrônico")||d.includes("informática"))return"Eletrônicos e Informática";if(d.includes("têxtil")||d.includes("confecção")||d.includes("vestuário"))return"Têxtil / Confecção";if(d.includes("construção"))return"Materiais de Construção";if(d.includes("automotivo")||d.includes("veículo"))return"Automotivo";return null;}
+async function buscaCNPJ(){const cnpj=val("f_cnpj").replace(/\D/g,"");if(cnpj.length!==14){toast("CNPJ deve ter 14 dígitos",true);return;}const btn=document.getElementById("cnpjBtn");btn.disabled=true;btn.textContent="Buscando…";try{const r=await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);if(!r.ok)throw new Error("CNPJ não encontrado");const d=await r.json();if(d.razao_social||d.nome_fantasia)document.getElementById("f_empresa").value=d.nome_fantasia||d.razao_social;const UFS_=["SP","RJ","RS","MG","PR","SC","BA","GO","ES"];if(d.uf)document.getElementById("f_estado").value=UFS_.includes(d.uf)?d.uf:"Outro";if(d.cnae_fiscal_descricao){const seg=cnaeToSeg(d.cnae_fiscal_descricao);if(seg)document.getElementById("f_segmento").value=seg;}const parts=[];if(d.municipio&&d.uf)parts.push(`Município: ${d.municipio}/${d.uf}`);if(d.descricao_situacao_cadastral)parts.push(`Situação CNPJ: ${d.descricao_situacao_cadastral}`);if(parts.length){const obs=document.getElementById("f_obs");obs.value=(obs.value?obs.value+"\n":"")+parts.join(" | ");}toast("Dados preenchidos via BrasilAPI");}catch(err){toast(err.message||"Erro ao buscar CNPJ",true);}finally{btn.disabled=false;btn.textContent="Buscar";}}
 
 /* ===== AUTH ===== */
 async function doLogin(){
@@ -404,6 +409,8 @@ function switchTab(w){
 /* ===== LEADS ===== */
 function initStageSelect(){ const s=document.getElementById("f_etapa"); s.innerHTML=""; STAGES.forEach((st,i)=>{const o=document.createElement("option");o.value=st;o.textContent=(i+1)+". "+st;s.appendChild(o);}); }
 function daysTo(d){ if(!d) return null; const dt=new Date(d+"T00:00:00"),n=new Date();n.setHours(0,0,0,0);return Math.round((dt-n)/86400000); }
+function leadTemp(l){if(l.etapa==="Operação ativa")return{color:"var(--green)",title:"Operação ativa"};const d=daysTo(l.proxdata);if(d===null||d===undefined)return{color:"var(--line)",title:"Sem follow-up agendado"};if(d<0)return{color:"var(--red)",title:`Atrasado ${-d} dia(s)`};if(d<=2)return{color:"#f97316",title:"Ação urgente — próximos 2 dias"};if(d<=7)return{color:"var(--amber)",title:`Follow-up em ${d} dias`};return{color:"var(--line)",title:`Follow-up em ${d} dias`};}
+function stageColor(i){if(i<=1)return"var(--blue)";if(i<=4)return"var(--amber)";if(i<=7)return"var(--violet)";return"var(--green)";}
 
 function refreshSegFilter(){
   const sel=document.getElementById("segFilter"); const cur=sel.value||"Todos";
@@ -416,7 +423,8 @@ function render(){
   document.getElementById("badgeParc").textContent=parceiros.length;
   refreshSegFilter();
   const segF=document.getElementById("segFilter").value||"Todos";
-  const view=segF==="Todos"?leads:leads.filter(l=>l.segmento===segF);
+  const q=(document.getElementById("searchLead")?.value||"").toLowerCase();
+  const view=(segF==="Todos"?leads:leads.filter(l=>l.segmento===segF)).filter(l=>!q||l.empresa?.toLowerCase().includes(q)||l.contato?.toLowerCase().includes(q));
   const ativos=view.filter(l=>l.etapa!=="Operação ativa");
   const ecoTotal=ativos.reduce((a,l)=>a+(Number(l.economia)||0),0);
   const ecoOp=view.filter(l=>l.etapa==="Operação ativa").reduce((a,l)=>a+(Number(l.economia)||0),0);
@@ -433,7 +441,7 @@ function render(){
   STAGES.forEach((st,i)=>{
     const col=document.createElement("div"); col.className="col";
     const inS=view.filter(l=>l.etapa===st).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
-    col.innerHTML=`<h3><span class="stg">${i+1}</span>${st}<span class="n">${inS.length}</span></h3><div class="cards"></div>`;
+    col.innerHTML=`<h3><span class="stg" style="background:${stageColor(i)}">${i+1}</span>${st}<span class="n">${inS.length}</span></h3><div class="cards"></div>`;
     const c=col.querySelector(".cards"); inS.forEach(l=>c.appendChild(cardEl(l)));
     col.addEventListener("dragover",e=>{e.preventDefault();col.classList.add("dragover");});
     col.addEventListener("dragleave",()=>col.classList.remove("dragover"));
@@ -462,13 +470,20 @@ function cardEl(l){
     if(d!==null){ w+=d===0?" · hoje":d<0?` · atrasado ${-d}d`:` · em ${d}d`; }
     nt=`🕑 ${esc(l.proxacao||"Follow-up")}${w?" — "+w:""}`;
   }
+  const temp=leadTemp(l);
+  el.style.borderLeft=`3px solid ${temp.color}`;
+  const actCount=(l.atividades||[]).length;
+  const actDone=(l.atividades||[]).filter(a=>a.done).length;
+  const dStage=l.etapa_desde?Math.max(0,Math.round((new Date()-new Date(l.etapa_desde+"T00:00:00"))/86400000)):null;
   const tags=[];
   if(l.segmento) tags.push(`<span class="tag seg">${esc(l.segmento)}</span>`);
   if(l.estado) tags.push(`<span class="tag uf">${esc(l.estado)}</span>`);
   if(l.faturamento) tags.push(`<span class="tag">Fat ${brl(l.faturamento)}</span>`);
   if(l.economia) tags.push(`<span class="tag eco">Econ ${brl(l.economia)}/mês</span>`);
+  if(actCount) tags.push(`<span class="tag" style="background:#eef2f4;color:var(--muted)" title="${actDone} concluída(s) de ${actCount}">📋 ${actDone}/${actCount}</span>`);
+  if(dStage!==null&&dStage>14&&l.etapa!=="Operação ativa") tags.push(`<span class="tag" style="background:var(--red-l);color:var(--red)" title="Lead parado nesta etapa há ${dStage} dias">⏳ ${dStage}d parado</span>`);
   el.innerHTML=`<span class="menu" onclick="event.stopPropagation();openModal('${l.id}')">⋯</span>
-    <div class="empresa">${esc(l.empresa)}</div>
+    <div class="empresa" title="${temp.title}">${esc(l.empresa)}</div>
     ${l.contato?`<div class="contato">${esc(l.contato)}${l.cargo?" · "+esc(l.cargo):""}</div>`:""}
     <div class="row">${tags.join("")}</div>
     ${nt?`<div class="next ${nc}">${nt}</div>`:""}
@@ -479,7 +494,7 @@ function cardEl(l){
     </div>`;
   return el;
 }
-async function moveLead(id,st){ const l=leads.find(x=>x.id===id); if(l&&l.etapa!==st){ l.etapa=st; l.ordem=Math.max(0,...leads.filter(x=>x.etapa===st&&x.id!==id).map(x=>x.ordem||0))+1; render(); if(await upsertRow("crm_leads",l)) toast(`${l.empresa} → ${st}`); } }
+async function moveLead(id,st){ const l=leads.find(x=>x.id===id); if(l&&l.etapa!==st){ l.etapa=st; l.etapa_desde=new Date().toISOString().slice(0,10); l.ordem=Math.max(0,...leads.filter(x=>x.etapa===st&&x.id!==id).map(x=>x.ordem||0))+1; render(); if(await upsertRow("crm_leads",l)) toast(`${l.empresa} → ${st}`); } }
 async function reorderWithin(stage,draggedId,targetId){
   const inS=leads.filter(l=>l.etapa===stage).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
   const di=inS.findIndex(l=>l.id===draggedId),ti=inS.findIndex(l=>l.id===targetId);
@@ -497,7 +512,7 @@ function openModal(id){
   document.getElementById("delBtn").style.display=isE?"inline-block":"none";
   const l=isE?leads.find(x=>x.id===id):{}; const g=(k,d="")=>l[k]!==undefined&&l[k]!==null?l[k]:d;
   document.getElementById("f_id").value=isE?id:"";
-  ["empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","proxacao","proxdata","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
+  ["cnpj","empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","proxacao","proxdata","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
   document.getElementById("f_etapa").value=g("etapa",STAGES[0]);
   _ativLeadId=isE?id:null;
@@ -510,7 +525,9 @@ async function saveLead(){
   const empresa=val("f_empresa"); if(!empresa){ toast("Informe o nome da empresa",true); return; }
   const id=document.getElementById("f_id").value||uid();
   const existing=leads.find(x=>x.id===id);
-  const obj={id,empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa:val("f_etapa")||STAGES[0],faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],ordem:existing?.ordem||0};
+  const etapa=val("f_etapa")||STAGES[0];
+  const etapa_desde=existing?.etapa===etapa?(existing?.etapa_desde||new Date().toISOString().slice(0,10)):new Date().toISOString().slice(0,10);
+  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
