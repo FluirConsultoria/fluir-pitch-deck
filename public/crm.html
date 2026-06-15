@@ -138,6 +138,24 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90vw}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--red)}
+/* ATIVIDADES */
+.modal-tabs{display:flex;border-bottom:1px solid var(--line);padding:0 12px}
+.mtab{border:none;background:none;padding:10px 16px;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.mtab.active{color:var(--teal-d);border-bottom-color:var(--teal)}
+.mtab:hover{color:var(--ink)}
+.atv-panel{padding:14px 20px;max-height:70vh;overflow-y:auto}
+.atv-form-box{background:var(--teal-l);border:1px solid var(--teal);border-radius:10px;padding:14px;margin-bottom:14px}
+.atv-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:14px 0 6px}
+.atv-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:#fcfdfe;border:1px solid var(--line);border-radius:9px;margin-bottom:6px}
+.atv-item.done-item{opacity:.5}
+.atv-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.atv-body{flex:1;min-width:0}
+.atv-tipo{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.atv-desc{font-size:13px;font-weight:600;margin-top:1px;word-break:break-word}
+.atv-date{font-size:11.5px;color:var(--muted);margin-top:2px}
+.atv-chk{flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--teal);margin-top:2px}
+.atv-del{flex-shrink:0;color:#ccc;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px}
+.atv-del:hover{color:var(--red)}
 </style>
 </head>
 <body>
@@ -222,7 +240,11 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
 <div class="overlay" id="overlay">
   <div class="modal">
     <h2 id="modalTitle">Novo lead</h2>
-    <div class="body">
+    <div class="modal-tabs" id="modalTabs" style="display:none">
+      <button class="mtab active" id="mtab-dados" onclick="modalTab('dados')">Dados</button>
+      <button class="mtab" id="mtab-ativs" onclick="modalTab('ativs')">📋 Atividades</button>
+    </div>
+    <div class="body" id="modal-dados">
       <input type="hidden" id="f_id">
       <div class="fld full"><label>Empresa *</label><input id="f_empresa" placeholder="Ex.: Bella Distribuidora"></div>
       <div class="fld"><label>Segmento</label><input id="f_segmento" list="segmentos" placeholder="Cosméticos">
@@ -244,7 +266,35 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
       <div class="fld"><label>Data da próxima ação</label><input id="f_proxdata" type="date"></div>
       <div class="fld full"><label>Observações</label><textarea id="f_obs" placeholder="Regime tributário, estados de venda, dores, histórico..."></textarea></div>
     </div>
-    <div class="foot">
+    <div class="atv-panel" id="modal-ativs" style="display:none">
+      <div class="atv-form-box" id="atv-form" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div class="fld"><label>Tipo</label>
+            <select id="atv_tipo">
+              <option value="ligacao">📞 Ligação</option>
+              <option value="email">📧 E-mail</option>
+              <option value="reuniao">📅 Reunião</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+              <option value="tarefa">✅ Tarefa</option>
+              <option value="nota">📝 Nota</option>
+            </select>
+          </div>
+          <div class="fld"><label>Data</label><input id="atv_data" type="date"></div>
+        </div>
+        <div class="fld" style="margin-bottom:10px"><label>Descrição *</label><textarea id="atv_desc" rows="2" placeholder="O que aconteceu ou o que precisa ser feito..."></textarea></div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+          <div class="fld" style="flex:1"><label>Hora (opcional)</label><input id="atv_hora" type="time"></div>
+          <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;margin-top:16px"><input type="checkbox" id="atv_done" style="width:16px;height:16px;accent-color:var(--teal)"> Concluída</label>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn ghost sm" onclick="cancelAtiv()">Cancelar</button>
+          <button class="btn primary sm" onclick="saveAtiv()">Salvar atividade</button>
+        </div>
+      </div>
+      <button class="btn ghost sm" onclick="showAtivForm()">+ Registrar atividade</button>
+      <div id="atv-list" style="margin-top:10px"></div>
+    </div>
+    <div class="foot" id="leadFoot">
       <div class="calc" id="calcLine"></div>
       <button class="btn danger" id="delBtn" onclick="delLead()" style="display:none">Excluir</button>
       <button class="btn ghost" onclick="closeModal()">Cancelar</button>
@@ -437,6 +487,9 @@ function openModal(id){
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
   document.getElementById("f_etapa").value=g("etapa",STAGES[0]);
   document.getElementById("f_meses").value=g("meses",18);
+  _ativLeadId=isE?id:null;
+  document.getElementById("modalTabs").style.display=isE?"flex":"none";
+  modalTab("dados"); cancelAtiv();
   updateCalc(); document.getElementById("overlay").classList.add("show");
 }
 function closeModal(){ document.getElementById("overlay").classList.remove("show"); }
@@ -447,7 +500,8 @@ function updateCalc(){
 async function saveLead(){
   const empresa=val("f_empresa"); if(!empresa){ toast("Informe o nome da empresa",true); return; }
   const id=document.getElementById("f_id").value||uid();
-  const obj={id,empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa:val("f_etapa")||STAGES[0],faturamento:num("f_faturamento"),economia:num("f_economia"),pct:num("f_pct"),meses:num("f_meses")||18,proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs")};
+  const existing=leads.find(x=>x.id===id);
+  const obj={id,empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa:val("f_etapa")||STAGES[0],faturamento:num("f_faturamento"),economia:num("f_economia"),pct:num("f_pct"),meses:num("f_meses")||18,proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[]};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
@@ -523,6 +577,80 @@ async function saveP(){
 async function delP(){
   const id=document.getElementById("p_id").value,p=parceiros.find(x=>x.id===id);
   if(p&&confirm(`Excluir "${p.nome}"?`)){ if(await deleteRow("crm_parceiros",id)){ await fetchAll(); closeP(); toast("Parceiro excluído"); } }
+}
+
+/* ===== ATIVIDADES ===== */
+let _ativLeadId=null, _ativEditing=null;
+const ATIVOS={ligacao:{icon:"📞",label:"Ligação"},email:{icon:"📧",label:"E-mail"},reuniao:{icon:"📅",label:"Reunião"},whatsapp:{icon:"💬",label:"WhatsApp"},tarefa:{icon:"✅",label:"Tarefa"},nota:{icon:"📝",label:"Nota"}};
+
+function modalTab(t){
+  document.getElementById("modal-dados").style.display=t==="dados"?"grid":"none";
+  document.getElementById("modal-ativs").style.display=t==="ativs"?"block":"none";
+  document.getElementById("leadFoot").style.display=t==="dados"?"flex":"none";
+  document.getElementById("mtab-dados").classList.toggle("active",t==="dados");
+  document.getElementById("mtab-ativs").classList.toggle("active",t==="ativs");
+  if(t==="ativs"&&_ativLeadId) renderAtivs(_ativLeadId);
+}
+function showAtivForm(){
+  const f=document.getElementById("atv-form"); f.style.display="block";
+  document.getElementById("atv_tipo").value="ligacao";
+  document.getElementById("atv_desc").value="";
+  document.getElementById("atv_data").value=new Date().toISOString().slice(0,10);
+  document.getElementById("atv_hora").value="";
+  document.getElementById("atv_done").checked=false;
+  _ativEditing=null;
+  document.getElementById("atv_desc").focus();
+}
+function cancelAtiv(){ document.getElementById("atv-form").style.display="none"; _ativEditing=null; }
+async function saveAtiv(){
+  const l=leads.find(x=>x.id===_ativLeadId); if(!l) return;
+  const desc=document.getElementById("atv_desc").value.trim(); if(!desc){ toast("Informe a descrição",true); return; }
+  if(!l.atividades) l.atividades=[];
+  const atv={id:(_ativEditing?.id)||uid(),tipo:document.getElementById("atv_tipo").value,desc,data:document.getElementById("atv_data").value,hora:document.getElementById("atv_hora").value||null,done:document.getElementById("atv_done").checked,criadoEm:_ativEditing?.criadoEm||new Date().toISOString()};
+  if(_ativEditing){ const idx=l.atividades.findIndex(a=>a.id===atv.id); if(idx>=0) l.atividades[idx]=atv; else l.atividades.push(atv); }
+  else l.atividades.push(atv);
+  const ok=await upsertRow("crm_leads",l);
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Atividade salva"); cancelAtiv(); renderAtivs(_ativLeadId); render(); }
+}
+async function toggleAtiv(leadId,ativId){
+  const l=leads.find(x=>x.id===leadId); if(!l||!l.atividades) return;
+  const a=l.atividades.find(x=>x.id===ativId); if(!a) return;
+  a.done=!a.done;
+  const ok=await upsertRow("crm_leads",l);
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); renderAtivs(leadId); render(); }
+}
+async function delAtiv(leadId,ativId){
+  const l=leads.find(x=>x.id===leadId); if(!l||!l.atividades) return;
+  if(!confirm("Excluir esta atividade?")) return;
+  l.atividades=l.atividades.filter(a=>a.id!==ativId);
+  const ok=await upsertRow("crm_leads",l);
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); renderAtivs(leadId); render(); toast("Atividade excluída"); }
+}
+function renderAtivs(leadId){
+  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const all=(l.atividades||[]);
+  const pending=all.filter(a=>!a.done).sort((a,b)=>(a.data||"").localeCompare(b.data||""));
+  const done=all.filter(a=>a.done).sort((a,b)=>(b.data||"").localeCompare(a.data||""));
+  const list=document.getElementById("atv-list"); if(!list) return;
+  let html="";
+  if(pending.length){ html+=`<div class="atv-section-label">⏳ Pendentes (${pending.length})</div>`; html+=pending.map(a=>ativHtml(a,leadId)).join(""); }
+  if(done.length){ html+=`<div class="atv-section-label">✓ Realizadas (${done.length})</div>`; html+=done.map(a=>ativHtml(a,leadId)).join(""); }
+  if(!all.length) html=`<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma atividade ainda. Clique em <b>+ Registrar atividade</b>.</div>`;
+  list.innerHTML=html;
+}
+function ativHtml(a,leadId){
+  const info=ATIVOS[a.tipo]||{icon:"📌",label:a.tipo};
+  const dt=a.data?new Date(a.data+"T00:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"2-digit"}):"";
+  return `<div class="atv-item${a.done?" done-item":""}">
+    <span class="atv-icon">${info.icon}</span>
+    <div class="atv-body">
+      <div class="atv-tipo">${info.label}</div>
+      <div class="atv-desc">${esc(a.desc)}</div>
+      ${dt||a.hora?`<div class="atv-date">${dt}${a.hora?" às "+a.hora:""}</div>`:""}
+    </div>
+    <input type="checkbox" class="atv-chk" ${a.done?"checked":""} onchange="toggleAtiv('${leadId}','${a.id}')" title="${a.done?"Marcar como pendente":"Marcar como concluída"}">
+    <span class="atv-del" onclick="delAtiv('${leadId}','${a.id}')" title="Excluir">✕</span>
+  </div>`;
 }
 
 /* ===== AGENDA ===== */
