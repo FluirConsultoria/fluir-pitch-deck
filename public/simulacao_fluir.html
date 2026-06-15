@@ -861,6 +861,13 @@ tr.proj-head-row th { background: #1e4080; }
           </div>
 
           <div>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Intro personalizada <span style="color:#6b8fbf;font-weight:400;font-size:11px;">(opcional)</span></label>
+            <textarea id="env_intro" rows="2" placeholder="Ex: Conforme conversamos na semana passada, segue o resumo...&#10;Se vazio, usa o texto padrão."
+              style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;resize:vertical;"></textarea>
+            <p style="margin:4px 0 0;font-size:11px;color:#6b8fbf;">Substitui "Agradeço pela agenda de hoje." — use quando a reunião foi há alguns dias.</p>
+          </div>
+
+          <div>
             <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Observação (opcional)</label>
             <textarea id="env_obs" rows="3" placeholder="Pontos discutidos na reunião, dúvidas do cliente..."
               style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;resize:vertical;"></textarea>
@@ -1074,6 +1081,7 @@ function enviarEmail() {
   var email     = document.getElementById('env_email').value.trim();
   var cc        = document.getElementById('env_cc').value.trim();
   var planilha  = document.getElementById('env_planilha').value === 'true';
+  var intro     = document.getElementById('env_intro').value.trim();
   var obs       = document.getElementById('env_obs').value.trim();
 
   if (!nome || !email) {
@@ -1102,7 +1110,8 @@ function enviarEmail() {
     aliquota_icms_origem: aliqO / 100,
     aliquota_icms_saida:  aliqS / 100,
     meses_contrato:       meses,
-    obs:                  obs
+    obs:                  obs,
+    intro:                intro || ''
   };
 
   var btn = document.getElementById('env_btn');
