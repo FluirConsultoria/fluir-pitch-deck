@@ -756,16 +756,6 @@ function renderAgenda(){
       upsertRow("crm_leads",dl).then(ok=>{if(ok) toast(`${dl.empresa} → ${dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`);});
     });
     const dn=document.createElement("div"); dn.className="day-num"; dn.textContent=dt.getDate(); cell.appendChild(dn);
-    leads.filter(l=>l.proxdata===ds).forEach(l=>{
-      const ev=document.createElement("div");
-      ev.className="cal-event "+(dt<today?"past":isTod?"now":"upcoming");
-      ev.title=(l.proxacao||"Follow-up")+" — "+l.empresa;
-      ev.textContent=(l.proxacao?"🕑 ":"")+esc(l.empresa);
-      ev.draggable=true;
-      ev.addEventListener("dragstart",e=>{e.dataTransfer.setData("text",l.id);e.stopPropagation();});
-      ev.onclick=()=>openModal(l.id);
-      cell.appendChild(ev);
-    });
     leads.forEach(l=>{
       (l.atividades||[]).filter(a=>a.data===ds&&!a.done).forEach(a=>{
         const info=ATIVOS[a.tipo]||{icon:"📌",label:a.tipo};
