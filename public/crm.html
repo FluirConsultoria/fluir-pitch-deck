@@ -13,6 +13,25 @@
   --red:#b42318;--red-l:#fdecea;--green:#0f7a3d;--green-l:#e7f4ec;--violet:#5b3a9c;--violet-l:#f2ecfb;
   --blue:#274b78;--blue-l:#e8eef6;--shadow:0 1px 2px rgba(16,40,48,.06),0 2px 8px rgba(16,40,48,.05);
 }
+/* AGENDA */
+.cal-nav{display:flex;align-items:center;gap:10px;padding:14px 20px 6px;flex-wrap:wrap}
+.cal-nav .month-title{font-size:17px;font-weight:800;min-width:200px;text-transform:capitalize}
+.cal-wrap{padding:0 20px 24px;overflow-x:auto}
+.cal-grid{min-width:700px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow)}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);background:linear-gradient(120deg,var(--teal-d),var(--teal));color:#fff}
+.cal-head div{padding:9px 6px;text-align:center;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day{border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:90px;padding:6px;background:var(--panel)}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day .day-num{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.cal-day.today .day-num{background:var(--teal);color:#fff}
+.cal-day.other-month{background:#f8fafb}
+.cal-day.other-month .day-num{opacity:.35}
+.cal-event{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+.cal-event.past{background:var(--red-l);color:var(--red)}
+.cal-event.now{background:var(--amber-l);color:var(--amber)}
+.cal-event.upcoming{background:var(--teal-l);color:var(--teal-d)}
+.cal-event:hover{opacity:.75}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45}
 /* LOGIN */
@@ -153,6 +172,7 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
 <div class="tabs">
   <div class="tab active" id="tab-leads" onclick="switchTab('leads')">Funil <span class="badge" id="badgeLeads">0</span></div>
   <div class="tab" id="tab-parceiros" onclick="switchTab('parceiros')">Parceiros <span class="badge" id="badgeParc">0</span></div>
+  <div class="tab" id="tab-agenda" onclick="switchTab('agenda')">📅 Agenda</div>
 </div>
 
 <div id="view-leads">
@@ -177,6 +197,24 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
   <div class="pfilters" id="pfilters"></div>
   <div class="empty-note" id="emptyParc" style="display:none">Nenhum parceiro. Clique em <b>+ Novo parceiro</b> para cadastrar contadores, operadores logísticos e transportadoras.</div>
   <div class="pgrid" id="pgrid"></div>
+</div>
+
+<div id="view-agenda" style="display:none">
+  <div class="cal-nav">
+    <button class="btn ghost sm" onclick="agendaNav(-1)">‹ Anterior</button>
+    <div class="month-title" id="agendaTitle"></div>
+    <button class="btn ghost sm" onclick="agendaNav(1)">Próximo ›</button>
+    <div class="spacer"></div>
+    <button class="btn ghost sm" onclick="agendaToday()">Hoje</button>
+  </div>
+  <div class="cal-wrap">
+    <div class="cal-grid">
+      <div class="cal-head">
+        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -310,8 +348,11 @@ async function deleteRow(table,id){
 function switchTab(w){
   document.getElementById("view-leads").style.display=w==="leads"?"block":"none";
   document.getElementById("view-parceiros").style.display=w==="parceiros"?"block":"none";
+  document.getElementById("view-agenda").style.display=w==="agenda"?"block":"none";
   document.getElementById("tab-leads").classList.toggle("active",w==="leads");
   document.getElementById("tab-parceiros").classList.toggle("active",w==="parceiros");
+  document.getElementById("tab-agenda").classList.toggle("active",w==="agenda");
+  if(w==="agenda") renderAgenda();
 }
 
 /* ===== LEADS ===== */
@@ -482,6 +523,37 @@ async function saveP(){
 async function delP(){
   const id=document.getElementById("p_id").value,p=parceiros.find(x=>x.id===id);
   if(p&&confirm(`Excluir "${p.nome}"?`)){ if(await deleteRow("crm_parceiros",id)){ await fetchAll(); closeP(); toast("Parceiro excluído"); } }
+}
+
+/* ===== AGENDA ===== */
+let agendaYear=new Date().getFullYear(), agendaMonth=new Date().getMonth();
+function agendaNav(d){ agendaMonth+=d; if(agendaMonth>11){agendaMonth=0;agendaYear++;}else if(agendaMonth<0){agendaMonth=11;agendaYear--;} renderAgenda(); }
+function agendaToday(){ agendaYear=new Date().getFullYear(); agendaMonth=new Date().getMonth(); renderAgenda(); }
+function renderAgenda(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const first=new Date(agendaYear,agendaMonth,1);
+  const lastDate=new Date(agendaYear,agendaMonth+1,0).getDate();
+  document.getElementById("agendaTitle").textContent=first.toLocaleDateString("pt-BR",{month:"long",year:"numeric"}).replace(/^\w/,c=>c.toUpperCase());
+  const startDow=first.getDay();
+  const totalCells=Math.ceil((startDow+lastDate)/7)*7;
+  const grid=document.getElementById("calDays"); grid.innerHTML="";
+  for(let i=0;i<totalCells;i++){
+    const dt=new Date(agendaYear,agendaMonth,1-startDow+i);
+    const isThis=dt.getMonth()===agendaMonth;
+    const isTod=dt.getTime()===today.getTime();
+    const ds=dt.toISOString().slice(0,10);
+    const cell=document.createElement("div"); cell.className="cal-day"+(isThis?"":" other-month")+(isTod?" today":"");
+    const dn=document.createElement("div"); dn.className="day-num"; dn.textContent=dt.getDate(); cell.appendChild(dn);
+    leads.filter(l=>l.proxdata===ds).forEach(l=>{
+      const ev=document.createElement("div");
+      ev.className="cal-event "+(dt<today?"past":isTod?"now":"upcoming");
+      ev.title=(l.proxacao||"Follow-up")+" — "+l.empresa;
+      ev.textContent=(l.proxacao?"🕑 ":"")+esc(l.empresa);
+      ev.onclick=()=>openModal(l.id);
+      cell.appendChild(ev);
+    });
+    grid.appendChild(cell);
+  }
 }
 
 /* ===== BACKUP ===== */
