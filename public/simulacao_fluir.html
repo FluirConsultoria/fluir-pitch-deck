@@ -668,6 +668,7 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('resumo')">📋 Ver Resumo da Operação →</button>
+    <button class="btn" onclick="copiarLinkComDados()" style="background:#1e4080;color:#fff;">🔗 Copiar link com dados</button>
     <button class="btn" id="btn-salvar-sim" onclick="salvarProposta()" style="background:#1a7a4a;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
@@ -782,6 +783,7 @@ tr.proj-head-row th { background: #1e4080; }
   <div class="actions">
     <button class="btn btn-gold" onclick="window.print()">🖨️ Gerar PDF</button>
     <button class="btn btn-blue" onclick="showTab('sim')">← Voltar à Simulação</button>
+    <button class="btn" onclick="copiarLinkComDados()" style="background:#1e4080;color:#fff;">🔗 Copiar link com dados</button>
     <button class="btn" id="btn-salvar-resumo" onclick="salvarProposta()" style="background:#1a7a4a;color:#fff;">💾 Salvar Proposta</button>
   </div>
 
@@ -1267,6 +1269,34 @@ function salvarProposta() {
     });
   });
 }
+
+// ===== COPIAR LINK COM DADOS =====
+function copiarLinkComDados() {
+  var fields = ['c7','c8','c11','c12','g8','g12','g14','i9'];
+  var params = fields.map(function(id){
+    var el = document.getElementById(id);
+    return el ? id + '=' + encodeURIComponent(el.value) : null;
+  }).filter(Boolean);
+  var empresa = (document.getElementById('env_empresa').value || '').trim();
+  if (empresa) params.push('empresa=' + encodeURIComponent(empresa));
+  var url = 'https://fluir-pitch-deck.pages.dev/simulacao_fluir?' + params.join('&');
+  var btns = document.querySelectorAll('[onclick="copiarLinkComDados()"]');
+  navigator.clipboard.writeText(url).then(function(){
+    btns.forEach(function(b){ var t=b.textContent; b.textContent='✅ Link copiado!'; setTimeout(function(){ b.textContent=t; },2500); });
+  }).catch(function(){ prompt('Copie o link:', url); });
+}
+
+// ===== CARREGAR DADOS DA URL =====
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if (p.get('view') === '1') return;
+  var fields = ['c7','c8','c11','c12','g8','g12','g14','i9'];
+  if (!fields.some(function(id){ return p.get(id) !== null; })) return;
+  fields.forEach(function(id){ var el=document.getElementById(id); if(el&&p.get(id)!==null) el.value=p.get(id); });
+  var emp = p.get('empresa');
+  if (emp) { var el=document.getElementById('env_empresa'); if(el) el.value=decodeURIComponent(emp); }
+  calc();
+})();
 
 // ===== VIEW MODE (link do email) =====
 (function(){
