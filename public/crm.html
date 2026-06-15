@@ -245,7 +245,7 @@ header.top button.hbtn:hover{background:rgba(255,255,255,.26)}
     <div class="body" id="modal-dados">
       <input type="hidden" id="f_id">
       <div class="fld full"><label>Empresa *</label><input id="f_empresa" placeholder="Ex.: Bella Distribuidora"></div>
-      <div class="fld"><label>Segmento</label><input id="f_segmento" list="segmentos" placeholder="Cosméticos">
+      <div class="fld"><label>Segmento</label><input id="f_segmento" list="segmentos" placeholder="Cosméticos" onfocus="this.select()">
         <datalist id="segmentos"><option>Cosméticos</option><option>Higiene &amp; Beleza</option><option>Suplementos</option><option>Limpeza e Higiene Doméstica</option><option>Farmacêutico</option><option>Alimentos e Bebidas</option><option>Bebidas</option><option>Pet / Veterinário</option><option>Embalagens</option><option>Papelaria e Escritório</option><option>Eletrônicos e Informática</option><option>Têxtil / Confecção</option><option>Materiais de Construção</option><option>Automotivo</option><option>Outro</option></datalist>
       </div>
       <div class="fld"><label>Estado (UF)</label>
@@ -432,7 +432,7 @@ function render(){
   const board=document.getElementById("board"); board.innerHTML="";
   STAGES.forEach((st,i)=>{
     const col=document.createElement("div"); col.className="col";
-    const inS=view.filter(l=>l.etapa===st);
+    const inS=view.filter(l=>l.etapa===st).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
     col.innerHTML=`<h3><span class="stg">${i+1}</span>${st}<span class="n">${inS.length}</span></h3><div class="cards"></div>`;
     const c=col.querySelector(".cards"); inS.forEach(l=>c.appendChild(cardEl(l)));
     col.addEventListener("dragover",e=>{e.preventDefault();col.classList.add("dragover");});
@@ -444,7 +444,17 @@ function render(){
 }
 function cardEl(l){
   const el=document.createElement("div"); el.className="card"; el.draggable=true;
-  el.addEventListener("dragstart",e=>e.dataTransfer.setData("text",l.id));
+  el.addEventListener("dragstart",e=>{e.dataTransfer.setData("text",l.id);});
+  el.addEventListener("click",()=>openModal(l.id));
+  el.addEventListener("dragover",e=>{e.preventDefault();e.stopPropagation();el.style.outline="2px dashed var(--teal)";el.style.outlineOffset="-2px";});
+  el.addEventListener("dragleave",()=>{el.style.outline="";});
+  el.addEventListener("drop",e=>{
+    e.preventDefault();e.stopPropagation();el.style.outline="";
+    const draggedId=e.dataTransfer.getData("text"); if(draggedId===l.id) return;
+    const dragged=leads.find(x=>x.id===draggedId); if(!dragged) return;
+    if(dragged.etapa===l.etapa) reorderWithin(l.etapa,draggedId,l.id);
+    else moveLead(draggedId,l.etapa);
+  });
   const d=daysTo(l.proxdata); let nc="",nt="";
   if(l.proxacao||l.proxdata){
     nc=d!==null&&d<=0?"due":(d!==null&&d<=3?"soon":"");
@@ -457,19 +467,30 @@ function cardEl(l){
   if(l.estado) tags.push(`<span class="tag uf">${esc(l.estado)}</span>`);
   if(l.faturamento) tags.push(`<span class="tag">Fat ${brl(l.faturamento)}</span>`);
   if(l.economia) tags.push(`<span class="tag eco">Econ ${brl(l.economia)}/mês</span>`);
-  el.innerHTML=`<span class="menu" onclick="openModal('${l.id}')">⋯</span>
+  el.innerHTML=`<span class="menu" onclick="event.stopPropagation();openModal('${l.id}')">⋯</span>
     <div class="empresa">${esc(l.empresa)}</div>
     ${l.contato?`<div class="contato">${esc(l.contato)}${l.cargo?" · "+esc(l.cargo):""}</div>`:""}
     <div class="row">${tags.join("")}</div>
     ${nt?`<div class="next ${nc}">${nt}</div>`:""}
     <div class="acts">
-      <button class="cal" onclick="addToCalendar('${l.id}')">📅 Agenda</button>
-      <button class="fl" onclick="fireFL('${l.id}','fl01')">📨 FL-01</button>
-      <button class="fl" onclick="fireFL('${l.id}','fl02')">📨 FL-02</button>
+      <button class="cal" onclick="event.stopPropagation();addToCalendar('${l.id}')">📅 Agenda</button>
+      <button class="fl" onclick="event.stopPropagation();fireFL('${l.id}','fl01')">📨 FL-01</button>
+      <button class="fl" onclick="event.stopPropagation();fireFL('${l.id}','fl02')">📨 FL-02</button>
     </div>`;
   return el;
 }
-async function moveLead(id,st){ const l=leads.find(x=>x.id===id); if(l&&l.etapa!==st){ l.etapa=st; render(); if(await upsertRow("crm_leads",l)) toast(`${l.empresa} → ${st}`); } }
+async function moveLead(id,st){ const l=leads.find(x=>x.id===id); if(l&&l.etapa!==st){ l.etapa=st; l.ordem=Math.max(0,...leads.filter(x=>x.etapa===st&&x.id!==id).map(x=>x.ordem||0))+1; render(); if(await upsertRow("crm_leads",l)) toast(`${l.empresa} → ${st}`); } }
+async function reorderWithin(stage,draggedId,targetId){
+  const inS=leads.filter(l=>l.etapa===stage).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  const di=inS.findIndex(l=>l.id===draggedId),ti=inS.findIndex(l=>l.id===targetId);
+  if(di<0||ti<0) return;
+  const [moved]=inS.splice(di,1); inS.splice(ti,0,moved);
+  inS.forEach((l,i)=>l.ordem=i+1);
+  leads=leads.map(l=>inS.find(x=>x.id===l.id)||l);
+  render();
+  for(const l of inS) await upsertRow("crm_leads",l);
+  toast("Ordem salva");
+}
 function openModal(id){
   initStageSelect(); const isE=!!id;
   document.getElementById("modalTitle").textContent=isE?"Editar lead":"Novo lead";
@@ -489,7 +510,7 @@ async function saveLead(){
   const empresa=val("f_empresa"); if(!empresa){ toast("Informe o nome da empresa",true); return; }
   const id=document.getElementById("f_id").value||uid();
   const existing=leads.find(x=>x.id===id);
-  const obj={id,empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa:val("f_etapa")||STAGES[0],faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[]};
+  const obj={id,empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa:val("f_etapa")||STAGES[0],faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:val("f_proxacao"),proxdata:val("f_proxdata"),obs:val("f_obs"),atividades:existing?.atividades||[],ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
@@ -659,12 +680,25 @@ function renderAgenda(){
     const isTod=dt.getTime()===today.getTime();
     const ds=dt.toISOString().slice(0,10);
     const cell=document.createElement("div"); cell.className="cal-day"+(isThis?"":" other-month")+(isTod?" today":"");
+    cell.addEventListener("dragover",e=>{e.preventDefault();cell.style.background="var(--teal-l)";});
+    cell.addEventListener("dragleave",()=>{cell.style.background="";});
+    cell.addEventListener("drop",e=>{
+      e.preventDefault();cell.style.background="";
+      const draggedId=e.dataTransfer.getData("text"); if(!draggedId) return;
+      const dl=leads.find(x=>x.id===draggedId); if(!dl||dl.proxdata===ds) return;
+      dl.proxdata=ds;
+      leads=leads.map(x=>x.id===dl.id?dl:x);
+      renderAgenda(); render();
+      upsertRow("crm_leads",dl).then(ok=>{if(ok) toast(`${dl.empresa} → ${dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`);});
+    });
     const dn=document.createElement("div"); dn.className="day-num"; dn.textContent=dt.getDate(); cell.appendChild(dn);
     leads.filter(l=>l.proxdata===ds).forEach(l=>{
       const ev=document.createElement("div");
       ev.className="cal-event "+(dt<today?"past":isTod?"now":"upcoming");
       ev.title=(l.proxacao||"Follow-up")+" — "+l.empresa;
       ev.textContent=(l.proxacao?"🕑 ":"")+esc(l.empresa);
+      ev.draggable=true;
+      ev.addEventListener("dragstart",e=>{e.dataTransfer.setData("text",l.id);e.stopPropagation();});
       ev.onclick=()=>openModal(l.id);
       cell.appendChild(ev);
     });
