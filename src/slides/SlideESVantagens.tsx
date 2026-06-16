@@ -68,10 +68,10 @@ const cards: CardProps[] = [
   {
     icon: <TrendingUp size={16} strokeWidth={1.5} />,
     tag: "Governo que Investe",
-    title: "R$ 137,6 bi em investimentos até 2029",
+    title: "R$ 35 bi até 2029 em logística e transporte",
     bullets: [
-      "Recorde histórico — 70% já em execução",
-      "Indústria e logística no centro do ciclo de investimento",
+      "Logística no centro do ciclo de investimento",
+      "Portos, rodovias, ferrovias e terminais de carga",
     ],
     color: "#2dd47e",
   },
