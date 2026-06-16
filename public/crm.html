@@ -253,6 +253,7 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
       <div class="fld"><label>Segmento</label><input id="f_segmento" list="segmentos" placeholder="Cosméticos" onfocus="this.select()">
         <datalist id="segmentos"><option>Cosméticos</option><option>Higiene &amp; Beleza</option><option>Suplementos</option><option>Limpeza e Higiene Doméstica</option><option>Farmacêutico</option><option>Alimentos e Bebidas</option><option>Bebidas</option><option>Pet / Veterinário</option><option>Embalagens</option><option>Papelaria e Escritório</option><option>Eletrônicos e Informática</option><option>Têxtil / Confecção</option><option>Materiais de Construção</option><option>Automotivo</option><option>Outro</option></datalist>
       </div>
+      <div class="fld"><label>Cidade</label><input id="f_cidade" placeholder="Vitória"></div>
       <div class="fld"><label>Estado (UF)</label>
         <select id="f_estado"><option value="">—</option><option>SP</option><option>RJ</option><option>RS</option><option>MG</option><option>PR</option><option>SC</option><option>BA</option><option>GO</option><option>ES</option><option>Outro</option></select>
       </div>
@@ -368,7 +369,7 @@ function num(id){ const v=document.getElementById(id).value; return v===""?null:
 function maskTel(el){let v=el.value.replace(/\D/g,"");if(v.length>11)v=v.slice(0,11);if(v.length<=10)v=v.replace(/^(\d{2})(\d{4})(\d{0,4})$/,"($1) $2-$3");else v=v.replace(/^(\d{2})(\d{5})(\d{0,4})$/,"($1) $2-$3");el.value=v.replace(/-$/,"");}
 function maskCNPJ(el){let v=el.value.replace(/\D/g,"");if(v.length>14)v=v.slice(0,14);v=v.replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2");el.value=v;}
 function cnaeToSeg(desc){const d=desc.toLowerCase();if(d.includes("cosmético")||d.includes("perfume")||d.includes("higiene pessoal"))return"Cosméticos";if(d.includes("higiene"))return"Higiene & Beleza";if(d.includes("suplemento")||d.includes("vitamina"))return"Suplementos";if(d.includes("limpeza"))return"Limpeza e Higiene Doméstica";if(d.includes("farmacêut")||d.includes("medicamento"))return"Farmacêutico";if(d.includes("alimento"))return"Alimentos e Bebidas";if(d.includes("bebida"))return"Bebidas";if(d.includes("pet ")||d.includes("veterinário")||d.includes("animal"))return"Pet / Veterinário";if(d.includes("embalagem"))return"Embalagens";if(d.includes("papelaria")||d.includes("escritório"))return"Papelaria e Escritório";if(d.includes("eletrônico")||d.includes("informática"))return"Eletrônicos e Informática";if(d.includes("têxtil")||d.includes("confecção")||d.includes("vestuário"))return"Têxtil / Confecção";if(d.includes("construção"))return"Materiais de Construção";if(d.includes("automotivo")||d.includes("veículo"))return"Automotivo";return null;}
-async function buscaCNPJ(){const cnpj=val("f_cnpj").replace(/\D/g,"");if(cnpj.length!==14){toast("CNPJ deve ter 14 dígitos",true);return;}const btn=document.getElementById("cnpjBtn");btn.disabled=true;btn.textContent="Buscando…";try{const r=await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);if(!r.ok)throw new Error("CNPJ não encontrado");const d=await r.json();if(d.razao_social||d.nome_fantasia)document.getElementById("f_empresa").value=d.nome_fantasia||d.razao_social;const UFS_=["SP","RJ","RS","MG","PR","SC","BA","GO","ES"];if(d.uf)document.getElementById("f_estado").value=UFS_.includes(d.uf)?d.uf:"Outro";if(d.cnae_fiscal_descricao){const seg=cnaeToSeg(d.cnae_fiscal_descricao);if(seg)document.getElementById("f_segmento").value=seg;}const parts=[];if(d.municipio&&d.uf)parts.push(`Município: ${d.municipio}/${d.uf}`);if(d.descricao_situacao_cadastral)parts.push(`Situação CNPJ: ${d.descricao_situacao_cadastral}`);if(parts.length){const obs=document.getElementById("f_obs");obs.value=(obs.value?obs.value+"\n":"")+parts.join(" | ");}toast("Dados preenchidos via BrasilAPI");}catch(err){toast(err.message||"Erro ao buscar CNPJ",true);}finally{btn.disabled=false;btn.textContent="Buscar";}}
+async function buscaCNPJ(){const cnpj=val("f_cnpj").replace(/\D/g,"");if(cnpj.length!==14){toast("CNPJ deve ter 14 dígitos",true);return;}const btn=document.getElementById("cnpjBtn");btn.disabled=true;btn.textContent="Buscando…";try{const r=await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);if(!r.ok)throw new Error("CNPJ não encontrado");const d=await r.json();if(d.razao_social||d.nome_fantasia)document.getElementById("f_empresa").value=d.nome_fantasia||d.razao_social;const UFS_=["SP","RJ","RS","MG","PR","SC","BA","GO","ES"];if(d.uf)document.getElementById("f_estado").value=UFS_.includes(d.uf)?d.uf:"Outro";if(d.municipio)document.getElementById("f_cidade").value=d.municipio;if(d.cnae_fiscal_descricao){const seg=cnaeToSeg(d.cnae_fiscal_descricao);if(seg)document.getElementById("f_segmento").value=seg;}const parts=[];if(d.descricao_situacao_cadastral)parts.push(`Situação CNPJ: ${d.descricao_situacao_cadastral}`);if(parts.length){const obs=document.getElementById("f_obs");obs.value=(obs.value?obs.value+"\n":"")+parts.join(" | ");}toast("Dados preenchidos via BrasilAPI");}catch(err){toast(err.message||"Erro ao buscar CNPJ",true);}finally{btn.disabled=false;btn.textContent="Buscar";}}
 
 /* ===== WHATSAPP + GOOGLE AGENDA ===== */
 function openWA(inputId){const tel=(document.getElementById(inputId)?.value||'').replace(/\D/g,'');if(!tel){toast('Informe o telefone',true);return;}window.open('https://wa.me/55'+tel,'_blank');}
@@ -429,6 +430,11 @@ async function fetchAll(){
     leads=(l||[]).map(r=>({id:r.id,...(r.data||{})}));
     parceiros=(p||[]).map(r=>({id:r.id,...(r.data||{})}));
     render(); sync("ok");
+    leads.filter(x=>(x.atividades||[]).length).forEach(x=>{
+      const before=x.proxdata;
+      syncProx(x);
+      if(x.proxdata!==before) upsertRow("crm_leads",x);
+    });
   }catch(err){ sync("err"); toast("Erro ao carregar: "+(err.message||err),true); }
 }
 async function upsertRow(table,obj){
@@ -529,7 +535,7 @@ function cardEl(l){
   const dStage=l.etapa_desde?Math.max(0,Math.round((new Date()-new Date(l.etapa_desde+"T00:00:00"))/86400000)):null;
   const tags=[];
   if(l.segmento) tags.push(`<span class="tag seg">${esc(l.segmento)}</span>`);
-  if(l.estado) tags.push(`<span class="tag uf">${esc(l.estado)}</span>`);
+  if(l.cidade||l.estado) tags.push(`<span class="tag uf">${esc([l.cidade,l.estado].filter(Boolean).join("/"))}</span>`);
   if(l.faturamento) tags.push(`<span class="tag">Fat ${brl(l.faturamento)}</span>`);
   if(l.economia) tags.push(`<span class="tag eco">Econ ${brl(l.economia)}/mês</span>`);
   if(actCount) tags.push(`<span class="tag" style="background:#eef2f4;color:var(--muted)" title="${actDone} concluída(s) de ${actCount}">📋 ${actDone}/${actCount}</span>`);
@@ -567,7 +573,7 @@ function openModal(id){
   document.getElementById("delBtn").style.display=isE?"inline-block":"none";
   const l=isE?leads.find(x=>x.id===id):{}; const g=(k,d="")=>l[k]!==undefined&&l[k]!==null?l[k]:d;
   document.getElementById("f_id").value=isE?id:"";
-  ["cnpj","empresa","segmento","contato","cargo","email","telefone","estado","faturamento","economia","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
+  ["cnpj","empresa","segmento","contato","cargo","email","telefone","cidade","estado","faturamento","economia","obs"].forEach(k=>document.getElementById("f_"+k).value=g(k));
   document.getElementById("f_link_planilha").value=g("link_planilha");
   document.getElementById("f_link_proposta").value=g("link_proposta");
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
@@ -586,7 +592,7 @@ async function saveLead(){
   const existing=leads.find(x=>x.id===id);
   const etapa=val("f_etapa")||STAGES[0];
   const etapa_desde=existing?.etapa===etapa?(existing?.etapa_desde||new Date().toISOString().slice(0,10)):new Date().toISOString().slice(0,10);
-  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:existing?.proxacao||'',proxdata:existing?.proxdata||'',obs:val("f_obs"),link_planilha:val("f_link_planilha"),link_proposta:val("f_link_proposta"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
+  const obj={id,cnpj:val("f_cnpj"),empresa,segmento:val("f_segmento"),contato:val("f_contato"),cargo:val("f_cargo"),email:val("f_email"),telefone:val("f_telefone"),cidade:val("f_cidade"),estado:val("f_estado"),etapa,etapa_desde,faturamento:num("f_faturamento"),economia:num("f_economia"),proxacao:existing?.proxacao||'',proxdata:existing?.proxdata||'',obs:val("f_obs"),link_planilha:val("f_link_planilha"),link_proposta:val("f_link_proposta"),atividades:existing?.atividades||[],contatos_extras:_extraContacts.filter(c=>(c.nome||'').trim()),ordem:existing?.ordem||0};
   const btn=document.getElementById("saveLeadBtn"); btn.disabled=true;
   const ok=await upsertRow("crm_leads",obj); btn.disabled=false;
   if(ok){ await fetchAll(); closeModal(); toast("Lead salvo"); }
@@ -700,6 +706,11 @@ function editAtiv(leadId,ativId){
   document.getElementById("atv_done").checked=!!a.done;
   document.getElementById("atv_desc").focus();
 }
+function syncProx(l){
+  const pending=(l.atividades||[]).filter(a=>!a.done&&a.data).sort((a,b)=>a.data.localeCompare(b.data));
+  if(pending.length){ const a=pending[0]; l.proxdata=a.data; l.proxacao=(ATIVOS[a.tipo]?.label||a.tipo)+": "+a.desc; }
+  else { l.proxdata=''; l.proxacao=''; }
+}
 async function saveAtiv(){
   const l=leads.find(x=>x.id===_ativLeadId); if(!l) return;
   const desc=document.getElementById("atv_desc").value.trim(); if(!desc){ toast("Informe a descrição",true); return; }
@@ -707,6 +718,7 @@ async function saveAtiv(){
   const atv={id:(_ativEditing?.id)||uid(),tipo:document.getElementById("atv_tipo").value,desc,data:document.getElementById("atv_data").value,hora:document.getElementById("atv_hora").value||null,done:document.getElementById("atv_done").checked,criadoEm:_ativEditing?.criadoEm||new Date().toISOString()};
   if(_ativEditing){ const idx=l.atividades.findIndex(a=>a.id===atv.id); if(idx>=0) l.atividades[idx]=atv; else l.atividades.push(atv); }
   else l.atividades.push(atv);
+  syncProx(l);
   const ok=await upsertRow("crm_leads",l);
   if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Atividade salva"); cancelAtiv(); renderAtivs(_ativLeadId); render(); if(atv.tipo==='reuniao'&&atv.data&&!_ativEditing){const ld=leads.find(x=>x.id===_ativLeadId);if(ld)openGCal(ld,atv);} }
 }
@@ -714,6 +726,7 @@ async function toggleAtiv(leadId,ativId){
   const l=leads.find(x=>x.id===leadId); if(!l||!l.atividades) return;
   const a=l.atividades.find(x=>x.id===ativId); if(!a) return;
   a.done=!a.done;
+  syncProx(l);
   const ok=await upsertRow("crm_leads",l);
   if(ok){ leads=leads.map(x=>x.id===l.id?l:x); renderAtivs(leadId); render(); }
 }
@@ -721,6 +734,7 @@ async function delAtiv(leadId,ativId){
   const l=leads.find(x=>x.id===leadId); if(!l||!l.atividades) return;
   if(!confirm("Excluir esta atividade?")) return;
   l.atividades=l.atividades.filter(a=>a.id!==ativId);
+  syncProx(l);
   const ok=await upsertRow("crm_leads",l);
   if(ok){ leads=leads.map(x=>x.id===l.id?l:x); renderAtivs(leadId); render(); toast("Atividade excluída"); }
 }
