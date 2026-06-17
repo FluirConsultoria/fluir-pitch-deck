@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo de Viabilidade Fiscal — Fluir ES</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  background: #e8edf2;
+  color: #1a1a2e;
+  padding-bottom: 40px;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+  background: linear-gradient(135deg, #0b1a35 0%, #12285a 100%);
+  padding: 18px 24px 16px;
+  text-align: center;
+  border-bottom: 3px solid #c9a227;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.fluir-logo {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+}
+.header-text { text-align: left; }
+.header-title {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.header-subtitle {
+  color: #c9a227;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+
+/* ===== CARD / PANEL ===== */
+.panel {
+  background: #fff;
+  border: 1px solid #b8cce0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  margin-bottom: 16px;
+}
+.panel-header {
+  background: #1e4080;
+  color: #fff;
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ===== INPUTS ===== */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+.input-group-title {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f2d60;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #d5e4f5;
+  padding-bottom: 4px;
+  margin-top: 6px;
+}
+.input-group-title:first-child { margin-top: 0; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; color: #2a3a52; font-weight: 600; }
+.field .input-row { display: flex; align-items: center; gap: 6px; }
+.field input {
+  border: 1px solid #c9a227;
+  background: #fffbea;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  padding: 6px 8px;
+  border-radius: 3px;
+  color: #0b1a35;
+  font-weight: 700;
+  width: 100%;
+}
+.field input:focus { outline: none; border-color: #1e4080; background: #eef4ff; }
+.field input[type="text"] { font-weight: 600; }
+.unit-sym { font-size: 11px; color: #6a8aaa; white-space: nowrap; }
+.field.note { grid-column: span 1; }
+.field-hint { font-size: 9.5px; color: #8aa4c8; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-gold { background: #c9a227; color: #0b1a35; }
+
+/* ===== SCENARIO TABS ===== */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px 0;
+  background: #fff;
+}
+.tab-btn {
+  padding: 9px 18px;
+  cursor: pointer;
+  color: #5a7aa0;
+  background: #eef3fa;
+  border: 1px solid #b8cce0;
+  border-bottom: none;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px 6px 0 0;
+  letter-spacing: 0.3px;
+}
+.tab-btn.active {
+  color: #0b1a35;
+  background: #c9a227;
+  border-color: #c9a227;
+}
+
+/* ===== CALC TABLE ===== */
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: #2d5fa8;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+}
+th.right { text-align: right; }
+td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #e4ecf5;
+  font-size: 12.5px;
+}
+td.right { text-align: right; font-variant-numeric: tabular-nums; }
+tr.sub td { color: #6a7d99; font-size: 11.5px; }
+tr.icms-row td { background: #d5e4f5; font-weight: 700; }
+tr.neg-row td { color: #b02a2a; }
+tr.final-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
+
+/* ===== WATERFALL ===== */
+.waterfall-wrap { padding: 14px; }
+#waterfall-svg { width: 100%; height: auto; display: block; }
+
+/* ===== PARITY ===== */
+.parity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 16px;
+}
+.parity-col {
+  border: 1px solid #b8cce0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.parity-head {
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+  color: #fff;
+}
+.parity-head.sp { background: #6a7d99; }
+.parity-head.es { background: #1e4080; }
+.parity-col table td { font-size: 12px; padding: 7px 12px; }
+.parity-result {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.parity-ok { background: #e6f5ea; color: #1a7a3a; border: 1px solid #1a7a3a; }
+.parity-warn { background: #fdeaea; color: #b02a2a; border: 1px solid #b02a2a; }
+
+/* ===== KPI CARDS ===== */
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+.kpi-card {
+  background: linear-gradient(135deg, #12285a 0%, #1e4080 100%);
+  border: 1px solid #2d5fa8;
+  border-radius: 8px;
+  padding: 18px 14px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+.kpi-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; color: #8aa4c8; margin-bottom: 8px; text-transform: uppercase; }
+.kpi-value { font-size: 24px; font-weight: 700; color: #c9a227; margin-bottom: 5px; }
+.kpi-desc { font-size: 10.5px; color: #9fb6d2; }
+.kpi-card.verdict-ok { background: linear-gradient(135deg, #14502c 0%, #1a7a3a 100%); border-color: #2fa658; }
+.kpi-card.verdict-ok .kpi-value { color: #d7ffe0; font-size: 22px; }
+.kpi-card.verdict-bad { background: linear-gradient(135deg, #6e1f1f 0%, #b02a2a 100%); border-color: #d05050; }
+.kpi-card.verdict-bad .kpi-value { color: #ffe0e0; font-size: 22px; }
+
+/* ===== GAUGE (ROSCA) ===== */
+.gauge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+.gauge-card {
+  border: 1px solid #b8cce0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.gauge-card-head {
+  background: #1e4080;
+  color: #fff;
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.gauge-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 18px 14px;
+  flex-wrap: wrap;
+}
+.gauge-ring-wrap { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.gauge-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-bg { fill: none; stroke: #e3e9f0; }
+.gauge-fg { fill: none; stroke-linecap: round; transition: stroke-dasharray .3s; }
+.gauge-center {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.gauge-pct { font-size: 22px; font-weight: 700; color: #0b1a35; }
+.gauge-pct.neg { color: #b02a2a; }
+.gauge-desc { max-width: 220px; font-size: 12px; color: #2a3a52; line-height: 1.5; }
+.gauge-desc strong { color: #0b1a35; }
+
+/* ===== PROJECTION ===== */
+.proj-scroll { max-height: 420px; overflow-y: auto; }
+#proj-table th { position: sticky; top: 0; }
+tr.tag-primavera td.tag { color: #1e4080; font-weight: 700; }
+tr.tag-fim td.tag { color: #c9a227; font-weight: 700; background: #0b1a35; }
+.proj-total-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
+
+.note-box {
+  background: #fffbea;
+  border: 1px solid #c9a227;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 16px 16px;
+  border-radius: 4px;
+}
+
+footer {
+  text-align: center;
+  font-size: 10px;
+  color: #8aa4c8;
+  padding: 16px;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .parity-grid { grid-template-columns: 1fr; }
+  .kpi-cards { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; }
+  .header-text { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-inner">
+    <img class="fluir-logo" src="fluir-logo.png" alt="Fluir">
+    <div class="header-text">
+      <div class="header-title">Estudo de Viabilidade Fiscal — Espírito Santo</div>
+      <div class="header-subtitle" id="dynamic-subtitle">{Empresa analisada} · base SPED {mês/ano}</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== INPUTS ===== -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Dados de Entrada</span>
+      <button class="btn btn-gold" onclick="clearAll()">Limpar dados</button>
+    </div>
+    <div class="input-grid">
+
+      <div class="input-group-title">Identificação</div>
+      <div class="field">
+        <label>Empresa analisada</label>
+        <input type="text" id="empresa" placeholder="Nome do prospect">
+      </div>
+      <div class="field">
+        <label>Mês/ano base SPED</label>
+        <input type="text" id="baseSped" placeholder="ex: Mar/2026">
+      </div>
+
+      <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
+      <div class="field">
+        <label>Faturamento mensal (BC Saídas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000"></div>
+      </div>
+      <div class="field">
+        <label>Compras (BC Entradas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000"></div>
+      </div>
+      <div class="field">
+        <label>ICMS efetivamente recolhido hoje (SPED)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100"></div>
+        <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
+      </div>
+
+      <div class="input-group-title">Parâmetros Fiscais</div>
+      <div class="field">
+        <label>Crédito entrada SP</label>
+        <div class="input-row"><input type="number" id="creditoEntradaSP" value="12" step="0.1"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Crédito entrada ES</label>
+        <div class="input-row"><input type="number" id="creditoEntradaES" value="7" step="0.1"><span class="unit-sym">%</span></div>
+        <div class="field-hint">Informativo — não impacta esta etapa de cálculo</div>
+      </div>
+      <div class="field">
+        <label>Destaque ICMS saída ES (crédito do cliente)</label>
+        <div class="input-row"><input type="number" id="destaqueSaidaES" value="12" step="0.1"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Carga efetiva ICMS ES (Compete)</label>
+        <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01"><span class="unit-sym">%</span></div>
+      </div>
+
+      <div class="input-group-title">Mix de Produtos (cenário Fim da Primavera)</div>
+      <div class="field">
+        <label>% Shampoo (saída 18%)</label>
+        <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>% Demais produtos (saída 25%)</label>
+        <div class="input-row"><input type="number" id="pctDemais" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
+        <div class="field-hint">Calculado automaticamente (100% − % shampoo)</div>
+      </div>
+      <div class="field">
+        <label>% das vendas a clientes creditantes</label>
+        <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+      </div>
+
+      <div class="input-group-title">Custos Incrementais e Consultoria</div>
+      <div class="field">
+        <label>Δ Logística ES − SP (% do faturamento)</label>
+        <div class="input-row"><input type="number" id="deltaLogPct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Δ Frete ES − SP (% do faturamento)</label>
+        <div class="input-row"><input type="number" id="deltaFretePct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Consultoria (% da economia bruta)</label>
+        <div class="input-row"><input type="number" id="consultoriaPct" value="6" step="0.1"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Consultoria — mínimo mensal</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="consultoriaMin" value="0" step="100"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SCENARIO + CALC TABLE ===== -->
+  <div class="panel">
+    <div class="tab-bar">
+      <div class="tab-btn active" id="tab-primavera" onclick="setScenario('primavera')">Primavera (SP 12%)</div>
+      <div class="tab-btn" id="tab-fim" onclick="setScenario('fim')">Fim da Primavera (18% shampoo / 25% demais)</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
+      </thead>
+      <tbody id="calc-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== WATERFALL ===== -->
+  <div class="panel">
+    <div class="panel-header"><span>Cascata do Benefício Líquido</span></div>
+    <div class="waterfall-wrap">
+      <svg id="waterfall-svg" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <!-- ===== PARITY ===== -->
+  <div class="panel">
+    <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido</span></div>
+    <div class="parity-grid">
+      <div class="parity-col">
+        <div class="parity-head sp">Comprando do concorrente (SP)</div>
+        <table>
+          <tr><td>Preço pago</td><td class="right" id="par-sp-preco">—</td></tr>
+          <tr><td>Crédito de ICMS</td><td class="right" id="par-sp-credito">—</td></tr>
+          <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido">—</strong></td></tr>
+        </table>
+      </div>
+      <div class="parity-col">
+        <div class="parity-head es">Comprando da empresa (ES)</div>
+        <table>
+          <tr><td>Preço pago</td><td class="right" id="par-es-preco">—</td></tr>
+          <tr><td>Crédito de ICMS</td><td class="right" id="par-es-credito">—</td></tr>
+          <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido">—</strong></td></tr>
+        </table>
+      </div>
+      <div class="parity-result" id="parity-result">—</div>
+    </div>
+  </div>
+
+  <!-- ===== KPI CARDS ===== -->
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Benefício líquido / mês</div>
+        <div class="kpi-value" id="kpi-mes">—</div>
+        <div class="kpi-desc">cenário selecionado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Benefício líquido / ano</div>
+        <div class="kpi-value" id="kpi-ano">—</div>
+        <div class="kpi-desc">cenário selecionado × 12</div>
+      </div>
+      <div class="kpi-card" id="kpi-veredicto-card">
+        <div class="kpi-title">Veredicto</div>
+        <div class="kpi-value" id="kpi-veredicto">—</div>
+        <div class="kpi-desc">migração SP → ES</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAUGES ===== -->
+  <div class="panel">
+    <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real</span></div>
+    <div class="gauge-grid">
+      <div class="gauge-card">
+        <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
+        <div class="gauge-card-body">
+          <div class="gauge-ring-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+              <circle id="gauge-liquido-fg" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" id="gauge-liquido-pct">—</div>
+            </div>
+          </div>
+          <div class="gauge-desc">
+            O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+          </div>
+        </div>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
+        <div class="gauge-card-body">
+          <div class="gauge-ring-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+              <circle id="gauge-desconto-fg" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" id="gauge-desconto-pct">—</div>
+            </div>
+          </div>
+          <div class="gauge-desc">
+            O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROJECTION 24M ===== -->
+  <div class="panel">
+    <div class="panel-header"><span>Projeção 24 Meses (Jun/2026 → Mai/2028)</span></div>
+    <div class="proj-scroll">
+      <table id="proj-table">
+        <thead>
+          <tr><th>Mês</th><th>Cenário</th><th class="right">Benefício mensal</th><th class="right">Acumulado</th></tr>
+        </thead>
+        <tbody id="proj-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>Nota da Reforma Tributária:</strong> o incentivo do Espírito Santo (Compete Atacadista) é integral até 2028.
+    A partir de 2029 o ganho líquido reduz 10% ao ano: 90% em 2029, 80% em 2030, 70% em 2031, encerrando (0%) em 2032.
+    A projeção de 24 meses acima ocorre integralmente dentro do período de incentivo pleno.
+  </div>
+
+</div>
+
+<footer>
+  Fluir Consultoria · Estudo de viabilidade fiscal ES · Sujeito a validação contábil.<br>
+  Logística e frete consideram apenas o incremental sobre a operação atual. O desconto ao cliente é o repasse máximo para igualar o custo líquido; ajustável conforme negociação e % de clientes creditantes.
+</footer>
+
+<script>
+const DEFAULTS = {
+  empresa: '', baseSped: '',
+  faturamento: 0, compras: 0, icmsSpedAtual: 0,
+  creditoEntradaSP: 12, creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
+  pctShampoo: 50, pctCreditantes: 100,
+  deltaLogPct: 0, deltaFretePct: 0,
+  consultoriaPct: 6, consultoriaMin: 0
+};
+
+let activeScenario = 'primavera';
+
+function fmtBRL(v) {
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+}
+function fmtPct(v) {
+  return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+}
+
+function getInputs() {
+  const num = id => parseFloat(document.getElementById(id).value) || 0;
+  const txt = id => document.getElementById(id).value;
+  return {
+    empresa: txt('empresa'),
+    baseSped: txt('baseSped'),
+    faturamento: num('faturamento'),
+    compras: num('compras'),
+    icmsSpedAtual: num('icmsSpedAtual'),
+    creditoEntradaSP: num('creditoEntradaSP'),
+    destaqueSaidaES: num('destaqueSaidaES'),
+    cargaEfetivaES: num('cargaEfetivaES'),
+    pctShampoo: num('pctShampoo'),
+    pctCreditantes: num('pctCreditantes'),
+    deltaLogPct: num('deltaLogPct'),
+    deltaFretePct: num('deltaFretePct'),
+    consultoriaPct: num('consultoriaPct'),
+    consultoriaMin: num('consultoriaMin')
+  };
+}
+
+function calcScenario(scenario, inp) {
+  const rSP = scenario === 'primavera'
+    ? 12
+    : (inp.pctShampoo / 100) * 18 + ((100 - inp.pctShampoo) / 100) * 25;
+
+  const icmsSP = scenario === 'primavera'
+    ? inp.icmsSpedAtual
+    : (rSP / 100) * inp.faturamento - (inp.creditoEntradaSP / 100) * inp.compras;
+
+  const descontoCliente = inp.faturamento * (inp.pctCreditantes / 100) *
+    ((rSP / 100) - (inp.destaqueSaidaES / 100)) / (1 - (inp.destaqueSaidaES / 100));
+
+  const faturamentoES = inp.faturamento - descontoCliente;
+  const icmsES = (inp.cargaEfetivaES / 100) * faturamentoES;
+  const economiaBruta = icmsSP - icmsES;
+  const consultoria = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta);
+  const deltaLogRS = (inp.deltaLogPct / 100) * inp.faturamento;
+  const deltaFreteRS = (inp.deltaFretePct / 100) * inp.faturamento;
+  const beneficioMes = economiaBruta - descontoCliente - consultoria - deltaLogRS - deltaFreteRS;
+  const beneficioAno = beneficioMes * 12;
+
+  return { scenario, rSP, icmsSP, descontoCliente, faturamentoES, icmsES, economiaBruta,
+    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno };
+}
+
+function setScenario(s) {
+  activeScenario = s;
+  document.getElementById('tab-primavera').classList.toggle('active', s === 'primavera');
+  document.getElementById('tab-fim').classList.toggle('active', s === 'fim');
+  render();
+}
+
+function renderCalcTable(r, scenario, inp) {
+  const icmsSPLabel = scenario === 'primavera'
+    ? 'ICMS SP a pagar (valor auditado SPED)'
+    : 'ICMS SP a pagar (projetado: rSP × Faturamento − créd.entrada SP × Compras)';
+  const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
+  const rows = [
+    ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
+    ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
+    ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(r.descontoCliente), false, true],
+    ['3', 'Faturamento ES (Faturamento − Desconto)', fmtBRL(r.faturamentoES), false, false],
+    ['4', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
+    ['5', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
+    ['6', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
+    ['7', 'Δ Logística (R$)', '− ' + fmtBRL(r.deltaLogRS), false, true],
+    ['8', 'Δ Frete (R$)', '− ' + fmtBRL(r.deltaFreteRS), false, true],
+    ['9', 'BENEFÍCIO LÍQUIDO / MÊS', fmtBRL(r.beneficioMes), false, false, false, true],
+    ['10', 'Benefício líquido / ano', fmtBRL(r.beneficioAno), false, false]
+  ];
+  const tbody = document.getElementById('calc-table-body');
+  tbody.innerHTML = rows.map(row => {
+    const [n, label, val, isSub, isNeg, isIcms, isFinal] = row;
+    let cls = '';
+    if (isSub) cls = 'sub';
+    else if (isFinal) cls = 'final-row';
+    else if (isIcms) cls = 'icms-row';
+    else if (isNeg) cls = 'neg-row';
+    return `<tr class="${cls}"><td>${n ? n + '. ' : ''}${label}</td><td class="right">${val}</td></tr>`;
+  }).join('');
+}
+
+function renderWaterfall(r) {
+  const svg = document.getElementById('waterfall-svg');
+  const W = 1100, H = 420;
+  const margin = { top: 40, right: 30, bottom: 90, left: 30 };
+  const plotW = W - margin.left - margin.right;
+  const plotH = H - margin.top - margin.bottom;
+
+  let running = r.economiaBruta;
+  const bars = [
+    { label: 'Economia Bruta\nICMS', from: 0, to: r.economiaBruta, type: 'start', value: r.economiaBruta }
+  ];
+  const steps = [
+    ['Desconto ao\nCliente', -r.descontoCliente],
+    ['Consultoria', -r.consultoria],
+    ['Δ Logística', -r.deltaLogRS],
+    ['Δ Frete', -r.deltaFreteRS]
+  ];
+  steps.forEach(([label, delta]) => {
+    bars.push({ label, from: running, to: running + delta, type: 'decrease', value: delta });
+    running += delta;
+  });
+  bars.push({ label: 'BENEFÍCIO\nLÍQUIDO', from: 0, to: running, type: 'final', value: running });
+
+  const allVals = bars.flatMap(b => [b.from, b.to]);
+  const maxV = Math.max(0, ...allVals);
+  const minV = Math.min(0, ...allVals);
+  const range = (maxV - minV) || 1;
+
+  const n = bars.length;
+  const barW = plotW / n * 0.6;
+  const gap = plotW / n;
+
+  function yFor(v) {
+    return margin.top + plotH - ((v - minV) / range) * plotH;
+  }
+
+  let svgContent = '';
+  const zeroY = yFor(0);
+  svgContent += `<line x1="${margin.left}" y1="${zeroY}" x2="${W - margin.right}" y2="${zeroY}" stroke="#cfd8e3" stroke-width="1"/>`;
+
+  bars.forEach((b, i) => {
+    const cx = margin.left + gap * i + gap / 2;
+    const top = Math.min(yFor(b.from), yFor(b.to));
+    const height = Math.abs(yFor(b.from) - yFor(b.to)) || 2;
+    let color = '#c9852a';
+    if (b.type === 'start') color = '#1e4080';
+    else if (b.type === 'final') color = b.value >= 0 ? '#1a7a3a' : '#b02a2a';
+
+    svgContent += `<rect x="${cx - barW / 2}" y="${top}" width="${barW}" height="${height}" fill="${color}" rx="3"/>`;
+
+    const valLabel = (b.type === 'decrease' ? '− ' : '') + fmtBRL(Math.abs(b.value));
+    const labelY = top - 10;
+    svgContent += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-size="13" font-weight="700" fill="#0b1a35">${valLabel}</text>`;
+
+    const lines = b.label.split('\n');
+    lines.forEach((line, li) => {
+      svgContent += `<text x="${cx}" y="${H - margin.bottom + 22 + li * 14}" text-anchor="middle" font-size="11" font-weight="700" fill="#2a3a52">${line}</text>`;
+    });
+
+    if (i < bars.length - 1) {
+      const nextCx = margin.left + gap * (i + 1) + gap / 2;
+      const connY = yFor(b.to);
+      svgContent += `<line x1="${cx + barW / 2}" y1="${connY}" x2="${nextCx - barW / 2}" y2="${connY}" stroke="#b8cce0" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    }
+  });
+
+  svg.innerHTML = svgContent;
+}
+
+function renderParity(r, inp) {
+  const spPreco = inp.faturamento;
+  const spCredito = (r.rSP / 100) * inp.faturamento;
+  const spLiquido = spPreco - spCredito;
+
+  const esPreco = r.faturamentoES;
+  const esCredito = (inp.destaqueSaidaES / 100) * r.faturamentoES;
+  const esLiquido = esPreco - esCredito;
+
+  document.getElementById('par-sp-preco').textContent = fmtBRL(spPreco);
+  document.getElementById('par-sp-credito').textContent = fmtBRL(spCredito);
+  document.getElementById('par-sp-liquido').textContent = fmtBRL(spLiquido);
+  document.getElementById('par-es-preco').textContent = fmtBRL(esPreco);
+  document.getElementById('par-es-credito').textContent = fmtBRL(esCredito);
+  document.getElementById('par-es-liquido').textContent = fmtBRL(esLiquido);
+
+  const diff = spLiquido - esLiquido;
+  const resultEl = document.getElementById('parity-result');
+  if (Math.abs(diff) < Math.max(1, inp.faturamento * 0.005)) {
+    resultEl.className = 'parity-result parity-ok';
+    resultEl.textContent = `Paridade confirmada — diferença de custo líquido: ${fmtBRL(diff)} (≈ R$ 0)`;
+  } else {
+    resultEl.className = 'parity-result parity-warn';
+    resultEl.textContent = `Atenção — diferença de custo líquido: ${fmtBRL(diff)}`;
+  }
+}
+
+function renderKpis(r) {
+  document.getElementById('kpi-mes').textContent = fmtBRL(r.beneficioMes);
+  document.getElementById('kpi-ano').textContent = fmtBRL(r.beneficioAno);
+  const card = document.getElementById('kpi-veredicto-card');
+  const veredicto = document.getElementById('kpi-veredicto');
+  if (r.beneficioMes > 0) {
+    card.className = 'kpi-card verdict-ok';
+    veredicto.textContent = 'VIÁVEL';
+  } else {
+    card.className = 'kpi-card verdict-bad';
+    veredicto.textContent = 'INVIÁVEL';
+  }
+}
+
+function renderProjection(inp) {
+  const calcPrimavera = calcScenario('primavera', inp);
+  const calcFim = calcScenario('fim', inp);
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  let startMonthIdx = 5; // Jun
+  let startYear = 2026;
+  let acumulado = 0;
+  let rows = '';
+  for (let i = 0; i < 24; i++) {
+    const monthIdx = (startMonthIdx + i) % 12;
+    const year = startYear + Math.floor((startMonthIdx + i) / 12);
+    const isPrimavera = i < 7;
+    const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
+    acumulado += beneficio;
+    const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
+    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
+    rows += `<tr class="${tagClass}"><td>${monthNames[monthIdx]}/${year}</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(beneficio)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+  }
+  rows += `<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO 24 MESES</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+  document.getElementById('proj-table-body').innerHTML = rows;
+}
+
+function renderSubtitle(inp) {
+  const empresa = inp.empresa || '{Empresa analisada}';
+  const base = inp.baseSped || '{mês/ano}';
+  document.getElementById('dynamic-subtitle').textContent = `${empresa} · base SPED ${base}`;
+}
+
+function setGauge(fgId, pctId, textId, percent) {
+  const r = 58;
+  const circumference = 2 * Math.PI * r;
+  const clamped = Math.max(0, Math.min(100, percent));
+  const fg = document.getElementById(fgId);
+  fg.setAttribute('stroke-dasharray', `${(clamped / 100) * circumference} ${circumference}`);
+  fg.setAttribute('stroke', percent < 0 ? '#b02a2a' : fg.dataset.color || fg.getAttribute('stroke'));
+  const pctEl = document.getElementById(pctId);
+  pctEl.textContent = `${percent.toFixed(0)}%`;
+  pctEl.classList.toggle('neg', percent < 0);
+  if (textId) document.getElementById(textId).textContent = `${percent.toFixed(0)}%`;
+}
+
+function renderGauges(r) {
+  if (!r.economiaBruta) {
+    setGauge('gauge-liquido-fg', 'gauge-liquido-pct', 'gauge-liquido-texto', 0);
+    setGauge('gauge-desconto-fg', 'gauge-desconto-pct', 'gauge-desconto-texto', 0);
+    return;
+  }
+  const pctLiquido = (r.beneficioMes / r.economiaBruta) * 100;
+  const pctDesconto = (r.descontoCliente / r.economiaBruta) * 100;
+  setGauge('gauge-liquido-fg', 'gauge-liquido-pct', 'gauge-liquido-texto', pctLiquido);
+  setGauge('gauge-desconto-fg', 'gauge-desconto-pct', 'gauge-desconto-texto', pctDesconto);
+}
+
+function render() {
+  const inp = getInputs();
+  renderSubtitle(inp);
+  const r = calcScenario(activeScenario, inp);
+  renderCalcTable(r, activeScenario, inp);
+  renderWaterfall(r);
+  renderParity(r, inp);
+  renderKpis(r);
+  renderGauges(r);
+  renderProjection(inp);
+}
+
+function clearAll() {
+  document.getElementById('empresa').value = DEFAULTS.empresa;
+  document.getElementById('baseSped').value = DEFAULTS.baseSped;
+  document.getElementById('faturamento').value = DEFAULTS.faturamento;
+  document.getElementById('compras').value = DEFAULTS.compras;
+  document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
+  document.getElementById('creditoEntradaSP').value = DEFAULTS.creditoEntradaSP;
+  document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
+  document.getElementById('destaqueSaidaES').value = DEFAULTS.destaqueSaidaES;
+  document.getElementById('cargaEfetivaES').value = DEFAULTS.cargaEfetivaES;
+  document.getElementById('pctShampoo').value = DEFAULTS.pctShampoo;
+  document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
+  document.getElementById('pctCreditantes').value = DEFAULTS.pctCreditantes;
+  document.getElementById('deltaLogPct').value = DEFAULTS.deltaLogPct;
+  document.getElementById('deltaFretePct').value = DEFAULTS.deltaFretePct;
+  document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
+  document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
+  setScenario('primavera');
+}
+
+document.getElementById('pctShampoo').addEventListener('input', function() {
+  const v = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+  document.getElementById('pctDemais').value = (100 - v).toFixed(0);
+  render();
+});
+
+document.querySelectorAll('.input-grid input').forEach(el => {
+  if (el.id !== 'pctShampoo') el.addEventListener('input', render);
+});
+
+document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
+render();
+</script>
+
+</body>
+</html>
