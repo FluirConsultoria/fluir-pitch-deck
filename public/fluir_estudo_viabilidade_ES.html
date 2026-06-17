@@ -115,6 +115,20 @@ body {
 .unit-sym { font-size: 11px; color: #6a8aaa; white-space: nowrap; }
 .field.note { grid-column: span 1; }
 .field-hint { font-size: 9.5px; color: #8aa4c8; }
+.markup-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #e8f0fb;
+  color: #1e4080;
+  border: 1px solid #b8cce0;
+  min-width: 70px;
+  text-align: center;
+}
+.markup-badge.atipico { background: #fdecea; color: #b71c1c; border-color: #f5c6c6; }
+.markup-badge.ok { background: #e6f4ea; color: #1b5e20; border-color: #a5d6a7; }
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -357,6 +371,11 @@ footer {
       <div class="field">
         <label>Compras (BC Entradas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Markup (Faturamento / Compras)</label>
+        <div id="markup-badge" class="markup-badge">—</div>
+        <div id="markup-hint" class="field-hint"></div>
       </div>
       <div class="field">
         <label>ICMS efetivamente recolhido hoje (SPED)</label>
@@ -818,9 +837,30 @@ function renderGauges(r) {
   setGauge('gauge-desconto-fg', 'gauge-desconto-pct', 'gauge-desconto-texto', pctDesconto);
 }
 
+function renderMarkup(inp) {
+  const badge = document.getElementById('markup-badge');
+  const hint = document.getElementById('markup-hint');
+  if (!inp.compras || inp.compras === 0) {
+    badge.textContent = '—';
+    badge.className = 'markup-badge';
+    hint.textContent = '';
+    return;
+  }
+  const pct = ((inp.faturamento / inp.compras) - 1) * 100;
+  badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
+  if (inp.faturamento < inp.compras) {
+    badge.className = 'markup-badge atipico';
+    hint.textContent = 'Mês atípico — mais entradas que saídas';
+  } else {
+    badge.className = 'markup-badge ok';
+    hint.textContent = '';
+  }
+}
+
 function render() {
   const inp = getInputs();
   renderSubtitle(inp);
+  renderMarkup(inp);
   const r = calcScenario(activeScenario, inp);
   renderCalcTable(r, activeScenario, inp);
   renderWaterfall(r);
