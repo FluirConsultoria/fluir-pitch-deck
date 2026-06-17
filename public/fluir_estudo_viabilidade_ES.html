@@ -127,8 +127,6 @@ body {
   min-width: 70px;
   text-align: center;
 }
-.markup-badge.atipico { background: #fdecea; color: #b71c1c; border-color: #f5c6c6; }
-.markup-badge.ok { background: #e6f4ea; color: #1b5e20; border-color: #a5d6a7; }
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -842,19 +840,12 @@ function renderMarkup(inp) {
   const hint = document.getElementById('markup-hint');
   if (!inp.compras || inp.compras === 0) {
     badge.textContent = '—';
-    badge.className = 'markup-badge';
     hint.textContent = '';
     return;
   }
   const pct = ((inp.faturamento / inp.compras) - 1) * 100;
   badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
-  if (inp.faturamento < inp.compras) {
-    badge.className = 'markup-badge atipico';
-    hint.textContent = 'Mês atípico — mais entradas que saídas';
-  } else {
-    badge.className = 'markup-badge ok';
-    hint.textContent = '';
-  }
+  hint.textContent = '';
 }
 
 function render() {
