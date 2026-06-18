@@ -747,10 +747,13 @@ function renderWaterfall(r) {
     let color = '#c9852a';
     if (b.type === 'start') color = '#1e4080';
     else if (b.type === 'final') color = b.value >= 0 ? '#1a7a3a' : '#b02a2a';
+    else if (b.type === 'decrease' && b.value >= 0) color = '#1a7a3a';
 
     svgContent += `<rect x="${cx - barW / 2}" y="${top}" width="${barW}" height="${height}" fill="${color}" rx="3"/>`;
 
-    const valLabel = (b.type === 'decrease' ? '− ' : '') + fmtBRL(Math.abs(b.value));
+    const valLabel = b.type === 'decrease'
+      ? (b.value < 0 ? '− ' : '+ ') + fmtBRL(Math.abs(b.value))
+      : fmtBRL(Math.abs(b.value));
     const labelY = top - 10;
     svgContent += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-size="13" font-weight="700" fill="#0b1a35">${valLabel}</text>`;
 
