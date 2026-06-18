@@ -646,8 +646,9 @@ function calcScenario(scenario, inp) {
   const icmsES = (inp.cargaEfetivaES / 100) * faturamentoES;
   const economiaBruta = icmsSP - icmsES;
   const consultoria = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta);
-  const deltaLogRS = (inp.deltaLogPct / 100) * inp.faturamento;
-  const deltaFreteRS = (inp.deltaFretePct / 100) * inp.faturamento;
+  const operadorLogRS = (inp.operadorLogPct / 100) * inp.faturamento;
+  const deltaLogRS = operadorLogRS - inp.custoLogAtual;
+  const deltaFreteRS = inp.freteNovo - inp.freteAtual;
   const beneficioMes = economiaBruta - descontoCliente - consultoria - deltaLogRS - deltaFreteRS;
   const beneficioAno = beneficioMes * 12;
 
