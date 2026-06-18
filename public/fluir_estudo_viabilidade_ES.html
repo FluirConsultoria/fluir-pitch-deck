@@ -879,10 +879,24 @@ function renderMarkup(inp) {
   hint.textContent = '';
 }
 
+function renderFreteLogistica(inp) {
+  const freteDiff = inp.freteNovo - inp.freteAtual;
+  document.getElementById('frete-diff-badge').textContent =
+    (freteDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(freteDiff));
+
+  const operadorRS = (inp.operadorLogPct / 100) * inp.faturamento;
+  document.getElementById('operador-log-rs').textContent = fmtBRL(operadorRS);
+
+  const logDiff = operadorRS - inp.custoLogAtual;
+  document.getElementById('logistica-diff-badge').textContent =
+    (logDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(logDiff));
+}
+
 function render() {
   const inp = getInputs();
   renderSubtitle(inp);
   renderMarkup(inp);
+  renderFreteLogistica(inp);
   const r = calcScenario(activeScenario, inp);
   renderCalcTable(r, activeScenario, inp);
   renderWaterfall(r);
