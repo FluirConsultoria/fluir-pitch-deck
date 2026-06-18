@@ -594,7 +594,7 @@ const DEFAULTS = {
   faturamento: 0, compras: 0, icmsSpedAtual: 0,
   creditoEntradaSP: 12, creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
-  deltaLogPct: 0, deltaFretePct: 0,
+  freteAtual: 0, freteNovo: 0, operadorLogPct: 0, custoLogAtual: 0,
   consultoriaPct: 6, consultoriaMin: 0
 };
 
@@ -621,8 +621,10 @@ function getInputs() {
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
     pctCreditantes: num('pctCreditantes'),
-    deltaLogPct: num('deltaLogPct'),
-    deltaFretePct: num('deltaFretePct'),
+    freteAtual: num('freteAtual'),
+    freteNovo: num('freteNovo'),
+    operadorLogPct: num('operadorLogPct'),
+    custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
     consultoriaMin: num('consultoriaMin')
   };
