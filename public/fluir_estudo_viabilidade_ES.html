@@ -668,6 +668,12 @@ function renderCalcTable(r, scenario, inp) {
     ? 'ICMS SP a pagar (valor auditado SPED)'
     : 'ICMS SP a pagar (projetado: rSP × Faturamento − créd.entrada SP × Compras)';
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
+
+  const deltaLogIsGain = r.deltaLogRS < 0;
+  const deltaFreteIsGain = r.deltaFreteRS < 0;
+  const deltaLogVal = (deltaLogIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaLogRS));
+  const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaFreteRS));
+
   const rows = [
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
@@ -676,18 +682,19 @@ function renderCalcTable(r, scenario, inp) {
     ['4', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['5', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
     ['6', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
-    ['7', 'Δ Logística (R$)', '− ' + fmtBRL(r.deltaLogRS), false, true],
-    ['8', 'Δ Frete (R$)', '− ' + fmtBRL(r.deltaFreteRS), false, true],
+    ['7', 'Δ Logística (R$)', deltaLogVal, false, !deltaLogIsGain, false, false, deltaLogIsGain],
+    ['8', 'Δ Frete (R$)', deltaFreteVal, false, !deltaFreteIsGain, false, false, deltaFreteIsGain],
     ['9', 'BENEFÍCIO LÍQUIDO / MÊS', fmtBRL(r.beneficioMes), false, false, false, true],
     ['10', 'Benefício líquido / ano', fmtBRL(r.beneficioAno), false, false]
   ];
   const tbody = document.getElementById('calc-table-body');
   tbody.innerHTML = rows.map(row => {
-    const [n, label, val, isSub, isNeg, isIcms, isFinal] = row;
+    const [n, label, val, isSub, isNeg, isIcms, isFinal, isPos] = row;
     let cls = '';
     if (isSub) cls = 'sub';
     else if (isFinal) cls = 'final-row';
     else if (isIcms) cls = 'icms-row';
+    else if (isPos) cls = 'pos-row';
     else if (isNeg) cls = 'neg-row';
     return `<tr class="${cls}"><td>${n ? n + '. ' : ''}${label}</td><td class="right">${val}</td></tr>`;
   }).join('');
