@@ -415,14 +415,31 @@ footer {
         <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
       </div>
 
-      <div class="input-group-title">Custos Incrementais e Consultoria</div>
+      <div class="input-group-title">Frete, Logística e Consultoria</div>
       <div class="field">
-        <label>Δ Logística ES − SP (% do faturamento)</label>
-        <div class="input-row"><input type="number" id="deltaLogPct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+        <label>Frete atual (Indústria → Matriz SP → Cliente)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteAtual" value="0" step="100"></div>
       </div>
       <div class="field">
-        <label>Δ Frete ES − SP (% do faturamento)</label>
-        <div class="input-row"><input type="number" id="deltaFretePct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+        <label>Frete novo (Indústria → Filial ES → Cliente)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteNovo" value="0" step="100"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Diferença de frete (novo − atual)</label>
+        <div id="frete-diff-badge" class="markup-badge">—</div>
+      </div>
+      <div class="field">
+        <label>Operador Logístico ES (% do faturamento)</label>
+        <div class="input-row"><input type="number" id="operadorLogPct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+        <div class="field-hint">Equivalente em R$/mês: <span id="operador-log-rs">—</span></div>
+      </div>
+      <div class="field">
+        <label>Custo atual da operação logística</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual" value="0" step="100"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Diferença de logística (operador ES − atual)</label>
+        <div id="logistica-diff-badge" class="markup-badge">—</div>
       </div>
       <div class="field">
         <label>Consultoria (% da economia bruta)</label>
