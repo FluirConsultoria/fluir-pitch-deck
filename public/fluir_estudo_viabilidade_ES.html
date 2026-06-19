@@ -870,16 +870,16 @@ function setGauge(fgId, pctId, textId, percent) {
   if (textId) document.getElementById(textId).textContent = `${percent.toFixed(0)}%`;
 }
 
-function renderGauges(r) {
+function renderGauges(r, suffix = '') {
   if (!r.economiaBruta) {
-    setGauge('gauge-liquido-fg', 'gauge-liquido-pct', 'gauge-liquido-texto', 0);
-    setGauge('gauge-desconto-fg', 'gauge-desconto-pct', 'gauge-desconto-texto', 0);
+    setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, 0);
+    setGauge('gauge-desconto-fg' + suffix, 'gauge-desconto-pct' + suffix, 'gauge-desconto-texto' + suffix, 0);
     return;
   }
   const pctLiquido = (r.beneficioMes / r.economiaBruta) * 100;
   const pctDesconto = (r.descontoCliente / r.economiaBruta) * 100;
-  setGauge('gauge-liquido-fg', 'gauge-liquido-pct', 'gauge-liquido-texto', pctLiquido);
-  setGauge('gauge-desconto-fg', 'gauge-desconto-pct', 'gauge-desconto-texto', pctDesconto);
+  setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, pctLiquido);
+  setGauge('gauge-desconto-fg' + suffix, 'gauge-desconto-pct' + suffix, 'gauge-desconto-texto' + suffix, pctDesconto);
 }
 
 function renderMarkup(inp) {
