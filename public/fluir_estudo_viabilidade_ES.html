@@ -893,7 +893,9 @@ function renderMarkup(inp) {
 }
 
 function renderFreteLogistica(inp) {
-  const freteDiff = inp.freteNovo - inp.freteAtual;
+  const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
+  const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
+  const freteDiff = freteNovoTotal - freteAtualTotal;
   document.getElementById('frete-diff-badge').textContent =
     (freteDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(freteDiff));
 
