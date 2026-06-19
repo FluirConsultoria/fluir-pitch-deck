@@ -127,7 +127,12 @@ body {
   min-width: 70px;
   text-align: center;
 }
-.field-compact { max-width: 180px; }
+.subgrid { grid-column: 1 / -1; display: grid; gap: 12px; }
+.subgrid-5 { grid-template-columns: repeat(5, 1fr); }
+.subgrid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) {
+  .subgrid-5, .subgrid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -425,38 +430,42 @@ footer {
       </div>
 
       <div class="input-group-title">Frete, Logística e Consultoria</div>
-      <div class="field">
-        <label>Frete Indústria → Matriz</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100"></div>
+      <div class="subgrid subgrid-5">
+        <div class="field">
+          <label>Frete Indústria → Matriz</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100"></div>
+        </div>
+        <div class="field">
+          <label>Frete Matriz → Cliente</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente" value="0" step="100"></div>
+        </div>
+        <div class="field">
+          <label>Frete Indústria → Filial ES</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100"></div>
+        </div>
+        <div class="field">
+          <label>Frete Filial ES → Cliente</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente" value="0" step="100"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Diferença de frete (novo − atual)</label>
+          <div id="frete-diff-badge" class="markup-badge">—</div>
+        </div>
       </div>
-      <div class="field">
-        <label>Frete Matriz → Cliente</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente" value="0" step="100"></div>
-      </div>
-      <div class="field">
-        <label>Frete Indústria → Filial ES</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100"></div>
-      </div>
-      <div class="field">
-        <label>Frete Filial ES → Cliente</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente" value="0" step="100"></div>
-      </div>
-      <div class="field field-markup field-compact">
-        <label>Diferença de frete (novo − atual)</label>
-        <div id="frete-diff-badge" class="markup-badge">—</div>
-      </div>
-      <div class="field">
-        <label>Operador Logístico ES (% do faturamento)</label>
-        <div class="input-row"><input type="number" id="operadorLogPct" value="0" step="0.1"><span class="unit-sym">%</span></div>
-        <div class="field-hint">Equivalente em R$/mês: <span id="operador-log-rs">—</span></div>
-      </div>
-      <div class="field">
-        <label>Custo atual da operação logística</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual" value="0" step="100"></div>
-      </div>
-      <div class="field field-markup">
-        <label>Diferença de logística (operador ES − atual)</label>
-        <div id="logistica-diff-badge" class="markup-badge">—</div>
+      <div class="subgrid subgrid-3">
+        <div class="field">
+          <label>Operador Logístico ES (% do faturamento)</label>
+          <div class="input-row"><input type="number" id="operadorLogPct" value="0" step="0.1"><span class="unit-sym">%</span></div>
+          <div class="field-hint">Equivalente em R$/mês: <span id="operador-log-rs">—</span></div>
+        </div>
+        <div class="field">
+          <label>Custo atual da operação logística</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual" value="0" step="100"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Diferença de logística (operador ES − atual)</label>
+          <div id="logistica-diff-badge" class="markup-badge">—</div>
+        </div>
       </div>
       <div class="field">
         <label>Consultoria (% da economia bruta)</label>
