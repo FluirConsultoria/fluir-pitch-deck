@@ -788,7 +788,7 @@ function renderWaterfall(r, suffix = '') {
   svg.innerHTML = svgContent;
 }
 
-function renderParity(r, inp) {
+function renderParity(r, inp, suffix = '') {
   const spPreco = inp.faturamento;
   const spCredito = (r.rSP / 100) * inp.faturamento;
   const spLiquido = spPreco - spCredito;
@@ -797,15 +797,15 @@ function renderParity(r, inp) {
   const esCredito = (inp.destaqueSaidaES / 100) * r.faturamentoES;
   const esLiquido = esPreco - esCredito;
 
-  document.getElementById('par-sp-preco').textContent = fmtBRL(spPreco);
-  document.getElementById('par-sp-credito').textContent = fmtBRL(spCredito);
-  document.getElementById('par-sp-liquido').textContent = fmtBRL(spLiquido);
-  document.getElementById('par-es-preco').textContent = fmtBRL(esPreco);
-  document.getElementById('par-es-credito').textContent = fmtBRL(esCredito);
-  document.getElementById('par-es-liquido').textContent = fmtBRL(esLiquido);
+  document.getElementById('par-sp-preco' + suffix).textContent = fmtBRL(spPreco);
+  document.getElementById('par-sp-credito' + suffix).textContent = fmtBRL(spCredito);
+  document.getElementById('par-sp-liquido' + suffix).textContent = fmtBRL(spLiquido);
+  document.getElementById('par-es-preco' + suffix).textContent = fmtBRL(esPreco);
+  document.getElementById('par-es-credito' + suffix).textContent = fmtBRL(esCredito);
+  document.getElementById('par-es-liquido' + suffix).textContent = fmtBRL(esLiquido);
 
   const diff = spLiquido - esLiquido;
-  const resultEl = document.getElementById('parity-result');
+  const resultEl = document.getElementById('parity-result' + suffix);
   if (Math.abs(diff) < Math.max(1, inp.faturamento * 0.005)) {
     resultEl.className = 'parity-result parity-ok';
     resultEl.textContent = `Paridade confirmada — diferença de custo líquido: ${fmtBRL(diff)} (≈ R$ 0)`;
