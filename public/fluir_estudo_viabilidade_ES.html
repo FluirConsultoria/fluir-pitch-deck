@@ -716,8 +716,8 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   }).join('');
 }
 
-function renderWaterfall(r) {
-  const svg = document.getElementById('waterfall-svg');
+function renderWaterfall(r, suffix = '') {
+  const svg = document.getElementById('waterfall-svg' + suffix);
   const W = 1100, H = 420;
   const margin = { top: 40, right: 30, bottom: 90, left: 30 };
   const plotW = W - margin.left - margin.right;
