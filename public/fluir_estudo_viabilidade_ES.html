@@ -574,6 +574,200 @@ footer {
   </div>
   </div>
 
+  <div id="print-report" style="display:none">
+    <h2>Cenário: Primavera (SP 12%)</h2>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
+        </thead>
+        <tbody id="calc-table-body-print-primavera"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Benefício Líquido</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-print-primavera" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido</span></div>
+      <div class="parity-grid">
+        <div class="parity-col">
+          <div class="parity-head sp">Comprando do concorrente (SP)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-sp-preco-print-primavera">—</td></tr>
+            <tr><td>Crédito de ICMS</td><td class="right" id="par-sp-credito-print-primavera">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido-print-primavera">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-col">
+          <div class="parity-head es">Comprando da empresa (ES)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-es-preco-print-primavera">—</td></tr>
+            <tr><td>Crédito de ICMS</td><td class="right" id="par-es-credito-print-primavera">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido-print-primavera">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-result" id="parity-result-print-primavera">—</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / mês</div>
+          <div class="kpi-value" id="kpi-mes-print-primavera">—</div>
+          <div class="kpi-desc">cenário Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-print-primavera">—</div>
+          <div class="kpi-desc">cenário Primavera × 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-print-primavera">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-print-primavera">—</div>
+          <div class="kpi-desc">migração SP → ES</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-print-primavera">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+            </div>
+          </div>
+        </div>
+        <div class="gauge-card">
+          <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-desconto-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-desconto-pct-print-primavera">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto-print-primavera">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Cenário: Fim da Primavera (mix de produtos)</h2>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
+        </thead>
+        <tbody id="calc-table-body-print-fim"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Benefício Líquido</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-print-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido</span></div>
+      <div class="parity-grid">
+        <div class="parity-col">
+          <div class="parity-head sp">Comprando do concorrente (SP)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-sp-preco-print-fim">—</td></tr>
+            <tr><td>Crédito de ICMS</td><td class="right" id="par-sp-credito-print-fim">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido-print-fim">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-col">
+          <div class="parity-head es">Comprando da empresa (ES)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-es-preco-print-fim">—</td></tr>
+            <tr><td>Crédito de ICMS</td><td class="right" id="par-es-credito-print-fim">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido-print-fim">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-result" id="parity-result-print-fim">—</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / mês</div>
+          <div class="kpi-value" id="kpi-mes-print-fim">—</div>
+          <div class="kpi-desc">cenário Fim da Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-print-fim">—</div>
+          <div class="kpi-desc">cenário Fim da Primavera × 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-print-fim">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-print-fim">—</div>
+          <div class="kpi-desc">migração SP → ES</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-print-fim">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+            </div>
+          </div>
+        </div>
+        <div class="gauge-card">
+          <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-desconto-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-desconto-pct-print-fim">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto-print-fim">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== PROJECTION 24M ===== -->
   <div class="panel">
     <div class="panel-header"><span>Projeção 24 Meses (Jun/2026 → Mai/2028)</span></div>
