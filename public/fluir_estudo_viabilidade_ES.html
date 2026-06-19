@@ -329,6 +329,12 @@ footer {
   .header-inner { flex-direction: column; }
   .header-text { text-align: center; }
 }
+
+@media print {
+  #input-panel, #screen-report { display: none; }
+  #print-report { display: block; }
+  body { background: #fff; }
+}
 </style>
 </head>
 <body>
