@@ -1104,6 +1104,27 @@ function renderFreteLogistica(inp) {
     (logDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(logDiff));
 }
 
+function salvarEstudo() {
+  const inp = getInputs();
+  const rPrimavera = calcScenario('primavera', inp);
+  const rFim = calcScenario('fim', inp);
+
+  renderCalcTable(rPrimavera, 'primavera', inp, '-print-primavera');
+  renderWaterfall(rPrimavera, '-print-primavera');
+  renderParity(rPrimavera, inp, '-print-primavera');
+  renderKpis(rPrimavera, '-print-primavera');
+  renderGauges(rPrimavera, '-print-primavera');
+
+  renderCalcTable(rFim, 'fim', inp, '-print-fim');
+  renderWaterfall(rFim, '-print-fim');
+  renderParity(rFim, inp, '-print-fim');
+  renderKpis(rFim, '-print-fim');
+  renderGauges(rFim, '-print-fim');
+
+  document.title = `Estudo de Viabilidade Fiscal - ${inp.empresa || 'Prospect'} - ${inp.baseSped || ''}`;
+  window.print();
+}
+
 function render() {
   const inp = getInputs();
   renderSubtitle(inp);
