@@ -815,11 +815,11 @@ function renderParity(r, inp, suffix = '') {
   }
 }
 
-function renderKpis(r) {
-  document.getElementById('kpi-mes').textContent = fmtBRL(r.beneficioMes);
-  document.getElementById('kpi-ano').textContent = fmtBRL(r.beneficioAno);
-  const card = document.getElementById('kpi-veredicto-card');
-  const veredicto = document.getElementById('kpi-veredicto');
+function renderKpis(r, suffix = '') {
+  document.getElementById('kpi-mes' + suffix).textContent = fmtBRL(r.beneficioMes);
+  document.getElementById('kpi-ano' + suffix).textContent = fmtBRL(r.beneficioAno);
+  const card = document.getElementById('kpi-veredicto-card' + suffix);
+  const veredicto = document.getElementById('kpi-veredicto' + suffix);
   if (r.beneficioMes > 0) {
     card.className = 'kpi-card verdict-ok';
     veredicto.textContent = 'VIÁVEL';
