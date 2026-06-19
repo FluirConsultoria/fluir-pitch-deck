@@ -679,7 +679,7 @@ function setScenario(s) {
   render();
 }
 
-function renderCalcTable(r, scenario, inp) {
+function renderCalcTable(r, scenario, inp, suffix = '') {
   const icmsSPLabel = scenario === 'primavera'
     ? 'ICMS SP a pagar (valor auditado SPED)'
     : 'ICMS SP a pagar (projetado: rSP × Faturamento − créd.entrada SP × Compras)';
@@ -703,7 +703,7 @@ function renderCalcTable(r, scenario, inp) {
     ['9', 'BENEFÍCIO LÍQUIDO / MÊS', fmtBRL(r.beneficioMes), false, false, false, true],
     ['10', 'Benefício líquido / ano', fmtBRL(r.beneficioAno), false, false]
   ];
-  const tbody = document.getElementById('calc-table-body');
+  const tbody = document.getElementById('calc-table-body' + suffix);
   tbody.innerHTML = rows.map(row => {
     const [n, label, val, isSub, isNeg, isIcms, isFinal, isPos] = row;
     let cls = '';
