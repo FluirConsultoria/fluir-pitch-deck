@@ -418,14 +418,22 @@ footer {
 
       <div class="input-group-title">Frete, Logística e Consultoria</div>
       <div class="field">
-        <label>Frete atual (Indústria → Matriz SP → Cliente)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteAtual" value="0" step="100"></div>
+        <label>Frete Indústria → Matriz</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100"></div>
       </div>
       <div class="field">
-        <label>Frete novo (Indústria → Filial ES → Cliente)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteNovo" value="0" step="100"></div>
+        <label>Frete Matriz → Cliente</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente" value="0" step="100"></div>
       </div>
-      <div class="field field-markup">
+      <div class="field">
+        <label>Frete Indústria → Filial ES</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100"></div>
+      </div>
+      <div class="field">
+        <label>Frete Filial ES → Cliente</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente" value="0" step="100"></div>
+      </div>
+      <div class="field field-markup field-compact">
         <label>Diferença de frete (novo − atual)</label>
         <div id="frete-diff-badge" class="markup-badge">—</div>
       </div>
