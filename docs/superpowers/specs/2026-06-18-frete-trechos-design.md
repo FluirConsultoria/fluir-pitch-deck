@@ -31,7 +31,14 @@ Ordem visual: os 2 campos do frete atual primeiro, depois os 2 do frete novo, de
 
 **Não há campos de total** (frete atual total / frete novo total) — só os 4 inputs e a badge final de diferença, para manter o painel compacto.
 
-**Ajuste visual:** a badge `frete-diff-badge` (classe `.field-markup`) passa a ter `max-width` reduzido via CSS, para não ocupar uma célula inteira da grade — fica visualmente mais leve/compacta do que os campos de input ao lado.
+**Ajuste visual:** o campo da badge `frete-diff-badge` ganha uma classe adicional dedicada `field-compact` (em vez de depender só de `.field-markup`, que já é compartilhada pelo badge de Markup original e pelo badge de diferença de logística — reduzir `.field-markup` direto encolheria os três). Nova regra CSS: `.field-compact { max-width: 180px; }`, aplicada só nesse campo.
+
+```html
+<div class="field field-markup field-compact">
+  <label>Diferença de frete (novo − atual)</label>
+  <div id="frete-diff-badge" class="markup-badge">—</div>
+</div>
+```
 
 ## Mudanças no cálculo
 
