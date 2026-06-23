@@ -331,11 +331,11 @@ input:focus{box-shadow:0 0 0 1px var(--accent)}
         Menos ICMS. Mais Margem.<br>
         <span style="background:var(--grad-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent">O próximo passo é simples.</span>
       </h2>
-      <div class="fi gp" style="margin-top:48px;display:inline-flex;align-items:center;gap:12px;padding:20px 32px;border-radius:40px;background:var(--grad-accent)">
+      <a href="https://wa.me/5531998065558?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20kick-off%20da%20proposta%20Fluir." target="_blank" rel="noopener" class="fi gp" style="margin-top:48px;display:inline-flex;align-items:center;gap:12px;padding:20px 32px;border-radius:40px;background:var(--grad-accent);text-decoration:none;cursor:pointer">
         <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
         <span style="color:white;font-weight:700;font-size:18px">Agende o kick-off</span>
         <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </div>
+      </a>
       <p class="fi" style="font-size:17px;color:var(--text-gray);margin-top:24px;font-style:italic">Em dias, você tem os números na mão.</p>
       <br>
       <p class="fi" style="font-size:14px;color:var(--text-gray);margin-top:20px;opacity:.75">carlos@fluirconsultoriaes.com.br &middot; Vit&oacute;ria, Esp&iacute;rito Santo</p>
@@ -478,7 +478,7 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Escape') closeModal();
 });
 document.addEventListener('click',e=>{
-  if(e.target.closest('button')||e.target.closest('.mo')) return;
+  if(e.target.closest('button')||e.target.closest('a')||e.target.closest('.mo')) return;
   next();
 });
 function toggleFS(){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
