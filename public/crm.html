@@ -157,6 +157,15 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
 .atv-chk{flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--teal);margin-top:2px}
 .atv-del{flex-shrink:0;color:#ccc;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px}
 .atv-del:hover{color:var(--red)}
+.anexo-list{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.anexo-item{display:flex;align-items:center;gap:6px;font-size:12px;background:#f1f5f8;border:1px solid var(--line);border-radius:7px;padding:4px 8px}
+.anexo-item .anexo-nome{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;color:var(--teal-d);font-weight:600}
+.anexo-item .anexo-nome:hover{text-decoration:underline}
+.anexo-item .anexo-del{flex-shrink:0;color:#ccc;cursor:pointer;padding:0 2px}
+.anexo-item .anexo-del:hover{color:var(--red)}
+.anexo-add{margin-top:6px;font-size:11.5px;border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:7px;padding:4px 9px;cursor:pointer;font-weight:600}
+.anexo-add:hover{border-color:var(--teal);color:var(--teal-d)}
+.anexo-up{font-size:11.5px;color:var(--muted);margin-top:4px}
 </style>
 </head>
 <body>
@@ -185,6 +194,7 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
   <button class="hbtn" onclick="exportJSON()">Exportar</button>
   <button class="hbtn" onclick="document.getElementById('importFile').click()">Importar</button>
   <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(event)">
+  <input type="file" id="anexoFile" style="display:none" onchange="onAnexoFile(event)">
   <button class="hbtn" onclick="logout()">Sair</button>
 </header>
 
@@ -354,6 +364,7 @@ const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const N8N={fl01:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pre-viabilidade",fl02:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pos-proposta"};
+const STORAGE_BUCKET="crm-anexos";
 const STAGES=["Prospecção","Qualificação","Pré-viabilidade","Proposta","Negociação","Contrato","Kickoff","Implementação","Operação ativa"];
 const PTYPES=["Contador","Operador logístico","Transportadora","Outro"];
 let leads=[], parceiros=[], pFilter="Todos", _extraContacts=[];
@@ -715,7 +726,7 @@ async function saveAtiv(){
   const l=leads.find(x=>x.id===_ativLeadId); if(!l) return;
   const desc=document.getElementById("atv_desc").value.trim(); if(!desc){ toast("Informe a descrição",true); return; }
   if(!l.atividades) l.atividades=[];
-  const atv={id:(_ativEditing?.id)||uid(),tipo:document.getElementById("atv_tipo").value,desc,data:document.getElementById("atv_data").value,hora:document.getElementById("atv_hora").value||null,done:document.getElementById("atv_done").checked,criadoEm:_ativEditing?.criadoEm||new Date().toISOString()};
+  const atv={id:(_ativEditing?.id)||uid(),tipo:document.getElementById("atv_tipo").value,desc,data:document.getElementById("atv_data").value,hora:document.getElementById("atv_hora").value||null,done:document.getElementById("atv_done").checked,criadoEm:_ativEditing?.criadoEm||new Date().toISOString(),anexos:_ativEditing?.anexos||[]};
   if(_ativEditing){ const idx=l.atividades.findIndex(a=>a.id===atv.id); if(idx>=0) l.atividades[idx]=atv; else l.atividades.push(atv); }
   else l.atividades.push(atv);
   syncProx(l);
@@ -753,17 +764,55 @@ function renderAtivs(leadId){
 function ativHtml(a,leadId){
   const info=ATIVOS[a.tipo]||{icon:"📌",label:a.tipo};
   const dt=a.data?new Date(a.data+"T00:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"2-digit"}):"";
+  const anexos=a.anexos||[];
+  const anexosHtml=anexos.length?`<div class="anexo-list">${anexos.map(x=>`<div class="anexo-item"><span>📎</span><span class="anexo-nome" onclick="openAnexo('${esc(x.path)}')" title="Abrir ${esc(x.nome)}">${esc(x.nome)}</span><span class="anexo-del" onclick="removeAnexo('${leadId}','${a.id}','${x.id}')" title="Remover anexo">✕</span></div>`).join("")}</div>`:"";
   return `<div class="atv-item${a.done?" done-item":""}">
     <span class="atv-icon">${info.icon}</span>
     <div class="atv-body">
       <div class="atv-tipo">${info.label}</div>
       <div class="atv-desc">${esc(a.desc)}</div>
       ${dt||a.hora?`<div class="atv-date">${dt}${a.hora?" às "+a.hora:""}</div>`:""}
+      ${anexosHtml}
+      <button type="button" class="anexo-add" onclick="attachAnexo('${leadId}','${a.id}')">📎 Anexar documento</button>
     </div>
     <input type="checkbox" class="atv-chk" ${a.done?"checked":""} onchange="toggleAtiv('${leadId}','${a.id}')" title="${a.done?"Marcar como pendente":"Marcar como concluída"}">
     <span onclick="editAtiv('${leadId}','${a.id}')" title="Editar" style="cursor:pointer;color:var(--muted);font-size:13px;margin-right:4px">✏️</span>
     <span class="atv-del" onclick="delAtiv('${leadId}','${a.id}')" title="Excluir">✕</span>
   </div>`;
+}
+
+/* ===== ANEXOS (Supabase Storage) ===== */
+let _anexoCtx=null;
+function attachAnexo(leadId,ativId){ _anexoCtx={leadId,ativId}; document.getElementById("anexoFile").click(); }
+async function onAnexoFile(e){
+  const file=e.target.files[0]; e.target.value="";
+  if(!file||!_anexoCtx) return;
+  const {leadId,ativId}=_anexoCtx; _anexoCtx=null;
+  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const a=(l.atividades||[]).find(x=>x.id===ativId); if(!a) return;
+  toast("Enviando anexo…");
+  const path=`${leadId}/${ativId}/${uid()}_${file.name}`;
+  const {error:upErr}=await sb.storage.from(STORAGE_BUCKET).upload(path,file);
+  if(upErr){ toast("Erro ao enviar anexo: "+upErr.message,true); return; }
+  if(!a.anexos) a.anexos=[];
+  a.anexos.push({id:uid(),nome:file.name,path,tamanho:file.size,criadoEm:new Date().toISOString()});
+  const ok=await upsertRow("crm_leads",l);
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Anexo adicionado"); renderAtivs(leadId); }
+}
+async function openAnexo(path){
+  const {data,error}=await sb.storage.from(STORAGE_BUCKET).createSignedUrl(path,3600);
+  if(error){ toast("Erro ao abrir anexo: "+error.message,true); return; }
+  window.open(data.signedUrl,"_blank");
+}
+async function removeAnexo(leadId,ativId,anexoId){
+  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const a=(l.atividades||[]).find(x=>x.id===ativId); if(!a) return;
+  const anexo=(a.anexos||[]).find(x=>x.id===anexoId); if(!anexo) return;
+  if(!confirm(`Remover o anexo "${anexo.nome}"?`)) return;
+  await sb.storage.from(STORAGE_BUCKET).remove([anexo.path]);
+  a.anexos=a.anexos.filter(x=>x.id!==anexoId);
+  const ok=await upsertRow("crm_leads",l);
+  if(ok){ leads=leads.map(x=>x.id===l.id?l:x); toast("Anexo removido"); renderAtivs(leadId); }
 }
 
 /* ===== AGENDA ===== */
