@@ -858,7 +858,7 @@ tr.proj-head-row th { background: #1e4080; }
             <label style="font-size:11px;font-weight:700;letter-spacing:0.8px;color:#1e4080;text-transform:uppercase;display:block;margin-bottom:5px;">Planilha interativa</label>
             <select id="env_planilha" style="width:100%;padding:9px 12px;border:1px solid #b8cce0;border-radius:4px;font-size:13px;font-family:Arial,sans-serif;color:#1a1a2e;background:#fff;">
               <option value="false">🔒 Travada (sem link da planilha)</option>
-              <option value="true">🔓 Aberta (inclui link para explorar)</option>
+              <option value="true" selected>🔓 Aberta (inclui link para explorar)</option>
             </select>
           </div>
 
@@ -1286,10 +1286,10 @@ function copiarLinkComDados() {
   }).catch(function(){ prompt('Copie o link:', url); });
 }
 
-// ===== CARREGAR DADOS DA URL =====
+// ===== CARREGAR DADOS DA URL (link interno, ex: copiarLinkComDados) =====
 (function(){
   var p = new URLSearchParams(window.location.search);
-  if (p.get('view') === '1') return;
+  if (p.get('email') === '1') return; // tratado pelo bloco "LINK DE EMAIL"
   var fields = ['c7','c8','c11','c12','g8','g12','g14','i9'];
   if (!fields.some(function(id){ return p.get(id) !== null; })) return;
   fields.forEach(function(id){ var el=document.getElementById(id); if(el&&p.get(id)!==null) el.value=p.get(id); });
@@ -1298,27 +1298,31 @@ function copiarLinkComDados() {
   calc();
 })();
 
-// ===== VIEW MODE (link do email) =====
+// ===== LINK DE EMAIL (Travada ou Aberta) =====
 (function(){
   var p = new URLSearchParams(window.location.search);
-  if (p.get('view') !== '1') return;
-  var setRO = function(id, v) {
+  if (p.get('email') !== '1') return;
+  var locked = p.get('view') === '1';
+  var setVal = function(id, v) {
     var el = document.getElementById(id);
     if (!el || v === null) return;
     el.value = v;
-    el.readOnly = true;
-    el.style.background = '#f0f4f8';
-    el.style.cursor = 'default';
-    el.style.pointerEvents = 'none';
+    if (locked) {
+      el.readOnly = true;
+      el.style.background = '#f0f4f8';
+      el.style.cursor = 'default';
+      el.style.pointerEvents = 'none';
+    }
   };
-  setRO('c11', p.get('fat'));
-  setRO('c7',  p.get('comp'));
-  setRO('c8',  p.get('aliqO'));
-  setRO('c12', p.get('aliqS'));
-  setRO('i9',  p.get('meses'));
+  setVal('c11', p.get('fat'));
+  setVal('c7',  p.get('comp'));
+  setVal('c8',  p.get('aliqO'));
+  setVal('c12', p.get('aliqS'));
+  setVal('i9',  p.get('meses'));
   calc();
+  // Esconde a aba Alíquotas ICMS e as ações internas em qualquer link de email (travada ou aberta)
   document.querySelectorAll('.tab-btn').forEach(function(t){
-    if (t.textContent.indexOf('Enviar') > -1) t.style.display = 'none';
+    if (t.textContent.indexOf('Alíquotas ICMS') > -1 || t.textContent.indexOf('Enviar') > -1) t.style.display = 'none';
   });
   ['btn-salvar-sim', 'btn-salvar-resumo', 'save_btn'].forEach(function(id){
     var el = document.getElementById(id);
