@@ -313,7 +313,6 @@ tr.tag-fim td.tag { color: #c9a227; font-weight: 700; background: #0b1a35; }
 
 /* ===== PROJECTION 2029 ===== */
 tr.proj-reform-alt { background: #f9fbfd; }
-tr.proj-reform-total td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
 .months-inp-reform {
   width: 64px; padding: 3px 6px;
   border: 1px solid #c9a227; background: #fffbea;
@@ -793,42 +792,26 @@ footer {
     </div>
   </div>
 
-  <!-- ===== PROJECTION 24M ===== -->
+  <!-- ===== PROJECTION UNIFICADA (até Reforma 2029-2032) ===== -->
   <div class="panel">
-    <div class="panel-header"><span>Projeção 24 Meses (Jun/2026 → Mai/2028)</span></div>
+    <div class="panel-header">
+      <span>Projeção de Benefício até a Reforma Tributária (2029 – 2032)</span>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
+        <span>Meses em Primavera: <input type="number" id="mesesPrimavera" value="7" min="0" max="60" class="months-inp-reform" oninput="render()"></span>
+        <span>Meses até Jan/2029: <input type="number" id="mesesAte2029" value="32" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
+      </div>
+    </div>
     <div class="proj-scroll">
       <table id="proj-table">
         <thead>
-          <tr><th>Mês</th><th>Cenário</th><th class="right">Benefício mensal</th><th class="right">Acumulado</th></tr>
+          <tr><th>Período</th><th>Cenário</th><th class="right">Benefício / Mês</th><th class="right">Acumulado</th></tr>
         </thead>
         <tbody id="proj-table-body"></tbody>
       </table>
     </div>
-  </div>
-
-  <!-- ===== PROJECTION 2029-2032 ===== -->
-  <div class="panel">
-    <div class="panel-header">
-      <span>Projeção até a Reforma Tributária (2029 – 2032)</span>
-      <div style="display:flex;align-items:center;gap:8px;font-size:11px;font-weight:400;color:#fff;">
-        Meses até Jan/2029: <input type="number" id="mesesAte2029" value="32" min="1" max="120" class="months-inp-reform" oninput="render()">
-      </div>
-    </div>
-    <table>
-      <thead>
-        <tr><th>Período</th><th class="right">Meses</th><th class="right">Eficácia</th><th class="right">Benef. / Mês</th><th class="right">Total</th></tr>
-      </thead>
-      <tbody id="proj-reform-body"></tbody>
-    </table>
     <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
-      ⚠️ Base: cenário <strong>Fim da Primavera</strong> (SP 18%/25%), regime esperado em 2029+. Redução de 10% a.a. no Compete Atacadista ES a partir de Jan/2029.
+      ⚠️ A partir de Jan/2029 o benefício do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
     </div>
-  </div>
-
-  <div class="note-box">
-    <strong>Nota da Reforma Tributária:</strong> o incentivo do Espírito Santo (Compete Atacadista) é integral até 2028.
-    A partir de 2029 o ganho líquido reduz 10% ao ano: 90% em 2029, 80% em 2030, 70% em 2031, encerrando (0%) em 2032.
-    A projeção de 24 meses acima ocorre integralmente dentro do período de incentivo pleno.
   </div>
 
 </div>
@@ -1066,27 +1049,6 @@ function renderKpis(r, suffix = '') {
   }
 }
 
-function renderProjection(inp) {
-  const calcPrimavera = calcScenario('primavera', inp);
-  const calcFim = calcScenario('fim', inp);
-  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  let startMonthIdx = 5; // Jun
-  let startYear = 2026;
-  let acumulado = 0;
-  let rows = '';
-  for (let i = 0; i < 24; i++) {
-    const monthIdx = (startMonthIdx + i) % 12;
-    const year = startYear + Math.floor((startMonthIdx + i) / 12);
-    const isPrimavera = i < 7;
-    const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
-    acumulado += beneficio;
-    const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
-    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
-    rows += `<tr class="${tagClass}"><td>${monthNames[monthIdx]}/${year}</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(beneficio)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
-  }
-  rows += `<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO 24 MESES</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
-  document.getElementById('proj-table-body').innerHTML = rows;
-}
 
 function renderSubtitle(inp) {
   const empresa = inp.empresa || '{Empresa analisada}';
@@ -1179,31 +1141,48 @@ function render() {
   renderParity(r, inp);
   renderKpis(r);
   renderGauges(r);
-  renderProjection(inp);
-  renderProjection2029(inp);
+  renderProjectionUnified(inp);
 }
 
-function renderProjection2029(inp) {
+function renderProjectionUnified(inp) {
+  const calcPrimavera = calcScenario('primavera', inp);
   const calcFim = calcScenario('fim', inp);
-  const base = calcFim.beneficioMes;
-  const meses = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 32));
-  const periodos = [
-    { label: 'Até Jan/2029', meses: meses, fator: 1.0, alt: false },
-    { label: '2029 – transição', meses: 12, fator: 0.9, alt: false },
-    { label: '2030 – transição', meses: 12, fator: 0.8, alt: true },
-    { label: '2031 – transição', meses: 12, fator: 0.7, alt: false },
-    { label: '2032 – transição', meses: 12, fator: 0.6, alt: true },
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const now = new Date();
+  let monthIdx = now.getMonth();
+  let year = now.getFullYear();
+  const mesesPrimavera = Math.max(0, Math.round(parseFloat(document.getElementById('mesesPrimavera').value) || 0));
+  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+  let acumulado = 0;
+  let rows = '';
+
+  for (let i = 0; i < mesesAte2029; i++) {
+    const isPrimavera = i < mesesPrimavera;
+    const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
+    acumulado += beneficio;
+    const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
+    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
+    rows += `<tr class="${tagClass}"><td>${monthNames[monthIdx]}/${year}</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(beneficio)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+    monthIdx = (monthIdx + 1) % 12;
+    if (monthIdx === 0) year++;
+  }
+
+  const periodosReforma = [
+    { label: '2029 (12 meses)', fator: 0.9, alt: false },
+    { label: '2030 (12 meses)', fator: 0.8, alt: true },
+    { label: '2031 (12 meses)', fator: 0.7, alt: false },
+    { label: '2032 (12 meses)', fator: 0.6, alt: true },
   ];
-  let total = 0;
-  const rows = periodos.map(p => {
-    const mensal = base * p.fator;
-    const subtotal = mensal * p.meses;
-    total += subtotal;
+  periodosReforma.forEach(p => {
+    const mensal = calcFim.beneficioMes * p.fator;
+    const subtotal = mensal * 12;
+    acumulado += subtotal;
     const cls = p.alt ? ' class="proj-reform-alt"' : '';
-    return '<tr' + cls + '><td>' + p.label + '</td><td class="right">' + p.meses + '</td><td class="right">' + (p.fator * 100).toFixed(0) + '%</td><td class="right">' + fmtBRL(mensal) + '</td><td class="right">' + fmtBRL(subtotal) + '</td></tr>';
-  }).join('');
-  document.getElementById('proj-reform-body').innerHTML = rows +
-    '<tr class="proj-reform-total"><td colspan="4">TOTAL ACUMULADO</td><td class="right">' + fmtBRL(total) + '</td></tr>';
+    rows += `<tr${cls}><td>${p.label}</td><td class="tag tag-fim">Reforma ${(p.fator * 100).toFixed(0)}%</td><td class="right">${fmtBRL(mensal)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+  });
+
+  rows += `<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+  document.getElementById('proj-table-body').innerHTML = rows;
 }
 
 function clearAll() {
