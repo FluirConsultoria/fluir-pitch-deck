@@ -392,12 +392,6 @@ footer {
         <label>Compras (BC Entradas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
       </div>
-      <div class="field">
-        <label>ICMS efetivamente recolhido hoje (SPED)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
-        <div class="field-hint">Valor auditado — usado no cenario Primavera</div>
-      </div>
-
       <div class="input-group-title">Parametros Fiscais</div>
       <div class="field">
         <label>Credito entrada ES</label>
@@ -474,6 +468,11 @@ footer {
       <div class="field">
         <label>Faturamento mensal (BC Saídas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field">
+        <label>ICMS efetivamente recolhido hoje (SPED)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
+        <div class="field-hint">Valor auditado do SPED</div>
       </div>
       <div class="field field-markup">
         <label>Markup (Faturamento / Compras)</label>
@@ -690,6 +689,11 @@ footer {
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
           <div class="field-hint">Deixe 0 para usar o mesmo BC da Primavera Tributária</div>
         </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED) — Pós Primavera</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
+          <div class="field-hint">Deixe 0 para usar o mesmo valor da Primavera</div>
+        </div>
       </div>
     </div>
 
@@ -800,7 +804,7 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, faturamentoPos: 0, compras: 0, icmsSpedAtual: 0,
+  faturamento: 0, faturamentoPos: 0, compras: 0, icmsSpedAtual: 0, icmsSpedAtualPos: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
@@ -824,6 +828,7 @@ function getInputs() {
     faturamentoPos: num('faturamentoPos'),
     compras: num('compras'),
     icmsSpedAtual: num('icmsSpedAtual'),
+    icmsSpedAtualPos: num('icmsSpedAtualPos'),
     destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
@@ -850,7 +855,8 @@ function calcScenario(scenario, inp) {
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
   } else {
-    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
+    const icmsBase = inp.icmsSpedAtualPos || inp.icmsSpedAtual;
+    icmsSP = icmsBase + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
   }
 
   const icmsES = (inp.cargaEfetivaES / 100) * base;
@@ -1177,6 +1183,7 @@ function clearAll() {
   document.getElementById('faturamentoPos').value = DEFAULTS.faturamentoPos;
   document.getElementById('compras').value = DEFAULTS.compras;
   document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
+  document.getElementById('icmsSpedAtualPos').value = DEFAULTS.icmsSpedAtualPos;
   document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
   document.getElementById('destaqueSaidaES').value = DEFAULTS.destaqueSaidaES;
   document.getElementById('cargaEfetivaES').value = DEFAULTS.cargaEfetivaES;
