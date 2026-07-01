@@ -362,6 +362,12 @@ footer {
 
 <div class="wrap">
 
+  <!-- ===== PAGE TABS ===== -->
+  <div class="page-tab-bar">
+    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributaria</div>
+    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Pós Primavera</div>
+  </div>
+
   <!-- ===== INPUTS ===== -->
   <div class="panel" id="input-panel">
     <div class="panel-header">
@@ -465,12 +471,6 @@ footer {
       </div>
 
     </div>
-  </div>
-
-  <!-- ===== PAGE TABS ===== -->
-  <div class="page-tab-bar">
-    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributaria</div>
-    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Fim da Primavera</div>
   </div>
 
   <!-- TAB 1 -->
@@ -594,7 +594,7 @@ footer {
       </div>
     </div>
 
-    <h2>Cenario: Fim da Primavera (mix de produtos)</h2>
+    <h2>Cenario: Pós Primavera (mix de produtos)</h2>
     <div class="panel">
       <table>
         <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
@@ -612,17 +612,17 @@ footer {
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / mes</div>
           <div class="kpi-value" id="kpi-mes-print-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Fim da Primavera</div>
+          <div class="kpi-desc">cenario Pós Primavera</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / ano</div>
           <div class="kpi-value" id="kpi-ano-print-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Fim da Primavera x 12</div>
+          <div class="kpi-desc">cenario Pós Primavera x 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-print-fim">
           <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-print-fim">&#8212;</div>
-          <div class="kpi-desc">migracao SP -> ES (Fim da Primavera)</div>
+          <div class="kpi-desc">migracao SP -> ES (Pós Primavera)</div>
         </div>
       </div>
     </div>
@@ -677,9 +677,9 @@ footer {
   <div id="tab2-content" class="page-tab-content">
 
     <div class="panel">
-      <div class="panel-header"><span>Mix de Produtos — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
-        <div class="input-group-title">Aliquotas SP — Fim da Primavera</div>
+        <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
         <div class="field">
           <label>% Shampoo (saida 18%)</label>
           <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
@@ -692,13 +692,13 @@ footer {
         <div class="field">
           <label>% faturamento para clientes LP / Medio Porte (hoje em 12%)</label>
           <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
-          <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Fim da Primavera.</div>
+          <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Pós Primavera.</div>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-header"><span>Calculo ICMS — Fim da Primavera (18% shampoo / 25% demais)</span></div>
+      <div class="panel-header"><span>Calculo ICMS — Pós Primavera (18% shampoo / 25% demais)</span></div>
       <table>
         <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
         <tbody id="calc-table-body-fim"></tbody>
@@ -706,7 +706,7 @@ footer {
     </div>
 
     <div class="panel">
-      <div class="panel-header"><span>Cascata do Beneficio Liquido — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Cascata do Beneficio Liquido — Pós Primavera</span></div>
       <div class="waterfall-wrap">
         <svg id="waterfall-svg-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
@@ -717,23 +717,23 @@ footer {
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / mes</div>
           <div class="kpi-value" id="kpi-mes-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Fim da Primavera</div>
+          <div class="kpi-desc">cenario Pós Primavera</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / ano</div>
           <div class="kpi-value" id="kpi-ano-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Fim da Primavera x 12</div>
+          <div class="kpi-desc">cenario Pós Primavera x 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-fim">
           <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-fim">&#8212;</div>
-          <div class="kpi-desc">migracao SP -> ES (Fim da Primavera)</div>
+          <div class="kpi-desc">migracao SP -> ES (Pós Primavera)</div>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real — Pós Primavera</span></div>
       <div class="gauge-grid">
         <div class="gauge-card">
           <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
@@ -840,7 +840,7 @@ function renderCalcTable(r, scenario, inp, suffix) {
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
   } else {
-    icmsSPLabel = 'ICMS SP Fim da Primavera - SPED atual + ' + fmtPct(inp.pctClientesLP) + ' clientes LP x Fat. x (' + fmtPct(r.rSP) + ' - 12%)';
+    icmsSPLabel = 'ICMS SP Pós Primavera - SPED atual + ' + fmtPct(inp.pctClientesLP) + ' clientes LP x Fat. x (' + fmtPct(r.rSP) + ' - 12%)';
   }
   const consultoriaLabel = 'Consultoria (' + fmtPct(inp.consultoriaPct) + ' da economia, min. ' + fmtBRL(inp.consultoriaMin) + ')';
 
@@ -1073,7 +1073,7 @@ function renderProjectionUnified(inp) {
     const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
     acumulado += beneficio;
     const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
-    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
+    const tagText = isPrimavera ? 'Primavera' : 'Pós Primavera';
     rows += '<tr class="' + tagClass + '"><td>' + monthNames[monthIdx] + '/' + year + '</td><td class="tag">' + tagText + '</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
     monthIdx = (monthIdx + 1) % 12;
     if (monthIdx === 0) year++;
