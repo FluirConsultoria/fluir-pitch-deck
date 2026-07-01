@@ -503,7 +503,7 @@ footer {
 
   <!-- ===== PAGE TABS ===== -->
   <div class="page-tab-bar">
-    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera (SP 12%)</div>
+    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributária</div>
     <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Fim da Primavera</div>
   </div>
 
@@ -512,7 +512,7 @@ footer {
   <div id="screen-report">
   <!-- ===== CALC TABLE — PRIMAVERA ===== -->
   <div class="panel">
-    <div class="panel-header"><span>Cálculo ICMS — Primavera (SP 12%)</span></div>
+    <div class="panel-header"><span>Cálculo ICMS — Primavera Tributária</span></div>
     <table>
       <thead>
         <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
@@ -591,7 +591,7 @@ footer {
             </div>
           </div>
           <div class="gauge-desc">
-            O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+            O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
           </div>
         </div>
       </div>
@@ -617,7 +617,7 @@ footer {
   </div>
 
   <div id="print-report">
-    <h2>Cenário: Primavera (SP 12%)</h2>
+    <h2>Cenário: Primavera Tributária</h2>
     <div class="panel">
       <table>
         <thead>
@@ -689,7 +689,7 @@ footer {
               </div>
             </div>
             <div class="gauge-desc">
-              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
             </div>
           </div>
         </div>
@@ -785,7 +785,7 @@ footer {
               </div>
             </div>
             <div class="gauge-desc">
-              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
             </div>
           </div>
         </div>
@@ -815,8 +815,7 @@ footer {
     <div class="panel-header">
       <span>Projeção de Benefício até a Reforma Tributária (2029 – 2032)</span>
       <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
-        <span>Meses em Primavera: <input type="number" id="mesesPrimavera" value="7" min="0" max="60" class="months-inp-reform" oninput="render()"></span>
-        <span>Meses até Jan/2029: <input type="number" id="mesesAte2029" value="32" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
+        <span>Meses até Jan/2029: <input type="number" id="mesesAte2029" value="30" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
       </div>
     </div>
     <div class="proj-scroll">
@@ -949,7 +948,7 @@ footer {
               </div>
             </div>
             <div class="gauge-desc">
-              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
             </div>
           </div>
         </div>
@@ -1347,15 +1346,12 @@ function renderProjectionUnified(inp) {
   const calcFim = calcScenario('fim', inp);
   const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const now = new Date();
-  const mesesPrimavera = Math.max(0, Math.round(parseFloat(document.getElementById('mesesPrimavera').value) || 0));
   const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
 
-  // Ancoragem: Fim da Primavera sempre começa em Jan/2027
-  // A tabela inicia em (Jan/2027 - mesesPrimavera)
-  const mesesAteReforma = (2027 - now.getFullYear()) * 12 + (0 - now.getMonth());
-  const startOffset = Math.max(0, mesesAteReforma - mesesPrimavera);
-  let monthIdx = (now.getMonth() + startOffset) % 12;
-  let year = now.getFullYear() + Math.floor((now.getMonth() + startOffset) / 12);
+  // Primavera Tributária: de hoje até Jan/2027 (fixo, diminui naturalmente)
+  const mesesPrimavera = Math.max(0, (2027 - now.getFullYear()) * 12 + (0 - now.getMonth()));
+  let monthIdx = now.getMonth();
+  let year = now.getFullYear();
 
   let acumulado = 0;
   let rows = '';
