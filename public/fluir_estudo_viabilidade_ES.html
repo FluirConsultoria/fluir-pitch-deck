@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -451,21 +451,6 @@ footer {
         <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01"><span class="unit-sym">%</span></div>
       </div>
 
-      <div class="input-group-title">Mix de Produtos (cenário Fim da Primavera)</div>
-      <div class="field">
-        <label>% Shampoo (saída 18%)</label>
-        <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
-      </div>
-      <div class="field">
-        <label>% Demais produtos (saída 25%)</label>
-        <div class="input-row"><input type="number" id="pctDemais" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
-        <div class="field-hint">Calculado automaticamente (100% − % shampoo)</div>
-      </div>
-      <div class="field">
-        <label>% das vendas a clientes creditantes</label>
-        <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
-      </div>
-
       <div class="input-group-title">Frete, Logística e Consultoria</div>
       <div class="subgrid subgrid-5">
         <div class="field">
@@ -518,19 +503,16 @@ footer {
 
   <!-- ===== PAGE TABS ===== -->
   <div class="page-tab-bar">
-    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Simulação Atual</div>
-    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Pós-Primavera — Reprecificação</div>
+    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera (SP 12%)</div>
+    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Fim da Primavera</div>
   </div>
 
   <!-- TAB 1: Simulação Atual -->
   <div id="tab1-content" class="page-tab-content active">
   <div id="screen-report">
-  <!-- ===== SCENARIO + CALC TABLE ===== -->
+  <!-- ===== CALC TABLE — PRIMAVERA ===== -->
   <div class="panel">
-    <div class="tab-bar">
-      <div class="tab-btn active" id="tab-primavera" onclick="setScenario('primavera')">Primavera (SP 12%)</div>
-      <div class="tab-btn" id="tab-fim" onclick="setScenario('fim')">Fim da Primavera (18% shampoo / 25% demais)</div>
-    </div>
+    <div class="panel-header"><span>Cálculo ICMS — Primavera (SP 12%)</span></div>
     <table>
       <thead>
         <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
@@ -852,15 +834,140 @@ footer {
 
   </div><!-- /tab1-content -->
 
-  <!-- TAB 2: Pós-Primavera — Reprecificação -->
+  <!-- TAB 2: Fim da Primavera (mix + cálculo + reprecificação) -->
   <div id="tab2-content" class="page-tab-content">
 
+    <!-- Mix de Produtos -->
     <div class="panel">
-      <div class="panel-header">
-        <span>Pós-Primavera Tributária — Novo Cenário de Preços</span>
-      </div>
+      <div class="panel-header"><span>Mix de Produtos — Fim da Primavera</span></div>
       <div class="input-grid">
-        <div class="input-group-title">Reprecificação do Mercado</div>
+        <div class="input-group-title">Alíquotas SP — Fim da Primavera</div>
+        <div class="field">
+          <label>% Shampoo (saída 18%)</label>
+          <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+        </div>
+        <div class="field">
+          <label>% Demais produtos (saída 25%)</label>
+          <div class="input-row"><input type="number" id="pctDemais" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
+          <div class="field-hint">Calculado automaticamente (100% − % shampoo)</div>
+        </div>
+        <div class="field">
+          <label>% das vendas a clientes creditantes</label>
+          <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fim da Primavera: Calc Table -->
+    <div class="panel">
+      <div class="panel-header"><span>Cálculo ICMS — Fim da Primavera (18% shampoo / 25% demais)</span></div>
+      <table>
+        <thead>
+          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
+        </thead>
+        <tbody id="calc-table-body-fim"></tbody>
+      </table>
+    </div>
+
+    <!-- Fim da Primavera: Waterfall -->
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Benefício Líquido — Fim da Primavera</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+
+    <!-- Fim da Primavera: Parity -->
+    <div class="panel">
+      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido (Fim da Primavera)</span></div>
+      <div class="parity-grid">
+        <div class="parity-col">
+          <div class="parity-head sp">Comprando do concorrente (SP)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-sp-preco-fim">—</td></tr>
+            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-sp-credito-fim">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido-fim">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-col">
+          <div class="parity-head es">Comprando da empresa (ES)</div>
+          <table>
+            <tr><td>Preço pago</td><td class="right" id="par-es-preco-fim">—</td></tr>
+            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-es-credito-fim">—</td></tr>
+            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido-fim">—</strong></td></tr>
+          </table>
+        </div>
+        <div class="parity-result" id="parity-result-fim">—</div>
+      </div>
+    </div>
+
+    <!-- Fim da Primavera: KPIs -->
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / mês</div>
+          <div class="kpi-value" id="kpi-mes-fim">—</div>
+          <div class="kpi-desc">cenário Fim da Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Benefício líquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-fim">—</div>
+          <div class="kpi-desc">cenário Fim da Primavera × 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-fim">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-fim">—</div>
+          <div class="kpi-desc">migração SP → ES (Fim da Primavera)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fim da Primavera: Gauges -->
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real — Fim da Primavera</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-fim">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por desconto ao cliente, consultoria, logística e frete.
+            </div>
+          </div>
+        </div>
+        <div class="gauge-card">
+          <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-desconto-fg-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-desconto-pct-fim">—</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto-fim">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reprecificação -->
+    <div class="panel">
+      <div class="panel-header"><span>Reprecificação do Mercado — Nova BC de Saída</span></div>
+      <div class="input-grid">
+        <div class="input-group-title">Com o Fim da Primavera, o mercado reprecifica</div>
         <div class="field">
           <label>BC de Saída atual (Primavera) — referência</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="v2-bc-saida-atual" value="0" readonly></div>
@@ -879,7 +986,7 @@ footer {
     </div>
 
     <div class="panel">
-      <div class="panel-header"><span>Comparativo ICMS — SP vs ES (Pós-Primavera c/ Reprecificação)</span></div>
+      <div class="panel-header"><span>Comparativo ICMS — SP vs ES (Fim da Primavera c/ Reprecificação)</span></div>
       <table>
         <thead>
           <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
@@ -893,10 +1000,10 @@ footer {
         <div class="kpi-card">
           <div class="kpi-title">Benefício líquido / mês</div>
           <div class="kpi-value" id="v2-kpi-mes">—</div>
-          <div class="kpi-desc">Pós-Primavera c/ reprecificação</div>
+          <div class="kpi-desc">Fim da Primavera c/ reprecificação</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-title">Ganho adicional vs. Fim da Primavera</div>
+          <div class="kpi-title">Ganho adicional vs. sem reprecificação</div>
           <div class="kpi-value" id="v2-kpi-delta">—</div>
           <div class="kpi-desc">benefício extra por mês</div>
         </div>
@@ -930,8 +1037,6 @@ const DEFAULTS = {
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
   consultoriaPct: 6, consultoriaMin: 0
 };
-
-let activeScenario = 'primavera';
 
 function fmtBRL(v) {
   return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
@@ -992,12 +1097,6 @@ function calcScenario(scenario, inp) {
     consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno };
 }
 
-function setScenario(s) {
-  activeScenario = s;
-  document.getElementById('tab-primavera').classList.toggle('active', s === 'primavera');
-  document.getElementById('tab-fim').classList.toggle('active', s === 'fim');
-  render();
-}
 
 function renderCalcTable(r, scenario, inp, suffix = '') {
   const icmsSPLabel = scenario === 'primavera'
@@ -1324,13 +1423,19 @@ function render() {
   renderSubtitle(inp);
   renderMarkup(inp);
   renderFreteLogistica(inp);
-  const r = calcScenario(activeScenario, inp);
-  renderCalcTable(r, activeScenario, inp);
-  renderWaterfall(r);
-  renderParity(r, inp);
-  renderKpis(r);
-  renderGauges(r);
+  const rPrimavera = calcScenario('primavera', inp);
+  renderCalcTable(rPrimavera, 'primavera', inp);
+  renderWaterfall(rPrimavera);
+  renderParity(rPrimavera, inp);
+  renderKpis(rPrimavera);
+  renderGauges(rPrimavera);
   renderProjectionUnified(inp);
+  const rFim = calcScenario('fim', inp);
+  renderCalcTable(rFim, 'fim', inp, '-fim');
+  renderWaterfall(rFim, '-fim');
+  renderParity(rFim, inp, '-fim');
+  renderKpis(rFim, '-fim');
+  renderGauges(rFim, '-fim');
   renderV2();
 }
 
@@ -1396,7 +1501,7 @@ function clearAll() {
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
   document.getElementById('v2-novaBCSaida').value = 0;
-  setScenario('primavera');
+  setPageTab('tab1');
 }
 
 document.getElementById('pctShampoo').addEventListener('input', function() {
