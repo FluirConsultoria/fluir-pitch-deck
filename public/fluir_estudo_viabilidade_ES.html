@@ -1035,11 +1035,9 @@ function calcScenario(scenario, inp) {
   let icmsSP;
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
-  } else if (novaBCSaidaAtiva) {
-    // Débito saída na nova BC − crédito de entrada (compras sempre entram com alíquota SP de 12%)
-    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
   } else {
-    icmsSP = inp.icmsSpedAtual + inp.faturamento * (rSP - 12) / 100;
+    // Fim da Primavera: débito saída na nova BC (ou faturamento) − crédito de entrada a 12%
+    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
   }
 
   const descontoCliente = base * (inp.pctCreditantes / 100) *
@@ -1066,10 +1064,9 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   let icmsSPLabel;
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
-  } else if (r.novaBCSaidaAtiva) {
-    icmsSPLabel = `ICMS SP líquido — nova BC × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   } else {
-    icmsSPLabel = `ICMS SP a pagar — estimativa (ICMS SPED atual + Faturamento × variação de alíquota)`;
+    const baseLabel = r.novaBCSaidaAtiva ? 'Nova BC' : 'Faturamento';
+    icmsSPLabel = `ICMS SP líquido — ${baseLabel} × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   }
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
 
@@ -1348,10 +1345,13 @@ function renderProjectionUnified(inp) {
   const now = new Date();
   const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
 
-  // Primavera Tributária: de hoje até Jan/2027 (fixo, diminui naturalmente)
-  const mesesPrimavera = Math.max(0, (2027 - now.getFullYear()) * 12 + (0 - now.getMonth()));
-  let monthIdx = now.getMonth();
-  let year = now.getFullYear();
+  // Tabela SEMPRE termina em Dez/2028 (Jan/2029 = início da regressão do incentivo)
+  // Reduzir mesesAte2029 avança o início (come meses pelo começo, não pelo fim)
+  const startTotal = 2029 * 12 - mesesAte2029;   // offset absoluto em meses
+  let monthIdx = startTotal % 12;
+  let year = Math.floor(startTotal / 12);
+  // Primavera Tributária = meses desde o início da tabela até Jan/2027
+  const mesesPrimavera = Math.max(0, 2027 * 12 - startTotal);
 
   let acumulado = 0;
   let rows = '';
