@@ -854,6 +854,11 @@ footer {
           <label>% das vendas a clientes creditantes</label>
           <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
         </div>
+        <div class="field">
+          <label>% faturamento para clientes LP / Médio Porte (hoje em 12%)</label>
+          <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
+          <div class="field-hint">Clientes Simples Nacional já estão em 18%/25% — não sobem no Fim da Primavera.</div>
+        </div>
         <div class="input-group-title">Repreci&#64257;ca&#231;&#227;o do Mercado (opcional)</div>
         <div class="field">
           <label>Nova BC de Sa&#237;da (mercado reprecificado)</label>
@@ -988,7 +993,7 @@ const DEFAULTS = {
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0,
+  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70,
   novaBCSaida: 0
 };
 
@@ -1020,7 +1025,8 @@ function getInputs() {
     custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
     consultoriaMin: num('consultoriaMin'),
-    novaBCSaida: num('novaBCSaida')
+    novaBCSaida: num('novaBCSaida'),
+    pctClientesLP: num('pctClientesLP')
   };
 }
 
@@ -1035,9 +1041,12 @@ function calcScenario(scenario, inp) {
   let icmsSP;
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
-  } else {
-    // Fim da Primavera: débito saída na nova BC (ou faturamento) − crédito de entrada a 12%
+  } else if (novaBCSaidaAtiva) {
+    // Reprecificação: nova BC aplica para todos — débito integral menos crédito entrada
     icmsSP = base * (rSP / 100) - inp.compras * 0.12;
+  } else {
+    // Sem reprecificação: só clientes LP saem de 12% → rSP; Simples já estão em rSP
+    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * inp.faturamento * (rSP - 12) / 100;
   }
 
   const descontoCliente = base * (inp.pctCreditantes / 100) *
@@ -1064,9 +1073,10 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   let icmsSPLabel;
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
+  } else if (r.novaBCSaidaAtiva) {
+    icmsSPLabel = `ICMS SP líquido — Nova BC × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   } else {
-    const baseLabel = r.novaBCSaidaAtiva ? 'Nova BC' : 'Faturamento';
-    icmsSPLabel = `ICMS SP líquido — ${baseLabel} × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
+    icmsSPLabel = `ICMS SP Fim da Primavera — SPED atual + ${fmtPct(inp.pctClientesLP)} clientes LP × Fat. × (${fmtPct(r.rSP)} − 12%)`;
   }
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
 
@@ -1406,6 +1416,7 @@ function clearAll() {
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
   document.getElementById('novaBCSaida').value = 0;
+  document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
   setPageTab('tab1');
 }
 
