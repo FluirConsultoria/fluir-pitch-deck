@@ -855,6 +855,16 @@ footer {
           <label>% das vendas a clientes creditantes</label>
           <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
         </div>
+        <div class="input-group-title">Repreci&#64257;ca&#231;&#227;o do Mercado (opcional)</div>
+        <div class="field">
+          <label>Nova BC de Sa&#237;da (mercado reprecificado)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="novaBCSaida" value="0" step="1000"></div>
+          <div class="field-hint">Deixe 0 para calcular com faturamento atual. Preencha se o mercado repreci&#64257;car ap&#243;s a reforma.</div>
+        </div>
+        <div class="field field-markup">
+          <label>Varia&#231;&#227;o vs. faturamento atual</label>
+          <div id="nova-bc-badge" class="markup-badge">&#8212;</div>
+        </div>
       </div>
     </div>
 
@@ -963,62 +973,6 @@ footer {
       </div>
     </div>
 
-    <!-- Reprecificação -->
-    <div class="panel">
-      <div class="panel-header"><span>Reprecificação do Mercado — Nova BC de Saída</span></div>
-      <div class="input-grid">
-        <div class="input-group-title">Com o Fim da Primavera, o mercado reprecifica</div>
-        <div class="field">
-          <label>BC de Saída atual (Primavera) — referência</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="v2-bc-saida-atual" value="0" readonly></div>
-          <div class="field-hint">Faturamento atual — referência antes da reforma</div>
-        </div>
-        <div class="field">
-          <label>Nova BC de Saída (mercado reprecificado)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="v2-novaBCSaida" value="0" step="1000" oninput="renderV2()"></div>
-          <div class="field-hint">Preço de venda que o mercado vai praticar após a reforma</div>
-        </div>
-        <div class="field field-markup">
-          <label>Variação no faturamento</label>
-          <div id="v2-aumento-badge" class="markup-badge">—</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-header"><span>Comparativo ICMS — SP vs ES (Fim da Primavera c/ Reprecificação)</span></div>
-      <table>
-        <thead>
-          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
-        </thead>
-        <tbody id="v2-calc-body"></tbody>
-      </table>
-    </div>
-
-    <div class="panel">
-      <div class="kpi-cards">
-        <div class="kpi-card">
-          <div class="kpi-title">Benefício líquido / mês</div>
-          <div class="kpi-value" id="v2-kpi-mes">—</div>
-          <div class="kpi-desc">Fim da Primavera c/ reprecificação</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Ganho adicional vs. sem reprecificação</div>
-          <div class="kpi-value" id="v2-kpi-delta">—</div>
-          <div class="kpi-desc">benefício extra por mês</div>
-        </div>
-        <div class="kpi-card" id="v2-kpi-veredicto-card">
-          <div class="kpi-title">Veredicto</div>
-          <div class="kpi-value" id="v2-kpi-veredicto">—</div>
-          <div class="kpi-desc">migração SP → ES</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="note-box">
-      O Compete Atacadista ES aplica 1,14% efetivo sobre a BC de venda (após desconto ao cliente). Com a reprecificação, o ICMS no ES sobe minimamente — enquanto o ICMS no SP explode (18%/25% × base maior). O diferencial a favor do ES cresce expressivamente.
-    </div>
-
   </div><!-- /tab2-content -->
 
 </div>
@@ -1035,7 +989,8 @@ const DEFAULTS = {
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0
+  consultoriaPct: 6, consultoriaMin: 0,
+  novaBCSaida: 0
 };
 
 function fmtBRL(v) {
@@ -1065,27 +1020,36 @@ function getInputs() {
     operadorLogPct: num('operadorLogPct'),
     custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
-    consultoriaMin: num('consultoriaMin')
+    consultoriaMin: num('consultoriaMin'),
+    novaBCSaida: num('novaBCSaida')
   };
 }
 
 function calcScenario(scenario, inp) {
+  const novaBCSaidaAtiva = scenario === 'fim' && inp.novaBCSaida > 0;
+  const base = novaBCSaidaAtiva ? inp.novaBCSaida : inp.faturamento;
+
   const rSP = scenario === 'primavera'
     ? 12
     : (inp.pctShampoo / 100) * 18 + ((100 - inp.pctShampoo) / 100) * 25;
 
-  const icmsSP = scenario === 'primavera'
-    ? inp.icmsSpedAtual
-    : inp.icmsSpedAtual + inp.faturamento * (rSP - 12) / 100;
+  let icmsSP;
+  if (scenario === 'primavera') {
+    icmsSP = inp.icmsSpedAtual;
+  } else if (novaBCSaidaAtiva) {
+    icmsSP = base * (rSP / 100);
+  } else {
+    icmsSP = inp.icmsSpedAtual + inp.faturamento * (rSP - 12) / 100;
+  }
 
-  const descontoCliente = inp.faturamento * (inp.pctCreditantes / 100) *
+  const descontoCliente = base * (inp.pctCreditantes / 100) *
     ((rSP / 100) - (inp.destaqueSaidaES / 100)) / (1 - (inp.destaqueSaidaES / 100));
 
-  const faturamentoES = inp.faturamento - descontoCliente;
+  const faturamentoES = base - descontoCliente;
   const icmsES = (inp.cargaEfetivaES / 100) * faturamentoES;
   const economiaBruta = icmsSP - icmsES;
   const consultoria = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta);
-  const operadorLogRS = (inp.operadorLogPct / 100) * inp.faturamento;
+  const operadorLogRS = (inp.operadorLogPct / 100) * base;
   const deltaLogRS = operadorLogRS - inp.custoLogAtual;
   const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
   const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
@@ -1094,14 +1058,19 @@ function calcScenario(scenario, inp) {
   const beneficioAno = beneficioMes * 12;
 
   return { scenario, rSP, icmsSP, descontoCliente, faturamentoES, icmsES, economiaBruta,
-    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno };
+    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base, novaBCSaidaAtiva };
 }
 
 
 function renderCalcTable(r, scenario, inp, suffix = '') {
-  const icmsSPLabel = scenario === 'primavera'
-    ? 'ICMS SP a pagar (valor auditado SPED)'
-    : 'ICMS SP a pagar (projetado: rSP × Faturamento − créd.entrada SP × Compras)';
+  let icmsSPLabel;
+  if (scenario === 'primavera') {
+    icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
+  } else if (r.novaBCSaidaAtiva) {
+    icmsSPLabel = `ICMS SP — nova BC de Saída × alíquota blendada (${fmtPct(r.rSP)})`;
+  } else {
+    icmsSPLabel = `ICMS SP a pagar — estimativa (ICMS SPED atual + Faturamento × variação de alíquota)`;
+  }
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
 
   const deltaLogIsGain = r.deltaLogRS < 0;
@@ -1109,7 +1078,12 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   const deltaLogVal = (deltaLogIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaLogRS));
   const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaFreteRS));
 
+  const baseRow = r.novaBCSaidaAtiva
+    ? [['', `Base: Nova BC de Saída reprecificada (faturamento atual: ${fmtBRL(inp.faturamento)})`, '', true, false]]
+    : [];
+
   const rows = [
+    ...baseRow,
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
     ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(r.descontoCliente), false, true],
@@ -1336,87 +1310,6 @@ function setPageTab(tab) {
   document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
 }
 
-function renderV2() {
-  const inp = getInputs();
-  const novaBCSaida = parseFloat(document.getElementById('v2-novaBCSaida').value) || 0;
-
-  document.getElementById('v2-bc-saida-atual').value = inp.faturamento;
-
-  const aumentoBadge = document.getElementById('v2-aumento-badge');
-  if (inp.faturamento > 0 && novaBCSaida > 0) {
-    const pctVar = ((novaBCSaida / inp.faturamento) - 1) * 100;
-    aumentoBadge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
-  } else {
-    aumentoBadge.textContent = '—';
-  }
-
-  const tbody = document.getElementById('v2-calc-body');
-  if (!novaBCSaida || !inp.faturamento) {
-    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#8aa4c8;padding:20px">Informe a nova BC de Saída acima para calcular.</td></tr>';
-    ['v2-kpi-mes','v2-kpi-delta','v2-kpi-veredicto'].forEach(id => document.getElementById(id).textContent = '—');
-    document.getElementById('v2-kpi-veredicto-card').className = 'kpi-card';
-    return;
-  }
-
-  const rSP = (inp.pctShampoo / 100) * 18 + ((100 - inp.pctShampoo) / 100) * 25;
-  const icmsSP_v2 = novaBCSaida * (rSP / 100);
-  const descontoCliente_v2 = novaBCSaida * (inp.pctCreditantes / 100) *
-    ((rSP / 100) - (inp.destaqueSaidaES / 100)) / (1 - (inp.destaqueSaidaES / 100));
-  const faturamentoES_v2 = novaBCSaida - descontoCliente_v2;
-  const icmsES_v2 = (inp.cargaEfetivaES / 100) * faturamentoES_v2;
-  const economiaBruta_v2 = icmsSP_v2 - icmsES_v2;
-  const consultoria_v2 = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta_v2);
-  const operadorLogRS_v2 = (inp.operadorLogPct / 100) * novaBCSaida;
-  const deltaLogRS = operadorLogRS_v2 - inp.custoLogAtual;
-  const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
-  const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
-  const deltaFreteRS = freteNovoTotal - freteAtualTotal;
-  const beneficioMes_v2 = economiaBruta_v2 - descontoCliente_v2 - consultoria_v2 - deltaLogRS - deltaFreteRS;
-
-  const calcFim = calcScenario('fim', inp);
-  const delta = beneficioMes_v2 - calcFim.beneficioMes;
-
-  const pctSHP = fmtPct(inp.pctShampoo);
-  const pctDEM = fmtPct(100 - inp.pctShampoo);
-  const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
-  const dLogVal = (deltaLogRS < 0 ? '+ ' : '− ') + fmtBRL(Math.abs(deltaLogRS));
-  const dFreteVal = (deltaFreteRS < 0 ? '+ ' : '− ') + fmtBRL(Math.abs(deltaFreteRS));
-
-  const rows = [
-    ['1', `ICMS SP — nova BC Saída × ${fmtPct(rSP)} blendado`, fmtBRL(icmsSP_v2), false, false],
-    ['', `${pctSHP} shampoo × 18%   +   ${pctDEM} demais × 25%`, '', true, false],
-    ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(descontoCliente_v2), false, true],
-    ['3', `ICMS ES — Compete 1,14% × BC Saída líquida (${fmtBRL(faturamentoES_v2)})`, fmtBRL(icmsES_v2), false, false],
-    ['4', 'Economia bruta de ICMS', fmtBRL(economiaBruta_v2), false, false, true],
-    ['5', consultoriaLabel, '− ' + fmtBRL(consultoria_v2), false, true],
-    ['6', 'Δ Logística', dLogVal, false, deltaLogRS > 0],
-    ['7', 'Δ Frete', dFreteVal, false, deltaFreteRS > 0],
-    ['8', 'BENEFÍCIO LÍQUIDO / MÊS', fmtBRL(beneficioMes_v2), false, false, false, true],
-  ];
-
-  tbody.innerHTML = rows.map(row => {
-    const [n, label, val, isSub, isNeg, isIcms, isFinal] = row;
-    let cls = '';
-    if (isSub) cls = 'sub';
-    else if (isFinal) cls = 'final-row';
-    else if (isIcms) cls = 'icms-row';
-    else if (isNeg) cls = 'neg-row';
-    return `<tr class="${cls}"><td>${n ? n + '. ' : ''}${label}</td><td class="right">${val}</td></tr>`;
-  }).join('');
-
-  document.getElementById('v2-kpi-mes').textContent = fmtBRL(beneficioMes_v2);
-  document.getElementById('v2-kpi-delta').textContent = (delta >= 0 ? '+' : '') + fmtBRL(delta);
-
-  const card = document.getElementById('v2-kpi-veredicto-card');
-  const verEl = document.getElementById('v2-kpi-veredicto');
-  if (beneficioMes_v2 > 0) {
-    card.className = 'kpi-card verdict-ok';
-    verEl.textContent = 'VIÁVEL';
-  } else {
-    card.className = 'kpi-card verdict-bad';
-    verEl.textContent = 'INVIÁVEL';
-  }
-}
 
 function render() {
   const inp = getInputs();
@@ -1436,7 +1329,16 @@ function render() {
   renderParity(rFim, inp, '-fim');
   renderKpis(rFim, '-fim');
   renderGauges(rFim, '-fim');
-  renderV2();
+  // badge de variação da nova BC de Saída
+  const badge = document.getElementById('nova-bc-badge');
+  if (badge) {
+    if (inp.novaBCSaida > 0 && inp.faturamento > 0) {
+      const pctVar = ((inp.novaBCSaida / inp.faturamento) - 1) * 100;
+      badge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
+    } else {
+      badge.textContent = '—';
+    }
+  }
 }
 
 function renderProjectionUnified(inp) {
@@ -1500,7 +1402,7 @@ function clearAll() {
   document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
-  document.getElementById('v2-novaBCSaida').value = 0;
+  document.getElementById('novaBCSaida').value = 0;
   setPageTab('tab1');
 }
 
