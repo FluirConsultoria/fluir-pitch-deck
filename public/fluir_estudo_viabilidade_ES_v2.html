@@ -130,9 +130,10 @@ body {
   text-align: center;
 }
 .subgrid { grid-column: 1 / -1; display: grid; gap: 12px; }
+.subgrid-5 { grid-template-columns: repeat(5, 1fr); }
 .subgrid-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 900px) {
-  .subgrid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .subgrid-5, .subgrid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 }
 
 /* ===== BUTTONS ===== */
@@ -407,23 +408,36 @@ footer {
         <div class="field-hint">Fixo — credito estornado na operacao ES</div>
       </div>
       <div class="field">
+        <label>Destaque ICMS saída ES (crédito do cliente)</label>
+        <div class="input-row"><input type="number" id="destaqueSaidaES" value="12" step="0.1" readonly><span class="unit-sym">%</span></div>
+        <div class="field-hint">Fixo — alíquota de destaque na NF ES</div>
+      </div>
+      <div class="field">
         <label>Carga efetiva ICMS ES (Compete)</label>
         <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01" oninput="render()"><span class="unit-sym">%</span></div>
       </div>
 
       <div class="input-group-title">Frete, Logistica e Consultoria</div>
-      <div class="subgrid subgrid-3">
+      <div class="subgrid subgrid-5">
         <div class="field">
-          <label>Frete Industria -> Matriz</label>
+          <label>Frete Indústria → Matriz</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100" oninput="render()"></div>
         </div>
         <div class="field">
-          <label>Frete Industria -> Filial ES</label>
+          <label>Frete Matriz → Cliente</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente" value="0" step="100" oninput="render()"></div>
+        </div>
+        <div class="field">
+          <label>Frete Indústria → Filial ES</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100" oninput="render()"></div>
         </div>
+        <div class="field">
+          <label>Frete Filial ES → Cliente</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente" value="0" step="100" oninput="render()"></div>
+        </div>
         <div class="field field-markup">
-          <label>Diferenca de frete (novo - atual)</label>
-          <div id="frete-diff-badge" class="markup-badge">&#8212;</div>
+          <label>Diferença de frete (novo − atual)</label>
+          <div id="frete-diff-badge" class="markup-badge">—</div>
         </div>
       </div>
       <div class="subgrid subgrid-3">
@@ -680,16 +694,6 @@ footer {
           <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
           <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Fim da Primavera.</div>
         </div>
-        <div class="input-group-title">Reprecificacao do Mercado (opcional)</div>
-        <div class="field">
-          <label>Nova BC de Saida (mercado reprecificado)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="novaBCSaida" value="0" step="1000" oninput="render()"></div>
-          <div class="field-hint">Deixe 0 para calcular com faturamento atual. Preencha se o mercado reprecificar apos a reforma.</div>
-        </div>
-        <div class="field field-markup">
-          <label>Variacao vs. faturamento atual</label>
-          <div id="nova-bc-badge" class="markup-badge">&#8212;</div>
-        </div>
       </div>
     </div>
 
@@ -764,11 +768,10 @@ footer {
 const DEFAULTS = {
   empresa: '', baseSped: '',
   faturamento: 0, compras: 0, icmsSpedAtual: 0,
-  creditoEntradaES: 7, cargaEfetivaES: 1.14,
+  creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
-  freteIndMatriz: 0, freteIndFilial: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70,
-  novaBCSaida: 0
+  freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
+  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70
 };
 
 function fmtBRL(v) {
@@ -787,22 +790,23 @@ function getInputs() {
     faturamento: num('faturamento'),
     compras: num('compras'),
     icmsSpedAtual: num('icmsSpedAtual'),
+    destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
     freteIndMatriz: num('freteIndMatriz'),
+    freteMatrizCliente: num('freteMatrizCliente'),
     freteIndFilial: num('freteIndFilial'),
+    freteFilialCliente: num('freteFilialCliente'),
     operadorLogPct: num('operadorLogPct'),
     custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
     consultoriaMin: num('consultoriaMin'),
-    novaBCSaida: num('novaBCSaida'),
     pctClientesLP: num('pctClientesLP')
   };
 }
 
 function calcScenario(scenario, inp) {
-  const novaBCSaidaAtiva = scenario === 'fim' && inp.novaBCSaida > 0;
-  const base = novaBCSaidaAtiva ? inp.novaBCSaida : inp.faturamento;
+  const base = inp.faturamento;
 
   const rSP = scenario === 'primavera'
     ? 12
@@ -811,8 +815,6 @@ function calcScenario(scenario, inp) {
   let icmsSP;
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
-  } else if (novaBCSaidaAtiva) {
-    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
   } else {
     icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * inp.faturamento * (rSP - 12) / 100;
   }
@@ -822,14 +824,14 @@ function calcScenario(scenario, inp) {
   const consultoria = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta);
   const operadorLogRS = (inp.operadorLogPct / 100) * base;
   const deltaLogRS = operadorLogRS - inp.custoLogAtual;
-  const freteAtualTotal = inp.freteIndMatriz;
-  const freteNovoTotal = inp.freteIndFilial;
+  const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
+  const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
   const deltaFreteRS = freteNovoTotal - freteAtualTotal;
   const beneficioMes = economiaBruta - consultoria - deltaLogRS - deltaFreteRS;
   const beneficioAno = beneficioMes * 12;
 
   return { scenario, rSP, icmsSP, icmsES, economiaBruta,
-    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base, novaBCSaidaAtiva };
+    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base };
 }
 
 function renderCalcTable(r, scenario, inp, suffix) {
@@ -837,8 +839,6 @@ function renderCalcTable(r, scenario, inp, suffix) {
   let icmsSPLabel;
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
-  } else if (r.novaBCSaidaAtiva) {
-    icmsSPLabel = 'ICMS SP liquido - Nova BC x ' + fmtPct(r.rSP) + ' (debito) - 12% x Compras (credito entrada)';
   } else {
     icmsSPLabel = 'ICMS SP Fim da Primavera - SPED atual + ' + fmtPct(inp.pctClientesLP) + ' clientes LP x Fat. x (' + fmtPct(r.rSP) + ' - 12%)';
   }
@@ -846,24 +846,19 @@ function renderCalcTable(r, scenario, inp, suffix) {
 
   const deltaLogIsGain = r.deltaLogRS < 0;
   const deltaFreteIsGain = r.deltaFreteRS < 0;
-  const deltaLogVal = (deltaLogIsGain ? '+ ' : '- ') + fmtBRL(Math.abs(r.deltaLogRS));
-  const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '- ') + fmtBRL(Math.abs(r.deltaFreteRS));
-
-  const baseRow = r.novaBCSaidaAtiva
-    ? [['', 'Base: Nova BC de Saida reprecificada (faturamento atual: ' + fmtBRL(inp.faturamento) + ')', '', true, false]]
-    : [];
+  const deltaLogVal = (deltaLogIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaLogRS));
+  const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaFreteRS));
 
   const rows = [
-    ...baseRow,
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', 'Aliquota SP blendada: ' + fmtPct(r.rSP), '', true, false],
     ['2', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['3', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
-    ['4', consultoriaLabel, '- ' + fmtBRL(r.consultoria), false, true],
-    ['5', 'Delta Logistica (R$)', deltaLogVal, false, !deltaLogIsGain, false, false, deltaLogIsGain],
-    ['6', 'Delta Frete (R$)', deltaFreteVal, false, !deltaFreteIsGain, false, false, deltaFreteIsGain],
-    ['7', 'BENEFICIO LIQUIDO / MES', fmtBRL(r.beneficioMes), false, false, false, true],
-    ['8', 'Beneficio liquido / ano', fmtBRL(r.beneficioAno), false, false]
+    ['4', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
+    ['5', 'Δ Logística (R$)', deltaLogVal, false, !deltaLogIsGain, false, false, deltaLogIsGain],
+    ['6', 'Δ Frete (R$)', deltaFreteVal, false, !deltaFreteIsGain, false, false, deltaFreteIsGain],
+    ['7', 'BENEFÍCIO LÍQUIDO / MÊS', fmtBRL(r.beneficioMes), false, false, false, true],
+    ['8', 'Benefício líquido / ano', fmtBRL(r.beneficioAno), false, false]
   ];
   const tbody = document.getElementById('calc-table-body' + suffix);
   tbody.innerHTML = rows.map(function(row) {
@@ -893,8 +888,8 @@ function renderWaterfall(r, suffix) {
   ];
   const steps = [
     ['Consultoria', -r.consultoria],
-    ['Delta Logistica', -r.deltaLogRS],
-    ['Delta Frete', -r.deltaFreteRS]
+    ['Δ Logística', -r.deltaLogRS],
+    ['Δ Frete', -r.deltaFreteRS]
   ];
   steps.forEach(function(s) {
     const label = s[0], delta = s[1];
@@ -1005,14 +1000,16 @@ function renderMarkup(inp) {
 }
 
 function renderFreteLogistica(inp) {
-  const freteDiff = inp.freteIndFilial - inp.freteIndMatriz;
+  const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
+  const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
+  const freteDiff = freteNovoTotal - freteAtualTotal;
   document.getElementById('frete-diff-badge').textContent =
-    (freteDiff >= 0 ? '+ ' : '- ') + fmtBRL(Math.abs(freteDiff));
+    (freteDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(freteDiff));
   const operadorRS = (inp.operadorLogPct / 100) * inp.faturamento;
   document.getElementById('operador-log-rs').textContent = fmtBRL(operadorRS);
   const logDiff = operadorRS - inp.custoLogAtual;
   document.getElementById('logistica-diff-badge').textContent =
-    (logDiff >= 0 ? '+ ' : '- ') + fmtBRL(Math.abs(logDiff));
+    (logDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(logDiff));
 }
 
 function salvarEstudo() {
@@ -1054,15 +1051,7 @@ function render() {
   renderWaterfall(rFim, '-fim');
   renderKpis(rFim, '-fim');
   renderGauges(rFim, '-fim');
-  const badge = document.getElementById('nova-bc-badge');
-  if (badge) {
-    if (inp.novaBCSaida > 0 && inp.faturamento > 0) {
-      const pctVar = ((inp.novaBCSaida / inp.faturamento) - 1) * 100;
-      badge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
-    } else {
-      badge.textContent = '-';
-    }
-  }
+
 }
 
 function renderProjectionUnified(inp) {
@@ -1115,16 +1104,18 @@ function clearAll() {
   document.getElementById('compras').value = DEFAULTS.compras;
   document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
   document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
+  document.getElementById('destaqueSaidaES').value = DEFAULTS.destaqueSaidaES;
   document.getElementById('cargaEfetivaES').value = DEFAULTS.cargaEfetivaES;
   document.getElementById('pctShampoo').value = DEFAULTS.pctShampoo;
   document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
   document.getElementById('freteIndMatriz').value = DEFAULTS.freteIndMatriz;
+  document.getElementById('freteMatrizCliente').value = DEFAULTS.freteMatrizCliente;
   document.getElementById('freteIndFilial').value = DEFAULTS.freteIndFilial;
+  document.getElementById('freteFilialCliente').value = DEFAULTS.freteFilialCliente;
   document.getElementById('operadorLogPct').value = DEFAULTS.operadorLogPct;
   document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
-  document.getElementById('novaBCSaida').value = 0;
   document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
   setPageTab('tab1');
   render();
