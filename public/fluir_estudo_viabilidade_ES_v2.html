@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo de Viabilidade Fiscal v2 — Fluir ES</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  background: #e8edf2;
+  color: #1a1a2e;
+  padding-bottom: 40px;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+  background: linear-gradient(135deg, #0b1a35 0%, #12285a 100%);
+  padding: 18px 24px 16px;
+  text-align: center;
+  border-bottom: 3px solid #c9a227;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.fluir-logo {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+}
+.header-text { text-align: left; }
+.header-title {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.header-subtitle {
+  color: #c9a227;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+
+/* ===== CARD / PANEL ===== */
+.panel {
+  background: #fff;
+  border: 1px solid #b8cce0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  margin-bottom: 16px;
+}
+.panel-header {
+  background: #1e4080;
+  color: #fff;
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ===== INPUTS ===== */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+.input-group-title {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f2d60;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #d5e4f5;
+  padding-bottom: 4px;
+  margin-top: 6px;
+}
+.input-group-title:first-child { margin-top: 0; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; color: #2a3a52; font-weight: 600; }
+.field .input-row { display: flex; align-items: center; gap: 6px; }
+.field input {
+  border: 1px solid #c9a227;
+  background: #fffbea;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  padding: 6px 8px;
+  border-radius: 3px;
+  color: #0b1a35;
+  font-weight: 700;
+  width: 100%;
+}
+.field input:focus { outline: none; border-color: #1e4080; background: #eef4ff; }
+.field input[readonly] { background: #f0f3f7; color: #6a7d99; border-color: #b8cce0; cursor: default; }
+.field input[readonly]:focus { background: #f0f3f7; border-color: #b8cce0; }
+.field input[type="text"] { font-weight: 600; }
+.unit-sym { font-size: 11px; color: #6a8aaa; white-space: nowrap; }
+.field.note { grid-column: span 1; }
+.field-hint { font-size: 9.5px; color: #8aa4c8; }
+.markup-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #e8f0fb;
+  color: #1e4080;
+  border: 1px solid #b8cce0;
+  min-width: 70px;
+  text-align: center;
+}
+.subgrid { grid-column: 1 / -1; display: grid; gap: 12px; }
+.subgrid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) {
+  .subgrid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-gold { background: #c9a227; color: #0b1a35; }
+
+/* ===== SCENARIO TABS ===== */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px 0;
+  background: #fff;
+}
+.tab-btn {
+  padding: 9px 18px;
+  cursor: pointer;
+  color: #5a7aa0;
+  background: #eef3fa;
+  border: 1px solid #b8cce0;
+  border-bottom: none;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px 6px 0 0;
+  letter-spacing: 0.3px;
+}
+.tab-btn.active {
+  color: #0b1a35;
+  background: #c9a227;
+  border-color: #c9a227;
+}
+
+/* ===== CALC TABLE ===== */
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: #2d5fa8;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+}
+th.right { text-align: right; }
+td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #e4ecf5;
+  font-size: 12.5px;
+}
+td.right { text-align: right; font-variant-numeric: tabular-nums; }
+tr.sub td { color: #6a7d99; font-size: 11.5px; }
+tr.icms-row td { background: #d5e4f5; font-weight: 700; }
+tr.neg-row td { color: #b02a2a; }
+tr.pos-row td { color: #1a7a3a; }
+tr.final-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
+
+/* ===== WATERFALL ===== */
+.waterfall-wrap { padding: 14px; }
+#waterfall-svg { width: 100%; height: auto; display: block; }
+
+/* ===== KPI CARDS ===== */
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+.kpi-card {
+  background: linear-gradient(135deg, #12285a 0%, #1e4080 100%);
+  border: 1px solid #2d5fa8;
+  border-radius: 8px;
+  padding: 18px 14px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+.kpi-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; color: #8aa4c8; margin-bottom: 8px; text-transform: uppercase; }
+.kpi-value { font-size: 24px; font-weight: 700; color: #c9a227; margin-bottom: 5px; }
+.kpi-desc { font-size: 10.5px; color: #9fb6d2; }
+.kpi-card.verdict-ok { background: linear-gradient(135deg, #14502c 0%, #1a7a3a 100%); border-color: #2fa658; }
+.kpi-card.verdict-ok .kpi-value { color: #d7ffe0; font-size: 22px; }
+.kpi-card.verdict-bad { background: linear-gradient(135deg, #6e1f1f 0%, #b02a2a 100%); border-color: #d05050; }
+.kpi-card.verdict-bad .kpi-value { color: #ffe0e0; font-size: 22px; }
+
+/* ===== GAUGE (ROSCA) ===== */
+.gauge-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+.gauge-card {
+  border: 1px solid #b8cce0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.gauge-card-head {
+  background: #1e4080;
+  color: #fff;
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.gauge-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 18px 14px;
+  flex-wrap: wrap;
+}
+.gauge-ring-wrap { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.gauge-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-bg { fill: none; stroke: #e3e9f0; }
+.gauge-fg { fill: none; stroke-linecap: round; transition: stroke-dasharray .3s; }
+.gauge-center {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.gauge-pct { font-size: 22px; font-weight: 700; color: #0b1a35; }
+.gauge-pct.neg { color: #b02a2a; }
+.gauge-desc { max-width: 220px; font-size: 12px; color: #2a3a52; line-height: 1.5; }
+.gauge-desc strong { color: #0b1a35; }
+
+/* ===== PROJECTION ===== */
+.proj-scroll { max-height: 420px; overflow-y: auto; }
+#proj-table th { position: sticky; top: 0; }
+tr.tag-primavera td.tag { color: #1e4080; font-weight: 700; }
+tr.tag-fim td.tag { color: #c9a227; font-weight: 700; background: #0b1a35; }
+.proj-total-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
+
+/* ===== PROJECTION 2029 ===== */
+tr.proj-reform-alt { background: #f9fbfd; }
+.months-inp-reform {
+  width: 64px; padding: 3px 6px;
+  border: 1px solid #c9a227; background: #fffbea;
+  font-size: 13px; font-weight: 700; border-radius: 3px; color: #0b1a35; text-align: center;
+}
+
+.note-box {
+  background: #fffbea;
+  border: 1px solid #c9a227;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 16px 16px;
+  border-radius: 4px;
+}
+
+footer {
+  text-align: center;
+  font-size: 10px;
+  color: #8aa4c8;
+  padding: 16px;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .kpi-cards { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; }
+  .header-text { text-align: center; }
+}
+
+#print-report { display: none; }
+
+@media print {
+  #input-panel, #screen-report { display: none; }
+  #print-report { display: block; }
+  body { background: #fff; }
+}
+
+/* ===== PAGE-LEVEL TABS ===== */
+.page-tab-bar {
+  display: flex;
+  gap: 4px;
+  padding-top: 12px;
+  border-bottom: 3px solid #c9a227;
+  margin-bottom: 16px;
+}
+.page-tab-btn {
+  padding: 10px 22px;
+  cursor: pointer;
+  color: #5a7aa0;
+  background: #d5e4f5;
+  border: 1px solid #b8cce0;
+  border-bottom: none;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 6px 6px 0 0;
+  transition: background .15s, color .15s;
+}
+.page-tab-btn.active {
+  color: #0b1a35;
+  background: #c9a227;
+  border-color: #c9a227;
+}
+.page-tab-content { display: none; }
+.page-tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-inner">
+    <img class="fluir-logo" src="fluir-logo.png" alt="Fluir">
+    <div class="header-text">
+      <div class="header-title">Estudo de Viabilidade Fiscal v2 — Espirito Santo</div>
+      <div class="header-subtitle" id="dynamic-subtitle">{Empresa analisada} · base SPED {mes/ano}</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== INPUTS ===== -->
+  <div class="panel" id="input-panel">
+    <div class="panel-header">
+      <span>Dados de Entrada</span>
+      <button class="btn btn-gold" onclick="clearAll()">Limpar dados</button>
+      <button class="btn btn-gold" onclick="salvarEstudo()">Salvar Estudo (PDF)</button>
+    </div>
+    <div class="input-grid">
+
+      <div class="input-group-title">Identificacao</div>
+      <div class="field">
+        <label>Empresa analisada</label>
+        <input type="text" id="empresa" placeholder="Nome do prospect">
+      </div>
+      <div class="field">
+        <label>Mes/ano base SPED</label>
+        <input type="text" id="baseSped" placeholder="ex: Mar/2026">
+      </div>
+
+      <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
+      <div class="field">
+        <label>Faturamento mensal (BC Saidas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field">
+        <label>Compras (BC Entradas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Markup (Faturamento / Compras)</label>
+        <div id="markup-badge" class="markup-badge">&#8212;</div>
+        <div id="markup-hint" class="field-hint"></div>
+      </div>
+      <div class="field">
+        <label>ICMS efetivamente recolhido hoje (SPED)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
+        <div class="field-hint">Valor auditado — usado no cenario Primavera</div>
+      </div>
+
+      <div class="input-group-title">Parametros Fiscais</div>
+      <div class="field">
+        <label>Credito entrada ES</label>
+        <div class="input-row"><input type="number" id="creditoEntradaES" value="7" step="0.1" readonly><span class="unit-sym">%</span></div>
+        <div class="field-hint">Fixo — credito estornado na operacao ES</div>
+      </div>
+      <div class="field">
+        <label>Carga efetiva ICMS ES (Compete)</label>
+        <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01" oninput="render()"><span class="unit-sym">%</span></div>
+      </div>
+
+      <div class="input-group-title">Frete, Logistica e Consultoria</div>
+      <div class="subgrid subgrid-3">
+        <div class="field">
+          <label>Frete Industria -> Matriz</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100" oninput="render()"></div>
+        </div>
+        <div class="field">
+          <label>Frete Industria -> Filial ES</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100" oninput="render()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Diferenca de frete (novo - atual)</label>
+          <div id="frete-diff-badge" class="markup-badge">&#8212;</div>
+        </div>
+      </div>
+      <div class="subgrid subgrid-3">
+        <div class="field">
+          <label>Operador Logistico ES (% do faturamento)</label>
+          <div class="input-row"><input type="number" id="operadorLogPct" value="0" step="0.1" oninput="render()"><span class="unit-sym">%</span></div>
+          <div class="field-hint">Equivalente em R$/mes: <span id="operador-log-rs">&#8212;</span></div>
+        </div>
+        <div class="field">
+          <label>Custo atual da operacao logistica</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual" value="0" step="100" oninput="render()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Diferenca de logistica (operador ES - atual)</label>
+          <div id="logistica-diff-badge" class="markup-badge">&#8212;</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Consultoria (% da economia bruta)</label>
+        <div class="input-row"><input type="number" id="consultoriaPct" value="6" step="0.1" oninput="render()"><span class="unit-sym">%</span></div>
+      </div>
+      <div class="field">
+        <label>Consultoria — minimo mensal</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="consultoriaMin" value="0" step="100" oninput="render()"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PAGE TABS ===== -->
+  <div class="page-tab-bar">
+    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributaria</div>
+    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Fim da Primavera</div>
+  </div>
+
+  <!-- TAB 1 -->
+  <div id="tab1-content" class="page-tab-content active">
+  <div id="screen-report">
+
+  <div class="panel">
+    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
+    <table>
+      <thead>
+        <tr><th>Linha de calculo</th><th class="right">Valor</th></tr>
+      </thead>
+      <tbody id="calc-table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+    <div class="waterfall-wrap">
+      <svg id="waterfall-svg" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / mes</div>
+        <div class="kpi-value" id="kpi-mes">&#8212;</div>
+        <div class="kpi-desc">cenario selecionado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / ano</div>
+        <div class="kpi-value" id="kpi-ano">&#8212;</div>
+        <div class="kpi-desc">cenario selecionado x 12</div>
+      </div>
+      <div class="kpi-card" id="kpi-veredicto-card">
+        <div class="kpi-title">Veredicto</div>
+        <div class="kpi-value" id="kpi-veredicto">&#8212;</div>
+        <div class="kpi-desc">migracao SP -> ES</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+    <div class="gauge-grid">
+      <div class="gauge-card">
+        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+        <div class="gauge-card-body">
+          <div class="gauge-ring-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+              <circle id="gauge-liquido-fg" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" id="gauge-liquido-pct">&#8212;</div>
+            </div>
+          </div>
+          <div class="gauge-desc">
+            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="print-report">
+    <h2>Cenario: Primavera Tributaria</h2>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+        <tbody id="calc-table-body-print-primavera"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-print-primavera" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / mes</div>
+          <div class="kpi-value" id="kpi-mes-print-primavera">&#8212;</div>
+          <div class="kpi-desc">cenario Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-print-primavera">&#8212;</div>
+          <div class="kpi-desc">cenario Primavera x 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-print-primavera">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-print-primavera">&#8212;</div>
+          <div class="kpi-desc">migracao SP -> ES</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-print-primavera">&#8212;</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Cenario: Fim da Primavera (mix de produtos)</h2>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+        <tbody id="calc-table-body-print-fim"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-print-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / mes</div>
+          <div class="kpi-value" id="kpi-mes-print-fim">&#8212;</div>
+          <div class="kpi-desc">cenario Fim da Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-print-fim">&#8212;</div>
+          <div class="kpi-desc">cenario Fim da Primavera x 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-print-fim">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-print-fim">&#8212;</div>
+          <div class="kpi-desc">migracao SP -> ES (Fim da Primavera)</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-print-fim">&#8212;</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-fim">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROJECTION ===== -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
+        <span>Meses ate Jan/2029: <input type="number" id="mesesAte2029" value="30" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
+      </div>
+    </div>
+    <div class="proj-scroll">
+      <table id="proj-table">
+        <thead>
+          <tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr>
+        </thead>
+        <tbody id="proj-table-body"></tbody>
+      </table>
+    </div>
+    <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+      A partir de Jan/2029 o beneficio do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
+    </div>
+  </div>
+
+  </div><!-- /tab1-content -->
+
+  <!-- TAB 2 -->
+  <div id="tab2-content" class="page-tab-content">
+
+    <div class="panel">
+      <div class="panel-header"><span>Mix de Produtos — Fim da Primavera</span></div>
+      <div class="input-grid">
+        <div class="input-group-title">Aliquotas SP — Fim da Primavera</div>
+        <div class="field">
+          <label>% Shampoo (saida 18%)</label>
+          <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+        </div>
+        <div class="field">
+          <label>% Demais produtos (saida 25%)</label>
+          <div class="input-row"><input type="number" id="pctDemais" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
+          <div class="field-hint">Calculado automaticamente (100% - % shampoo)</div>
+        </div>
+        <div class="field">
+          <label>% faturamento para clientes LP / Medio Porte (hoje em 12%)</label>
+          <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
+          <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Fim da Primavera.</div>
+        </div>
+        <div class="input-group-title">Reprecificacao do Mercado (opcional)</div>
+        <div class="field">
+          <label>Nova BC de Saida (mercado reprecificado)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="novaBCSaida" value="0" step="1000" oninput="render()"></div>
+          <div class="field-hint">Deixe 0 para calcular com faturamento atual. Preencha se o mercado reprecificar apos a reforma.</div>
+        </div>
+        <div class="field field-markup">
+          <label>Variacao vs. faturamento atual</label>
+          <div id="nova-bc-badge" class="markup-badge">&#8212;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Calculo ICMS — Fim da Primavera (18% shampoo / 25% demais)</span></div>
+      <table>
+        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+        <tbody id="calc-table-body-fim"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Beneficio Liquido — Fim da Primavera</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / mes</div>
+          <div class="kpi-value" id="kpi-mes-fim">&#8212;</div>
+          <div class="kpi-desc">cenario Fim da Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-fim">&#8212;</div>
+          <div class="kpi-desc">cenario Fim da Primavera x 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-fim">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-fim">&#8212;</div>
+          <div class="kpi-desc">migracao SP -> ES (Fim da Primavera)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real — Fim da Primavera</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-fim">&#8212;</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-fim">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab2-content -->
+
+</div>
+
+<footer>
+  Fluir Consultoria &middot; Estudo de viabilidade fiscal ES v2 &middot; Sujeito a validacao contabil.<br>
+  Logistica e frete consideram apenas o incremental sobre a operacao atual.
+</footer>
+
+<script>
+const DEFAULTS = {
+  empresa: '', baseSped: '',
+  faturamento: 0, compras: 0, icmsSpedAtual: 0,
+  creditoEntradaES: 7, cargaEfetivaES: 1.14,
+  pctShampoo: 50,
+  freteIndMatriz: 0, freteIndFilial: 0, operadorLogPct: 0, custoLogAtual: 0,
+  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70,
+  novaBCSaida: 0
+};
+
+function fmtBRL(v) {
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+}
+function fmtPct(v) {
+  return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+}
+
+function getInputs() {
+  const num = id => parseFloat(document.getElementById(id).value) || 0;
+  const txt = id => document.getElementById(id).value;
+  return {
+    empresa: txt('empresa'),
+    baseSped: txt('baseSped'),
+    faturamento: num('faturamento'),
+    compras: num('compras'),
+    icmsSpedAtual: num('icmsSpedAtual'),
+    cargaEfetivaES: num('cargaEfetivaES'),
+    pctShampoo: num('pctShampoo'),
+    freteIndMatriz: num('freteIndMatriz'),
+    freteIndFilial: num('freteIndFilial'),
+    operadorLogPct: num('operadorLogPct'),
+    custoLogAtual: num('custoLogAtual'),
+    consultoriaPct: num('consultoriaPct'),
+    consultoriaMin: num('consultoriaMin'),
+    novaBCSaida: num('novaBCSaida'),
+    pctClientesLP: num('pctClientesLP')
+  };
+}
+
+function calcScenario(scenario, inp) {
+  const novaBCSaidaAtiva = scenario === 'fim' && inp.novaBCSaida > 0;
+  const base = novaBCSaidaAtiva ? inp.novaBCSaida : inp.faturamento;
+
+  const rSP = scenario === 'primavera'
+    ? 12
+    : (inp.pctShampoo / 100) * 18 + ((100 - inp.pctShampoo) / 100) * 25;
+
+  let icmsSP;
+  if (scenario === 'primavera') {
+    icmsSP = inp.icmsSpedAtual;
+  } else if (novaBCSaidaAtiva) {
+    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
+  } else {
+    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * inp.faturamento * (rSP - 12) / 100;
+  }
+
+  const icmsES = (inp.cargaEfetivaES / 100) * base;
+  const economiaBruta = icmsSP - icmsES;
+  const consultoria = Math.max(inp.consultoriaMin, (inp.consultoriaPct / 100) * economiaBruta);
+  const operadorLogRS = (inp.operadorLogPct / 100) * base;
+  const deltaLogRS = operadorLogRS - inp.custoLogAtual;
+  const freteAtualTotal = inp.freteIndMatriz;
+  const freteNovoTotal = inp.freteIndFilial;
+  const deltaFreteRS = freteNovoTotal - freteAtualTotal;
+  const beneficioMes = economiaBruta - consultoria - deltaLogRS - deltaFreteRS;
+  const beneficioAno = beneficioMes * 12;
+
+  return { scenario, rSP, icmsSP, icmsES, economiaBruta,
+    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base, novaBCSaidaAtiva };
+}
+
+function renderCalcTable(r, scenario, inp, suffix) {
+  suffix = suffix || '';
+  let icmsSPLabel;
+  if (scenario === 'primavera') {
+    icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
+  } else if (r.novaBCSaidaAtiva) {
+    icmsSPLabel = 'ICMS SP liquido - Nova BC x ' + fmtPct(r.rSP) + ' (debito) - 12% x Compras (credito entrada)';
+  } else {
+    icmsSPLabel = 'ICMS SP Fim da Primavera - SPED atual + ' + fmtPct(inp.pctClientesLP) + ' clientes LP x Fat. x (' + fmtPct(r.rSP) + ' - 12%)';
+  }
+  const consultoriaLabel = 'Consultoria (' + fmtPct(inp.consultoriaPct) + ' da economia, min. ' + fmtBRL(inp.consultoriaMin) + ')';
+
+  const deltaLogIsGain = r.deltaLogRS < 0;
+  const deltaFreteIsGain = r.deltaFreteRS < 0;
+  const deltaLogVal = (deltaLogIsGain ? '+ ' : '- ') + fmtBRL(Math.abs(r.deltaLogRS));
+  const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '- ') + fmtBRL(Math.abs(r.deltaFreteRS));
+
+  const baseRow = r.novaBCSaidaAtiva
+    ? [['', 'Base: Nova BC de Saida reprecificada (faturamento atual: ' + fmtBRL(inp.faturamento) + ')', '', true, false]]
+    : [];
+
+  const rows = [
+    ...baseRow,
+    ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
+    ['', 'Aliquota SP blendada: ' + fmtPct(r.rSP), '', true, false],
+    ['2', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
+    ['3', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
+    ['4', consultoriaLabel, '- ' + fmtBRL(r.consultoria), false, true],
+    ['5', 'Delta Logistica (R$)', deltaLogVal, false, !deltaLogIsGain, false, false, deltaLogIsGain],
+    ['6', 'Delta Frete (R$)', deltaFreteVal, false, !deltaFreteIsGain, false, false, deltaFreteIsGain],
+    ['7', 'BENEFICIO LIQUIDO / MES', fmtBRL(r.beneficioMes), false, false, false, true],
+    ['8', 'Beneficio liquido / ano', fmtBRL(r.beneficioAno), false, false]
+  ];
+  const tbody = document.getElementById('calc-table-body' + suffix);
+  tbody.innerHTML = rows.map(function(row) {
+    const n = row[0], label = row[1], val = row[2], isSub = row[3], isNeg = row[4],
+          isIcms = row[5], isFinal = row[6], isPos = row[7];
+    let cls = '';
+    if (isSub) cls = 'sub';
+    else if (isFinal) cls = 'final-row';
+    else if (isIcms) cls = 'icms-row';
+    else if (isPos) cls = 'pos-row';
+    else if (isNeg) cls = 'neg-row';
+    return '<tr class="' + cls + '"><td>' + (n ? n + '. ' : '') + label + '</td><td class="right">' + val + '</td></tr>';
+  }).join('');
+}
+
+function renderWaterfall(r, suffix) {
+  suffix = suffix || '';
+  const svg = document.getElementById('waterfall-svg' + suffix);
+  const W = 1100, H = 420;
+  const margin = { top: 40, right: 30, bottom: 90, left: 30 };
+  const plotW = W - margin.left - margin.right;
+  const plotH = H - margin.top - margin.bottom;
+
+  let running = r.economiaBruta;
+  const bars = [
+    { label: 'Economia Bruta\nICMS', from: 0, to: r.economiaBruta, type: 'start', value: r.economiaBruta }
+  ];
+  const steps = [
+    ['Consultoria', -r.consultoria],
+    ['Delta Logistica', -r.deltaLogRS],
+    ['Delta Frete', -r.deltaFreteRS]
+  ];
+  steps.forEach(function(s) {
+    const label = s[0], delta = s[1];
+    bars.push({ label: label, from: running, to: running + delta, type: 'decrease', value: delta });
+    running += delta;
+  });
+  bars.push({ label: 'BENEFICIO\nLIQUIDO', from: 0, to: running, type: 'final', value: running });
+
+  const allVals = bars.reduce(function(acc, b) { acc.push(b.from, b.to); return acc; }, []);
+  const maxV = Math.max(0, Math.max.apply(null, allVals));
+  const minV = Math.min(0, Math.min.apply(null, allVals));
+  const range = (maxV - minV) || 1;
+
+  const n = bars.length;
+  const barW = plotW / n * 0.6;
+  const gap = plotW / n;
+
+  function yFor(v) {
+    return margin.top + plotH - ((v - minV) / range) * plotH;
+  }
+
+  let svgContent = '';
+  const zeroY = yFor(0);
+  svgContent += '<line x1="' + margin.left + '" y1="' + zeroY + '" x2="' + (W - margin.right) + '" y2="' + zeroY + '" stroke="#cfd8e3" stroke-width="1"/>';
+
+  bars.forEach(function(b, i) {
+    const cx = margin.left + gap * i + gap / 2;
+    const top = Math.min(yFor(b.from), yFor(b.to));
+    const height = Math.abs(yFor(b.from) - yFor(b.to)) || 2;
+    let color = '#c9852a';
+    if (b.type === 'start') color = '#1e4080';
+    else if (b.type === 'final') color = b.value >= 0 ? '#1a7a3a' : '#b02a2a';
+    else if (b.type === 'decrease' && b.value >= 0) color = '#1a7a3a';
+
+    svgContent += '<rect x="' + (cx - barW / 2) + '" y="' + top + '" width="' + barW + '" height="' + height + '" fill="' + color + '" rx="3"/>';
+
+    const valLabel = b.type === 'decrease'
+      ? (b.value < 0 ? '- ' : '+ ') + fmtBRL(Math.abs(b.value))
+      : fmtBRL(Math.abs(b.value));
+    svgContent += '<text x="' + cx + '" y="' + (top - 10) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#0b1a35">' + valLabel + '</text>';
+
+    const lines = b.label.split('\n');
+    lines.forEach(function(line, li) {
+      svgContent += '<text x="' + cx + '" y="' + (H - margin.bottom + 22 + li * 14) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#2a3a52">' + line + '</text>';
+    });
+
+    if (i < bars.length - 1) {
+      const nextCx = margin.left + gap * (i + 1) + gap / 2;
+      const connY = yFor(b.to);
+      svgContent += '<line x1="' + (cx + barW / 2) + '" y1="' + connY + '" x2="' + (nextCx - barW / 2) + '" y2="' + connY + '" stroke="#b8cce0" stroke-width="1.5" stroke-dasharray="4,3"/>';
+    }
+  });
+
+  svg.innerHTML = svgContent;
+}
+
+function renderKpis(r, suffix) {
+  suffix = suffix || '';
+  document.getElementById('kpi-mes' + suffix).textContent = fmtBRL(r.beneficioMes);
+  document.getElementById('kpi-ano' + suffix).textContent = fmtBRL(r.beneficioAno);
+  const card = document.getElementById('kpi-veredicto-card' + suffix);
+  const veredicto = document.getElementById('kpi-veredicto' + suffix);
+  if (r.beneficioMes > 0) {
+    card.className = 'kpi-card verdict-ok';
+    veredicto.textContent = 'VIAVEL';
+  } else {
+    card.className = 'kpi-card verdict-bad';
+    veredicto.textContent = 'INVIAVEL';
+  }
+}
+
+function renderSubtitle(inp) {
+  const empresa = inp.empresa || '{Empresa analisada}';
+  const base = inp.baseSped || '{mes/ano}';
+  document.getElementById('dynamic-subtitle').textContent = empresa + ' · base SPED ' + base;
+}
+
+function setGauge(fgId, pctId, textId, percent) {
+  const r = 58;
+  const circumference = 2 * Math.PI * r;
+  const clamped = Math.max(0, Math.min(100, percent));
+  const fg = document.getElementById(fgId);
+  fg.setAttribute('stroke-dasharray', (clamped / 100) * circumference + ' ' + circumference);
+  fg.setAttribute('stroke', percent < 0 ? '#b02a2a' : (fg.dataset.color || fg.getAttribute('stroke')));
+  const pctEl = document.getElementById(pctId);
+  pctEl.textContent = percent.toFixed(0) + '%';
+  pctEl.classList.toggle('neg', percent < 0);
+  if (textId) document.getElementById(textId).textContent = percent.toFixed(0) + '%';
+}
+
+function renderGauges(r, suffix) {
+  suffix = suffix || '';
+  if (!r.economiaBruta) {
+    setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, 0);
+    return;
+  }
+  const pctLiquido = (r.beneficioMes / r.economiaBruta) * 100;
+  setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, pctLiquido);
+}
+
+function renderMarkup(inp) {
+  const badge = document.getElementById('markup-badge');
+  const hint = document.getElementById('markup-hint');
+  if (!inp.compras || inp.compras === 0) { badge.textContent = '-'; hint.textContent = ''; return; }
+  const pct = ((inp.faturamento / inp.compras) - 1) * 100;
+  badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
+  hint.textContent = '';
+}
+
+function renderFreteLogistica(inp) {
+  const freteDiff = inp.freteIndFilial - inp.freteIndMatriz;
+  document.getElementById('frete-diff-badge').textContent =
+    (freteDiff >= 0 ? '+ ' : '- ') + fmtBRL(Math.abs(freteDiff));
+  const operadorRS = (inp.operadorLogPct / 100) * inp.faturamento;
+  document.getElementById('operador-log-rs').textContent = fmtBRL(operadorRS);
+  const logDiff = operadorRS - inp.custoLogAtual;
+  document.getElementById('logistica-diff-badge').textContent =
+    (logDiff >= 0 ? '+ ' : '- ') + fmtBRL(Math.abs(logDiff));
+}
+
+function salvarEstudo() {
+  const inp = getInputs();
+  const rPrimavera = calcScenario('primavera', inp);
+  const rFim = calcScenario('fim', inp);
+  renderCalcTable(rPrimavera, 'primavera', inp, '-print-primavera');
+  renderWaterfall(rPrimavera, '-print-primavera');
+  renderKpis(rPrimavera, '-print-primavera');
+  renderGauges(rPrimavera, '-print-primavera');
+  renderCalcTable(rFim, 'fim', inp, '-print-fim');
+  renderWaterfall(rFim, '-print-fim');
+  renderKpis(rFim, '-print-fim');
+  renderGauges(rFim, '-print-fim');
+  document.title = 'Estudo de Viabilidade Fiscal v2 - ' + (inp.empresa || 'Prospect') + ' - ' + (inp.baseSped || '');
+  window.print();
+}
+
+function setPageTab(tab) {
+  document.getElementById('page-tab1-btn').classList.toggle('active', tab === 'tab1');
+  document.getElementById('page-tab2-btn').classList.toggle('active', tab === 'tab2');
+  document.getElementById('tab1-content').classList.toggle('active', tab === 'tab1');
+  document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
+}
+
+function render() {
+  const inp = getInputs();
+  renderSubtitle(inp);
+  renderMarkup(inp);
+  renderFreteLogistica(inp);
+  const rPrimavera = calcScenario('primavera', inp);
+  renderCalcTable(rPrimavera, 'primavera', inp);
+  renderWaterfall(rPrimavera);
+  renderKpis(rPrimavera);
+  renderGauges(rPrimavera);
+  renderProjectionUnified(inp);
+  const rFim = calcScenario('fim', inp);
+  renderCalcTable(rFim, 'fim', inp, '-fim');
+  renderWaterfall(rFim, '-fim');
+  renderKpis(rFim, '-fim');
+  renderGauges(rFim, '-fim');
+  const badge = document.getElementById('nova-bc-badge');
+  if (badge) {
+    if (inp.novaBCSaida > 0 && inp.faturamento > 0) {
+      const pctVar = ((inp.novaBCSaida / inp.faturamento) - 1) * 100;
+      badge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
+    } else {
+      badge.textContent = '-';
+    }
+  }
+}
+
+function renderProjectionUnified(inp) {
+  const calcPrimavera = calcScenario('primavera', inp);
+  const calcFim = calcScenario('fim', inp);
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+
+  const startTotal = 2029 * 12 - mesesAte2029;
+  let monthIdx = startTotal % 12;
+  let year = Math.floor(startTotal / 12);
+  const mesesPrimavera = Math.max(0, 2027 * 12 - startTotal);
+
+  let acumulado = 0;
+  let rows = '';
+
+  for (let i = 0; i < mesesAte2029; i++) {
+    const isPrimavera = i < mesesPrimavera;
+    const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
+    acumulado += beneficio;
+    const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
+    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
+    rows += '<tr class="' + tagClass + '"><td>' + monthNames[monthIdx] + '/' + year + '</td><td class="tag">' + tagText + '</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+    monthIdx = (monthIdx + 1) % 12;
+    if (monthIdx === 0) year++;
+  }
+
+  const periodosReforma = [
+    { label: '2029 (12 meses)', fator: 0.9, alt: false },
+    { label: '2030 (12 meses)', fator: 0.8, alt: true },
+    { label: '2031 (12 meses)', fator: 0.7, alt: false },
+    { label: '2032 (12 meses)', fator: 0.6, alt: true }
+  ];
+  periodosReforma.forEach(function(p) {
+    const mensal = calcFim.beneficioMes * p.fator;
+    const subtotal = mensal * 12;
+    acumulado += subtotal;
+    const cls = p.alt ? ' class="proj-reform-alt"' : '';
+    rows += '<tr' + cls + '><td>' + p.label + '</td><td class="tag tag-fim">Reforma ' + (p.fator * 100).toFixed(0) + '%</td><td class="right">' + fmtBRL(mensal) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+  });
+
+  rows += '<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+  document.getElementById('proj-table-body').innerHTML = rows;
+}
+
+function clearAll() {
+  document.getElementById('empresa').value = DEFAULTS.empresa;
+  document.getElementById('baseSped').value = DEFAULTS.baseSped;
+  document.getElementById('faturamento').value = DEFAULTS.faturamento;
+  document.getElementById('compras').value = DEFAULTS.compras;
+  document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
+  document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
+  document.getElementById('cargaEfetivaES').value = DEFAULTS.cargaEfetivaES;
+  document.getElementById('pctShampoo').value = DEFAULTS.pctShampoo;
+  document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
+  document.getElementById('freteIndMatriz').value = DEFAULTS.freteIndMatriz;
+  document.getElementById('freteIndFilial').value = DEFAULTS.freteIndFilial;
+  document.getElementById('operadorLogPct').value = DEFAULTS.operadorLogPct;
+  document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
+  document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
+  document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
+  document.getElementById('novaBCSaida').value = 0;
+  document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
+  setPageTab('tab1');
+  render();
+}
+
+document.getElementById('pctShampoo').addEventListener('input', function() {
+  const v = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+  document.getElementById('pctDemais').value = (100 - v).toFixed(0);
+  render();
+});
+
+document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
+render();
+</script>
+
+</body>
+</html>
