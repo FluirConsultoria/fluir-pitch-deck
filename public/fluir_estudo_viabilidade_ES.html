@@ -1037,7 +1037,8 @@ function calcScenario(scenario, inp) {
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
   } else if (novaBCSaidaAtiva) {
-    icmsSP = base * (rSP / 100);
+    // Débito saída na nova BC − crédito de entrada (compras sempre entram com alíquota SP de 12%)
+    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
   } else {
     icmsSP = inp.icmsSpedAtual + inp.faturamento * (rSP - 12) / 100;
   }
@@ -1067,7 +1068,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
   } else if (r.novaBCSaidaAtiva) {
-    icmsSPLabel = `ICMS SP — nova BC de Saída × alíquota blendada (${fmtPct(r.rSP)})`;
+    icmsSPLabel = `ICMS SP líquido — nova BC × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   } else {
     icmsSPLabel = `ICMS SP a pagar — estimativa (ICMS SPED atual + Faturamento × variação de alíquota)`;
   }
@@ -1087,7 +1088,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
     ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(r.descontoCliente), false, true],
-    ['3', 'Faturamento ES (Faturamento − Desconto)', fmtBRL(r.faturamentoES), false, false],
+    ['3', 'Faturamento ES', fmtBRL(r.faturamentoES), false, false],
     ['4', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['5', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
     ['6', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
@@ -1346,10 +1347,16 @@ function renderProjectionUnified(inp) {
   const calcFim = calcScenario('fim', inp);
   const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const now = new Date();
-  let monthIdx = now.getMonth();
-  let year = now.getFullYear();
   const mesesPrimavera = Math.max(0, Math.round(parseFloat(document.getElementById('mesesPrimavera').value) || 0));
   const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+
+  // Ancoragem: Fim da Primavera sempre começa em Jan/2027
+  // A tabela inicia em (Jan/2027 - mesesPrimavera)
+  const mesesAteReforma = (2027 - now.getFullYear()) * 12 + (0 - now.getMonth());
+  const startOffset = Math.max(0, mesesAteReforma - mesesPrimavera);
+  let monthIdx = (now.getMonth() + startOffset) % 12;
+  let year = now.getFullYear() + Math.floor((now.getMonth() + startOffset) / 12);
+
   let acumulado = 0;
   let rows = '';
 
