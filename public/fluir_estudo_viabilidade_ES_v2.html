@@ -398,21 +398,6 @@ footer {
         <div class="field-hint">Valor auditado — usado no cenario Primavera</div>
       </div>
 
-      <div class="field">
-        <label>Faturamento mensal (BC Saídas) — Primavera Tributária</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field">
-        <label>Faturamento mensal (BC Saídas) — Pós Primavera</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
-        <div class="field-hint">Deixe 0 para usar o mesmo BC da Primavera Tributária</div>
-      </div>
-      <div class="field field-markup">
-        <label>Markup (Faturamento / Compras)</label>
-        <div id="markup-badge" class="markup-badge">&#8212;</div>
-        <div id="markup-hint" class="field-hint"></div>
-      </div>
-
       <div class="input-group-title">Parametros Fiscais</div>
       <div class="field">
         <label>Credito entrada ES</label>
@@ -483,6 +468,20 @@ footer {
   <div id="tab1-content" class="page-tab-content active">
   <div id="screen-report">
 
+  <div class="panel">
+    <div class="panel-header"><span>Base de Cálculo — Primavera Tributária</span></div>
+    <div class="input-grid" style="padding:12px 16px;">
+      <div class="field">
+        <label>Faturamento mensal (BC Saídas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Markup (Faturamento / Compras)</label>
+        <div id="markup-badge" class="markup-badge">&#8212;</div>
+        <div id="markup-hint" class="field-hint"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="panel">
     <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
@@ -683,6 +682,16 @@ footer {
   <!-- TAB 2 -->
   <div id="tab2-content" class="page-tab-content">
 
+    <div class="panel">
+      <div class="panel-header"><span>Base de Cálculo — Pós Primavera</span></div>
+      <div class="input-grid" style="padding:12px 16px;">
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas) — Pós Primavera</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
+          <div class="field-hint">Deixe 0 para usar o mesmo BC da Primavera Tributária</div>
+        </div>
+      </div>
+    </div>
 
     <div class="panel">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
