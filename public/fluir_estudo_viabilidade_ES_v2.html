@@ -389,17 +389,8 @@ footer {
 
       <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
       <div class="field">
-        <label>Faturamento mensal (BC Saidas)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field">
         <label>Compras (BC Entradas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field field-markup">
-        <label>Markup (Faturamento / Compras)</label>
-        <div id="markup-badge" class="markup-badge">&#8212;</div>
-        <div id="markup-hint" class="field-hint"></div>
       </div>
       <div class="field">
         <label>ICMS efetivamente recolhido hoje (SPED)</label>
@@ -476,6 +467,21 @@ footer {
   <!-- TAB 1 -->
   <div id="tab1-content" class="page-tab-content active">
   <div id="screen-report">
+
+  <div class="panel">
+    <div class="panel-header"><span>Base de Cálculo — Primavera Tributária</span></div>
+    <div class="input-grid" style="padding:12px 16px;">
+      <div class="field">
+        <label>Faturamento mensal (BC Saídas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Markup (Faturamento / Compras)</label>
+        <div id="markup-badge" class="markup-badge">&#8212;</div>
+        <div id="markup-hint" class="field-hint"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="panel">
     <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
@@ -677,6 +683,17 @@ footer {
   <div id="tab2-content" class="page-tab-content">
 
     <div class="panel">
+      <div class="panel-header"><span>Base de Cálculo — Pós Primavera</span></div>
+      <div class="input-grid" style="padding:12px 16px;">
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas) — Pós Primavera</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
+          <div class="field-hint">Deixe 0 para usar o mesmo BC da Primavera Tributária</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
         <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
@@ -690,7 +707,7 @@ footer {
           <div class="field-hint">Calculado automaticamente (100% - % shampoo)</div>
         </div>
         <div class="field">
-          <label>% faturamento para clientes LP / Medio Porte (hoje em 12%)</label>
+          <label>% faturamento para clientes LP</label>
           <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
           <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Pós Primavera.</div>
         </div>
@@ -755,6 +772,22 @@ footer {
       </div>
     </div>
 
+
+    <div class="panel">
+      <div class="panel-header"><span>Projeção de Benefício até a Reforma Tributária (2029 - 2032)</span></div>
+      <div class="proj-scroll">
+        <table id="proj-table-pos">
+          <thead>
+            <tr><th>Período</th><th>Cenário</th><th class="right">Benefício / Mês</th><th class="right">Acumulado</th></tr>
+          </thead>
+          <tbody id="proj-table-body-pos"></tbody>
+        </table>
+      </div>
+      <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+        Até Jan/2027: benefício da Primavera Tributária. A partir de Jan/2027: Pós Primavera. A partir de Jan/2029 o benefício do Compete ES reduz 10% a.a.
+      </div>
+    </div>
+
   </div><!-- /tab2-content -->
 
 </div>
@@ -767,7 +800,7 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, compras: 0, icmsSpedAtual: 0,
+  faturamento: 0, faturamentoPos: 0, compras: 0, icmsSpedAtual: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
@@ -788,6 +821,7 @@ function getInputs() {
     empresa: txt('empresa'),
     baseSped: txt('baseSped'),
     faturamento: num('faturamento'),
+    faturamentoPos: num('faturamentoPos'),
     compras: num('compras'),
     icmsSpedAtual: num('icmsSpedAtual'),
     destaqueSaidaES: num('destaqueSaidaES'),
@@ -806,7 +840,7 @@ function getInputs() {
 }
 
 function calcScenario(scenario, inp) {
-  const base = inp.faturamento;
+  const base = scenario === 'primavera' ? inp.faturamento : (inp.faturamentoPos || inp.faturamento);
 
   const rSP = scenario === 'primavera'
     ? 12
@@ -816,7 +850,7 @@ function calcScenario(scenario, inp) {
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
   } else {
-    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * inp.faturamento * (rSP - 12) / 100;
+    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
   }
 
   const icmsES = (inp.cargaEfetivaES / 100) * base;
@@ -1045,7 +1079,8 @@ function render() {
   renderWaterfall(rPrimavera);
   renderKpis(rPrimavera);
   renderGauges(rPrimavera);
-  renderProjectionUnified(inp);
+  renderProjectionPrimavera(inp);
+  renderProjectionPos(inp);
   const rFim = calcScenario('fim', inp);
   renderCalcTable(rFim, 'fim', inp, '-fim');
   renderWaterfall(rFim, '-fim');
@@ -1054,7 +1089,45 @@ function render() {
 
 }
 
-function renderProjectionUnified(inp) {
+function renderProjectionPrimavera(inp) {
+  const calcPrimavera = calcScenario('primavera', inp);
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+
+  const startTotal = 2029 * 12 - mesesAte2029;
+  let monthIdx = startTotal % 12;
+  let year = Math.floor(startTotal / 12);
+
+  let acumulado = 0;
+  let rows = '';
+
+  for (let i = 0; i < mesesAte2029; i++) {
+    const beneficio = calcPrimavera.beneficioMes;
+    acumulado += beneficio;
+    rows += '<tr class="tag-primavera"><td>' + monthNames[monthIdx] + '/' + year + '</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+    monthIdx = (monthIdx + 1) % 12;
+    if (monthIdx === 0) year++;
+  }
+
+  const periodosReforma = [
+    { label: '2029 (12 meses)', fator: 0.9, alt: false },
+    { label: '2030 (12 meses)', fator: 0.8, alt: true },
+    { label: '2031 (12 meses)', fator: 0.7, alt: false },
+    { label: '2032 (12 meses)', fator: 0.6, alt: true }
+  ];
+  periodosReforma.forEach(function(p) {
+    const mensal = calcPrimavera.beneficioMes * p.fator;
+    const subtotal = mensal * 12;
+    acumulado += subtotal;
+    const cls = p.alt ? ' class="proj-reform-alt"' : '';
+    rows += '<tr' + cls + '><td>' + p.label + '</td><td class="tag tag-primavera">Reforma ' + (p.fator * 100).toFixed(0) + '%</td><td class="right">' + fmtBRL(mensal) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+  });
+
+  rows += '<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+  document.getElementById('proj-table-body').innerHTML = rows;
+}
+
+function renderProjectionPos(inp) {
   const calcPrimavera = calcScenario('primavera', inp);
   const calcFim = calcScenario('fim', inp);
   const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1094,13 +1167,14 @@ function renderProjectionUnified(inp) {
   });
 
   rows += '<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
-  document.getElementById('proj-table-body').innerHTML = rows;
+  document.getElementById('proj-table-body-pos').innerHTML = rows;
 }
 
 function clearAll() {
   document.getElementById('empresa').value = DEFAULTS.empresa;
   document.getElementById('baseSped').value = DEFAULTS.baseSped;
   document.getElementById('faturamento').value = DEFAULTS.faturamento;
+  document.getElementById('faturamentoPos').value = DEFAULTS.faturamentoPos;
   document.getElementById('compras').value = DEFAULTS.compras;
   document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
   document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
