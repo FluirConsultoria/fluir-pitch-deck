@@ -387,36 +387,6 @@ footer {
         <input type="text" id="baseSped" placeholder="ex: Mar/2026">
       </div>
 
-      <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
-      <div class="field">
-        <label>Faturamento mensal (BC Saídas)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field">
-        <label>Compras (BC Entradas)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field field-markup">
-        <label>Markup (Faturamento / Compras)</label>
-        <div id="markup-badge" class="markup-badge">&#8212;</div>
-        <div id="markup-hint" class="field-hint"></div>
-      </div>
-      <div class="field">
-        <label>ICMS efetivamente recolhido hoje (SPED)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
-        <div class="field-hint">Valor auditado — Primavera Tributária</div>
-      </div>
-
-      <div class="input-group-title">Cenário Pós Primavera (deixe 0 para usar os mesmos valores acima)</div>
-      <div class="field">
-        <label>Faturamento mensal (BC Saídas) — Pós Primavera</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
-      </div>
-      <div class="field">
-        <label>ICMS efetivamente recolhido hoje (SPED) — Pós Primavera</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
-      </div>
-
       <div class="input-group-title">Parametros Fiscais</div>
       <div class="field">
         <label>Credito entrada ES</label>
@@ -487,6 +457,28 @@ footer {
   <div id="tab1-content" class="page-tab-content active">
   <div id="screen-report">
 
+  <div class="panel">
+    <div class="panel-header"><span>Dados Financeiros (Etapa 1 — SPED)</span></div>
+    <div class="input-grid" style="padding:12px 16px;">
+      <div class="field">
+        <label>Faturamento mensal (BC Saídas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field">
+        <label>Compras (BC Entradas)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
+      </div>
+      <div class="field field-markup">
+        <label>Markup (Faturamento / Compras)</label>
+        <div id="markup-badge" class="markup-badge">&#8212;</div>
+        <div id="markup-hint" class="field-hint"></div>
+      </div>
+      <div class="field">
+        <label>ICMS efetivamente recolhido hoje (SPED)</label>
+        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="panel">
     <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
@@ -688,6 +680,28 @@ footer {
   <div id="tab2-content" class="page-tab-content">
 
     <div class="panel">
+      <div class="panel-header"><span>Dados Financeiros (Etapa 1 — SPED)</span></div>
+      <div class="input-grid" style="padding:12px 16px;">
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasPos" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge-pos" class="markup-badge">&#8212;</div>
+        </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
         <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
@@ -794,7 +808,7 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, faturamentoPos: 0, compras: 0, icmsSpedAtual: 0, icmsSpedAtualPos: 0,
+  faturamento: 0, faturamentoPos: 0, compras: 0, comprasPos: 0, icmsSpedAtual: 0, icmsSpedAtualPos: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
@@ -817,6 +831,7 @@ function getInputs() {
     faturamento: num('faturamento'),
     faturamentoPos: num('faturamentoPos'),
     compras: num('compras'),
+    comprasPos: num('comprasPos'),
     icmsSpedAtual: num('icmsSpedAtual'),
     icmsSpedAtualPos: num('icmsSpedAtualPos'),
     destaqueSaidaES: num('destaqueSaidaES'),
@@ -1023,10 +1038,19 @@ function renderGauges(r, suffix) {
 function renderMarkup(inp) {
   const badge = document.getElementById('markup-badge');
   const hint = document.getElementById('markup-hint');
-  if (!inp.compras || inp.compras === 0) { badge.textContent = '-'; hint.textContent = ''; return; }
-  const pct = ((inp.faturamento / inp.compras) - 1) * 100;
-  badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
-  hint.textContent = '';
+  if (!inp.compras || inp.compras === 0) { badge.textContent = '-'; hint.textContent = ''; }
+  else {
+    const pct = ((inp.faturamento / inp.compras) - 1) * 100;
+    badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
+    hint.textContent = '';
+  }
+  const badgePos = document.getElementById('markup-badge-pos');
+  if (badgePos) {
+    const cp = inp.comprasPos || inp.compras;
+    const fp = inp.faturamentoPos || inp.faturamento;
+    if (!cp) { badgePos.textContent = '-'; }
+    else { badgePos.textContent = (((fp / cp) - 1) * 100).toFixed(1).replace('.', ',') + '%'; }
+  }
 }
 
 function renderFreteLogistica(inp) {
@@ -1172,6 +1196,7 @@ function clearAll() {
   document.getElementById('faturamento').value = DEFAULTS.faturamento;
   document.getElementById('faturamentoPos').value = DEFAULTS.faturamentoPos;
   document.getElementById('compras').value = DEFAULTS.compras;
+  document.getElementById('comprasPos').value = DEFAULTS.comprasPos;
   document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
   document.getElementById('icmsSpedAtualPos').value = DEFAULTS.icmsSpedAtualPos;
   document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
