@@ -368,55 +368,6 @@ footer {
     <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Pós Primavera</div>
   </div>
 
-  <!-- Dados Financeiros por aba (acima dos inputs compartilhados) -->
-  <div id="dados-fin-tab1" class="page-tab-content active">
-    <div class="panel">
-      <div class="panel-header"><span>Dados Financeiros (Etapa 1 — SPED)</span></div>
-      <div class="input-grid" style="padding:12px 16px;">
-        <div class="field">
-          <label>Faturamento mensal (BC Saídas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field">
-          <label>Compras (BC Entradas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field field-markup">
-          <label>Markup (Faturamento / Compras)</label>
-          <div id="markup-badge" class="markup-badge">&#8212;</div>
-          <div id="markup-hint" class="field-hint"></div>
-        </div>
-        <div class="field">
-          <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="dados-fin-tab2" class="page-tab-content">
-    <div class="panel">
-      <div class="panel-header"><span>Dados Financeiros (Etapa 1 — SPED)</span></div>
-      <div class="input-grid" style="padding:12px 16px;">
-        <div class="field">
-          <label>Faturamento mensal (BC Saídas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field">
-          <label>Compras (BC Entradas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasPos" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field field-markup">
-          <label>Markup (Faturamento / Compras)</label>
-          <div id="markup-badge-pos" class="markup-badge">&#8212;</div>
-        </div>
-        <div class="field">
-          <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ===== INPUTS ===== -->
   <div class="panel" id="input-panel">
     <div class="panel-header">
@@ -434,6 +385,49 @@ footer {
       <div class="field">
         <label>Mes/ano base SPED</label>
         <input type="text" id="baseSped" placeholder="ex: Mar/2026">
+      </div>
+
+      <!-- Dados Financeiros Tab 1 -->
+      <div id="dados-fin-tab1" style="display:contents">
+        <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge" class="markup-badge">&#8212;</div>
+          <div id="markup-hint" class="field-hint"></div>
+        </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
+          <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
+        </div>
+      </div>
+      <!-- Dados Financeiros Tab 2 -->
+      <div id="dados-fin-tab2" style="display:none">
+        <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasPos" value="0" step="1000" oninput="render()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge-pos" class="markup-badge">&#8212;</div>
+        </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
+        </div>
       </div>
 
       <div class="input-group-title">Parametros Fiscais</div>
@@ -1089,8 +1083,8 @@ function salvarEstudo() {
 function setPageTab(tab) {
   document.getElementById('page-tab1-btn').classList.toggle('active', tab === 'tab1');
   document.getElementById('page-tab2-btn').classList.toggle('active', tab === 'tab2');
-  document.getElementById('dados-fin-tab1').classList.toggle('active', tab === 'tab1');
-  document.getElementById('dados-fin-tab2').classList.toggle('active', tab === 'tab2');
+  document.getElementById('dados-fin-tab1').style.display = tab === 'tab1' ? 'contents' : 'none';
+  document.getElementById('dados-fin-tab2').style.display = tab === 'tab2' ? 'contents' : 'none';
   document.getElementById('tab1-content').classList.toggle('active', tab === 'tab1');
   document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
 }
