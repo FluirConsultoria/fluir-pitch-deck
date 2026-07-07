@@ -149,31 +149,6 @@ body {
 .btn:hover { opacity: .85; }
 .btn-gold { background: #c9a227; color: #0b1a35; }
 
-/* ===== SCENARIO TABS ===== */
-.tab-bar {
-  display: flex;
-  gap: 6px;
-  padding: 10px 14px 0;
-  background: #fff;
-}
-.tab-btn {
-  padding: 9px 18px;
-  cursor: pointer;
-  color: #5a7aa0;
-  background: #eef3fa;
-  border: 1px solid #b8cce0;
-  border-bottom: none;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 6px 6px 0 0;
-  letter-spacing: 0.3px;
-}
-.tab-btn.active {
-  color: #0b1a35;
-  background: #c9a227;
-  border-color: #c9a227;
-}
-
 /* ===== CALC TABLE ===== */
 table { width: 100%; border-collapse: collapse; }
 th {
@@ -199,7 +174,7 @@ tr.final-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-si
 
 /* ===== WATERFALL ===== */
 .waterfall-wrap { padding: 14px; }
-#waterfall-svg { width: 100%; height: auto; display: block; }
+.waterfall-wrap svg { width: 100%; height: auto; display: block; }
 
 /* ===== KPI CARDS ===== */
 .kpi-cards {
@@ -271,14 +246,57 @@ tr.final-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-si
 .gauge-desc { max-width: 220px; font-size: 12px; color: #2a3a52; line-height: 1.5; }
 .gauge-desc strong { color: #0b1a35; }
 
+/* ===== COMPARE VISUAL (Pós Primavera) ===== */
+.compare-visual {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 20px 16px 6px;
+  flex-wrap: wrap;
+}
+.compare-card {
+  flex: 1;
+  min-width: 200px;
+  background: #f7f9fc;
+  border: 1px solid #b8cce0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.compare-card.sp { border-top: 4px solid #6a7d99; }
+.compare-card.es { border-top: 4px solid #c9a227; }
+.compare-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #5a7aa0;
+  margin-bottom: 10px;
+}
+.compare-value { font-size: 27px; font-weight: 800; color: #0b1a35; margin-bottom: 6px; }
+.compare-sub { font-size: 11.5px; color: #8aa4c8; }
+.compare-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 60px;
+  color: #c9a227;
+}
+.compare-arrow-glyph { font-size: 30px; font-weight: 700; line-height: 1; }
+.compare-arrow-label { font-size: 9px; color: #5a7aa0; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+@media (max-width: 720px) {
+  .compare-arrow { min-width: 100%; }
+  .compare-arrow-glyph { transform: rotate(90deg); }
+}
+
 /* ===== PROJECTION ===== */
 .proj-scroll { max-height: 420px; overflow-y: auto; }
-#proj-table th { position: sticky; top: 0; }
+table.proj-table th { position: sticky; top: 0; }
 tr.tag-primavera td.tag { color: #1e4080; font-weight: 700; }
 tr.tag-fim td.tag { color: #c9a227; font-weight: 700; background: #0b1a35; }
 .proj-total-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
-
-/* ===== PROJECTION 2029 ===== */
 tr.proj-reform-alt { background: #f9fbfd; }
 .months-inp-reform {
   width: 64px; padding: 3px 6px;
@@ -314,7 +332,7 @@ footer {
 #print-report { display: none; }
 
 @media print {
-  #input-panel, #screen-report { display: none; }
+  .wrap { display: none; }
   #print-report { display: block; }
   body { background: #fff; }
 }
@@ -322,11 +340,15 @@ footer {
 /* ===== PAGE-LEVEL TABS ===== */
 .page-tab-bar {
   display: flex;
-  gap: 4px;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
   padding-top: 12px;
   border-bottom: 3px solid #c9a227;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
+.page-tab-bar-tabs { display: flex; gap: 4px; }
 .page-tab-btn {
   padding: 10px 22px;
   cursor: pointer;
@@ -346,6 +368,15 @@ footer {
 }
 .page-tab-content { display: none; }
 .page-tab-content.active { display: block; }
+.print-heading {
+  color: #0b1a35;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 3px solid #c9a227;
+}
+.print-heading:first-child { margin-top: 0; }
 </style>
 </head>
 <body>
@@ -364,236 +395,156 @@ footer {
 
   <!-- ===== PAGE TABS ===== -->
   <div class="page-tab-bar">
-    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributaria</div>
-    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Pós Primavera</div>
+    <div class="page-tab-bar-tabs">
+      <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Cenário 1</div>
+      <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Cenário 2</div>
+    </div>
+    <button class="btn btn-gold" onclick="salvarEstudo()">Salvar Estudo (PDF) — os 2 cenários</button>
   </div>
 
-  <!-- ===== INPUTS ===== -->
-  <div class="panel" id="input-panel">
-    <div class="panel-header">
-      <span>Dados de Entrada</span>
-      <button class="btn btn-gold" onclick="clearAll()">Limpar dados</button>
-      <button class="btn btn-gold" onclick="salvarEstudo()">Salvar Estudo (PDF)</button>
-    </div>
-    <div class="input-grid">
+  <!-- ============================================================ -->
+  <!-- TAB 1 — CENARIO 1                                             -->
+  <!-- ============================================================ -->
+  <div id="tab1-content" class="page-tab-content active">
 
-      <div class="input-group-title">Identificacao</div>
-      <div class="field">
-        <label>Empresa analisada</label>
-        <input type="text" id="empresa" placeholder="Nome do prospect">
+    <div class="panel">
+      <div class="panel-header">
+        <span>Dados de Entrada — Cenário 1</span>
+        <button class="btn btn-gold" onclick="clearAll('-c1')">Limpar dados</button>
       </div>
-      <div class="field">
-        <label>Mes/ano base SPED</label>
-        <input type="text" id="baseSped" placeholder="ex: Mar/2026">
-      </div>
+      <div class="input-grid">
 
-      <!-- Dados Financeiros Tab 1 -->
-      <div id="dados-fin-tab1" style="display:contents">
+        <div class="input-group-title">Identificacao</div>
+        <div class="field">
+          <label>Empresa analisada</label>
+          <input type="text" id="empresa-c1" placeholder="Nome do prospect" oninput="renderAll()">
+        </div>
+        <div class="field">
+          <label>Mes/ano base SPED</label>
+          <input type="text" id="baseSped-c1" placeholder="ex: Mar/2026" oninput="renderAll()">
+        </div>
+
         <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
         <div class="field">
           <label>Faturamento mensal (BC Saídas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" oninput="render()"></div>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento-c1" value="0" step="1000" oninput="renderAll()"></div>
         </div>
         <div class="field">
           <label>Compras (BC Entradas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" oninput="render()"></div>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras-c1" value="0" step="1000" oninput="renderAll()"></div>
         </div>
         <div class="field field-markup">
           <label>Markup (Faturamento / Compras)</label>
-          <div id="markup-badge" class="markup-badge">&#8212;</div>
-          <div id="markup-hint" class="field-hint"></div>
+          <div id="markup-badge-c1" class="markup-badge">&#8212;</div>
+          <div id="markup-hint-c1" class="field-hint"></div>
         </div>
         <div class="field">
           <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100" oninput="render()"></div>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual-c1" value="0" step="100" oninput="renderAll()"></div>
           <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
         </div>
-      </div>
-      <!-- Dados Financeiros Tab 2 -->
-      <div id="dados-fin-tab2" style="display:none">
-        <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
-        <div class="field">
-          <label>Faturamento mensal (BC Saídas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoPos" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field">
-          <label>Compras (BC Entradas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasPos" value="0" step="1000" oninput="render()"></div>
-        </div>
-        <div class="field field-markup">
-          <label>Markup (Faturamento / Compras)</label>
-          <div id="markup-badge-pos" class="markup-badge">&#8212;</div>
-        </div>
-        <div class="field">
-          <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtualPos" value="0" step="100" oninput="render()"></div>
-        </div>
-      </div>
 
-      <div class="input-group-title">Parametros Fiscais</div>
-      <div class="field">
-        <label>Credito entrada ES</label>
-        <div class="input-row"><input type="number" id="creditoEntradaES" value="7" step="0.1" readonly><span class="unit-sym">%</span></div>
-        <div class="field-hint">Fixo — credito estornado na operacao ES</div>
-      </div>
-      <div class="field">
-        <label>Destaque ICMS saída ES (crédito do cliente)</label>
-        <div class="input-row"><input type="number" id="destaqueSaidaES" value="12" step="0.1" readonly><span class="unit-sym">%</span></div>
-        <div class="field-hint">Fixo — alíquota de destaque na NF ES</div>
-      </div>
-      <div class="field">
-        <label>Carga efetiva ICMS ES (Compete)</label>
-        <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01" oninput="render()"><span class="unit-sym">%</span></div>
-      </div>
-
-      <div class="input-group-title">Frete, Logistica e Consultoria</div>
-      <div class="subgrid subgrid-5">
+        <div class="input-group-title">Parametros Fiscais</div>
         <div class="field">
-          <label>Frete Indústria → Matriz</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz" value="0" step="100" oninput="render()"></div>
+          <label>Credito entrada ES</label>
+          <div class="input-row"><input type="number" id="creditoEntradaES-c1" value="7" step="0.1" readonly><span class="unit-sym">%</span></div>
+          <div class="field-hint">Fixo — credito estornado na operacao ES</div>
         </div>
         <div class="field">
-          <label>Frete Matriz → Cliente</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente" value="0" step="100" oninput="render()"></div>
+          <label>Destaque ICMS saída ES (crédito do cliente)</label>
+          <div class="input-row"><input type="number" id="destaqueSaidaES-c1" value="12" step="0.1" readonly><span class="unit-sym">%</span></div>
+          <div class="field-hint">Fixo — alíquota de destaque na NF ES</div>
         </div>
         <div class="field">
-          <label>Frete Indústria → Filial ES</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial" value="0" step="100" oninput="render()"></div>
+          <label>Carga efetiva ICMS ES (Compete)</label>
+          <div class="input-row"><input type="number" id="cargaEfetivaES-c1" value="1.14" step="0.01" oninput="renderAll()"><span class="unit-sym">%</span></div>
         </div>
-        <div class="field">
-          <label>Frete Filial ES → Cliente</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente" value="0" step="100" oninput="render()"></div>
-        </div>
-        <div class="field field-markup">
-          <label>Diferença de frete (novo − atual)</label>
-          <div id="frete-diff-badge" class="markup-badge">—</div>
-        </div>
-      </div>
-      <div class="subgrid subgrid-3">
-        <div class="field">
-          <label>Operador Logistico ES (% do faturamento)</label>
-          <div class="input-row"><input type="number" id="operadorLogPct" value="0" step="0.1" oninput="render()"><span class="unit-sym">%</span></div>
-          <div class="field-hint">Equivalente em R$/mes: <span id="operador-log-rs">&#8212;</span></div>
-        </div>
-        <div class="field">
-          <label>Custo atual da operacao logistica</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual" value="0" step="100" oninput="render()"></div>
-        </div>
-        <div class="field field-markup">
-          <label>Diferenca de logistica (operador ES - atual)</label>
-          <div id="logistica-diff-badge" class="markup-badge">&#8212;</div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Consultoria (% da economia bruta)</label>
-        <div class="input-row"><input type="number" id="consultoriaPct" value="6" step="0.1" oninput="render()"><span class="unit-sym">%</span></div>
-      </div>
-      <div class="field">
-        <label>Consultoria — minimo mensal</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="consultoriaMin" value="0" step="100" oninput="render()"></div>
-      </div>
 
-    </div>
-  </div>
-
-  <!-- TAB 1 -->
-  <div id="tab1-content" class="page-tab-content active">
-  <div id="screen-report">
-
-  <div class="panel">
-    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
-    <table>
-      <thead>
-        <tr><th>Linha de calculo</th><th class="right">Valor</th></tr>
-      </thead>
-      <tbody id="calc-table-body"></tbody>
-    </table>
-  </div>
-
-  <div class="panel">
-    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
-    <div class="waterfall-wrap">
-      <svg id="waterfall-svg" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="kpi-cards">
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / mes</div>
-        <div class="kpi-value" id="kpi-mes">&#8212;</div>
-        <div class="kpi-desc">cenario selecionado</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / ano</div>
-        <div class="kpi-value" id="kpi-ano">&#8212;</div>
-        <div class="kpi-desc">cenario selecionado x 12</div>
-      </div>
-      <div class="kpi-card" id="kpi-veredicto-card">
-        <div class="kpi-title">Veredicto</div>
-        <div class="kpi-value" id="kpi-veredicto">&#8212;</div>
-        <div class="kpi-desc">migracao SP -> ES</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
-    <div class="gauge-grid">
-      <div class="gauge-card">
-        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
-        <div class="gauge-card-body">
-          <div class="gauge-ring-wrap">
-            <svg viewBox="0 0 140 140">
-              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-              <circle id="gauge-liquido-fg" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-            </svg>
-            <div class="gauge-center">
-              <div class="gauge-pct" id="gauge-liquido-pct">&#8212;</div>
-            </div>
+        <div class="input-group-title">Frete, Logistica e Consultoria</div>
+        <div class="subgrid subgrid-5">
+          <div class="field">
+            <label>Frete Indústria → Matriz</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz-c1" value="0" step="100" oninput="renderAll()"></div>
           </div>
-          <div class="gauge-desc">
-            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+          <div class="field">
+            <label>Frete Matriz → Cliente</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente-c1" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field">
+            <label>Frete Indústria → Filial ES</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial-c1" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field">
+            <label>Frete Filial ES → Cliente</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente-c1" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field field-markup">
+            <label>Diferença de frete (novo − atual)</label>
+            <div id="frete-diff-badge-c1" class="markup-badge">—</div>
           </div>
         </div>
+        <div class="subgrid subgrid-3">
+          <div class="field">
+            <label>Operador Logistico ES (% do faturamento)</label>
+            <div class="input-row"><input type="number" id="operadorLogPct-c1" value="0" step="0.1" oninput="renderAll()"><span class="unit-sym">%</span></div>
+            <div class="field-hint">Equivalente em R$/mes: <span id="operador-log-rs-c1">&#8212;</span></div>
+          </div>
+          <div class="field">
+            <label>Custo atual da operacao logistica</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual-c1" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field field-markup">
+            <label>Diferenca de logistica (operador ES - atual)</label>
+            <div id="logistica-diff-badge-c1" class="markup-badge">&#8212;</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Consultoria (% da economia bruta)</label>
+          <div class="input-row"><input type="number" id="consultoriaPct-c1" value="6" step="0.1" oninput="renderAll()"><span class="unit-sym">%</span></div>
+        </div>
+        <div class="field">
+          <label>Consultoria — minimo mensal</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="consultoriaMin-c1" value="0" step="100" oninput="renderAll()"></div>
+        </div>
+
       </div>
     </div>
-  </div>
-  </div>
 
-  <div id="print-report">
-    <h2>Cenario: Primavera Tributaria</h2>
     <div class="panel">
+      <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
       <table>
         <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
-        <tbody id="calc-table-body-print-primavera"></tbody>
+        <tbody id="calc-table-body-c1"></tbody>
       </table>
     </div>
+
     <div class="panel">
       <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
       <div class="waterfall-wrap">
-        <svg id="waterfall-svg-print-primavera" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="waterfall-svg-c1" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
     </div>
+
     <div class="panel">
       <div class="kpi-cards">
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / mes</div>
-          <div class="kpi-value" id="kpi-mes-print-primavera">&#8212;</div>
-          <div class="kpi-desc">cenario Primavera</div>
+          <div class="kpi-value" id="kpi-mes-c1">&#8212;</div>
+          <div class="kpi-desc">Primavera Tributária</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Beneficio liquido / ano</div>
-          <div class="kpi-value" id="kpi-ano-print-primavera">&#8212;</div>
-          <div class="kpi-desc">cenario Primavera x 12</div>
+          <div class="kpi-value" id="kpi-ano-c1">&#8212;</div>
+          <div class="kpi-desc">Primavera Tributária x 12</div>
         </div>
-        <div class="kpi-card" id="kpi-veredicto-card-print-primavera">
+        <div class="kpi-card" id="kpi-veredicto-card-c1">
           <div class="kpi-title">Veredicto</div>
-          <div class="kpi-value" id="kpi-veredicto-print-primavera">&#8212;</div>
+          <div class="kpi-value" id="kpi-veredicto-c1">&#8212;</div>
           <div class="kpi-desc">migracao SP -> ES</div>
         </div>
       </div>
     </div>
+
     <div class="panel">
       <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
       <div class="gauge-grid">
@@ -603,101 +554,39 @@ footer {
             <div class="gauge-ring-wrap">
               <svg viewBox="0 0 140 140">
                 <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-liquido-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+                <circle id="gauge-liquido-fg-c1" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
               </svg>
               <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-liquido-pct-print-primavera">&#8212;</div>
+                <div class="gauge-pct" id="gauge-liquido-pct-c1">&#8212;</div>
               </div>
             </div>
             <div class="gauge-desc">
-              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-c1">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <h2>Cenario: Pós Primavera (mix de produtos)</h2>
     <div class="panel">
-      <table>
-        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
-        <tbody id="calc-table-body-print-fim"></tbody>
-      </table>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
-      <div class="waterfall-wrap">
-        <svg id="waterfall-svg-print-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="kpi-cards">
-        <div class="kpi-card">
-          <div class="kpi-title">Beneficio liquido / mes</div>
-          <div class="kpi-value" id="kpi-mes-print-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Pós Primavera</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Beneficio liquido / ano</div>
-          <div class="kpi-value" id="kpi-ano-print-fim">&#8212;</div>
-          <div class="kpi-desc">cenario Pós Primavera x 12</div>
-        </div>
-        <div class="kpi-card" id="kpi-veredicto-card-print-fim">
-          <div class="kpi-title">Veredicto</div>
-          <div class="kpi-value" id="kpi-veredicto-print-fim">&#8212;</div>
-          <div class="kpi-desc">migracao SP -> ES (Pós Primavera)</div>
+      <div class="panel-header">
+        <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
+        <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
+          <span>Meses ate Jan/2029: <input type="number" id="mesesAte2029-c1" value="30" min="1" max="120" class="months-inp-reform" oninput="renderAll()"></span>
         </div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
-      <div class="gauge-grid">
-        <div class="gauge-card">
-          <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
-          <div class="gauge-card-body">
-            <div class="gauge-ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-liquido-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-liquido-pct-print-fim">&#8212;</div>
-              </div>
-            </div>
-            <div class="gauge-desc">
-              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-fim">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
-            </div>
-          </div>
-        </div>
+      <div class="proj-scroll" style="max-height:none;">
+        <table class="proj-table">
+          <thead>
+            <tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr>
+          </thead>
+          <tbody id="proj-table-body-c1"></tbody>
+        </table>
+      </div>
+      <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+        A partir de Jan/2029 o beneficio do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
       </div>
     </div>
-  </div>
-
-  <!-- ===== PROJECTION ===== -->
-  <div class="panel">
-    <div class="panel-header">
-      <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
-      <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
-        <span>Meses ate Jan/2029: <input type="number" id="mesesAte2029" value="30" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
-      </div>
-    </div>
-    <div class="proj-scroll">
-      <table id="proj-table">
-        <thead>
-          <tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr>
-        </thead>
-        <tbody id="proj-table-body"></tbody>
-      </table>
-    </div>
-    <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
-      A partir de Jan/2029 o beneficio do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
-    </div>
-  </div>
-
-  </div><!-- /tab1-content -->
-
-  <!-- TAB 2 -->
-  <div id="tab2-content" class="page-tab-content">
 
     <div class="panel">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
@@ -705,41 +594,57 @@ footer {
         <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
         <div class="field">
           <label>% Shampoo (saida 18%)</label>
-          <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+          <div class="input-row"><input type="number" id="pctShampoo-c1" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
         </div>
         <div class="field">
           <label>% Demais produtos (saida 25%)</label>
-          <div class="input-row"><input type="number" id="pctDemais" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
+          <div class="input-row"><input type="number" id="pctDemais-c1" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
           <div class="field-hint">Calculado automaticamente (100% - % shampoo)</div>
         </div>
         <div class="field">
           <label>% faturamento para clientes LP</label>
-          <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
+          <div class="input-row"><input type="number" id="pctClientesLP-c1" value="70" step="1" min="0" max="100" oninput="renderAll()"><span class="unit-sym">%</span></div>
           <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Pós Primavera.</div>
         </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-header"><span>Calculo ICMS — Pós Primavera (18% shampoo / 25% demais)</span></div>
-      <table>
-        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
-        <tbody id="calc-table-body-fim"></tbody>
-      </table>
+      <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera (18% shampoo / 25% demais)</span></div>
+      <div class="compare-visual">
+        <div class="compare-card sp">
+          <div class="compare-label">ICMS SP Pós Primavera</div>
+          <div class="compare-value" id="cmp-icmssp-c1">&#8212;</div>
+          <div class="compare-sub" id="cmp-aliqsp-c1">&#8212;</div>
+        </div>
+        <div class="compare-arrow">
+          <div class="compare-arrow-glyph">&#8594;</div>
+          <div class="compare-arrow-label">Migração ES</div>
+        </div>
+        <div class="compare-card es">
+          <div class="compare-label">ICMS ES (Compete)</div>
+          <div class="compare-value" id="cmp-icmses-c1">&#8212;</div>
+          <div class="compare-sub" id="cmp-aliqes-c1">&#8212;</div>
+        </div>
+      </div>
     </div>
-
 
     <div class="panel">
       <div class="kpi-cards">
         <div class="kpi-card">
           <div class="kpi-title">Economia Bruta ICMS / mês</div>
-          <div class="kpi-value" id="kpi-econ-mes-fim">&#8212;</div>
+          <div class="kpi-value" id="kpi-econ-mes-c1">&#8212;</div>
           <div class="kpi-desc">sem descontar custos operacionais</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Economia Bruta ICMS / ano</div>
-          <div class="kpi-value" id="kpi-econ-ano-fim">&#8212;</div>
+          <div class="kpi-value" id="kpi-econ-ano-c1">&#8212;</div>
           <div class="kpi-desc">projeção anual Pós Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">% de Redução sobre ICMS SP</div>
+          <div class="kpi-value" id="kpi-econ-pct-c1">&#8212;</div>
+          <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
         </div>
       </div>
     </div>
@@ -747,7 +652,7 @@ footer {
     <div class="panel">
       <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
       <div class="proj-scroll" style="max-height:none;">
-        <table id="proj-table-pos">
+        <table class="proj-table">
           <thead>
             <tr>
               <th>Ano</th>
@@ -758,7 +663,278 @@ footer {
               <th class="right">Acumulado</th>
             </tr>
           </thead>
-          <tbody id="proj-table-body-pos"></tbody>
+          <tbody id="proj-table-body-pos-c1"></tbody>
+        </table>
+      </div>
+      <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+        Projeção baseada na economia bruta de ICMS (sem custos operacionais). A partir de 2029, o benefício do Compete ES reduz 10% a.a. com a transição da Reforma Tributária.
+      </div>
+    </div>
+
+  </div><!-- /tab1-content -->
+
+  <!-- ============================================================ -->
+  <!-- TAB 2 — CENARIO 2                                             -->
+  <!-- ============================================================ -->
+  <div id="tab2-content" class="page-tab-content">
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>Dados de Entrada — Cenário 2</span>
+        <button class="btn btn-gold" onclick="clearAll('-c2')">Limpar dados</button>
+      </div>
+      <div class="input-grid">
+
+        <div class="input-group-title">Identificacao</div>
+        <div class="field">
+          <label>Empresa analisada</label>
+          <input type="text" id="empresa-c2" placeholder="Nome do prospect" oninput="renderAll()">
+        </div>
+        <div class="field">
+          <label>Mes/ano base SPED</label>
+          <input type="text" id="baseSped-c2" placeholder="ex: Mar/2026" oninput="renderAll()">
+        </div>
+
+        <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento-c2" value="0" step="1000" oninput="renderAll()"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras-c2" value="0" step="1000" oninput="renderAll()"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge-c2" class="markup-badge">&#8212;</div>
+          <div id="markup-hint-c2" class="field-hint"></div>
+        </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual-c2" value="0" step="100" oninput="renderAll()"></div>
+          <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
+        </div>
+
+        <div class="input-group-title">Parametros Fiscais</div>
+        <div class="field">
+          <label>Credito entrada ES</label>
+          <div class="input-row"><input type="number" id="creditoEntradaES-c2" value="7" step="0.1" readonly><span class="unit-sym">%</span></div>
+          <div class="field-hint">Fixo — credito estornado na operacao ES</div>
+        </div>
+        <div class="field">
+          <label>Destaque ICMS saída ES (crédito do cliente)</label>
+          <div class="input-row"><input type="number" id="destaqueSaidaES-c2" value="12" step="0.1" readonly><span class="unit-sym">%</span></div>
+          <div class="field-hint">Fixo — alíquota de destaque na NF ES</div>
+        </div>
+        <div class="field">
+          <label>Carga efetiva ICMS ES (Compete)</label>
+          <div class="input-row"><input type="number" id="cargaEfetivaES-c2" value="1.14" step="0.01" oninput="renderAll()"><span class="unit-sym">%</span></div>
+        </div>
+
+        <div class="input-group-title">Frete, Logistica e Consultoria</div>
+        <div class="subgrid subgrid-5">
+          <div class="field">
+            <label>Frete Indústria → Matriz</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndMatriz-c2" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field">
+            <label>Frete Matriz → Cliente</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteMatrizCliente-c2" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field">
+            <label>Frete Indústria → Filial ES</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteIndFilial-c2" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field">
+            <label>Frete Filial ES → Cliente</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="freteFilialCliente-c2" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field field-markup">
+            <label>Diferença de frete (novo − atual)</label>
+            <div id="frete-diff-badge-c2" class="markup-badge">—</div>
+          </div>
+        </div>
+        <div class="subgrid subgrid-3">
+          <div class="field">
+            <label>Operador Logistico ES (% do faturamento)</label>
+            <div class="input-row"><input type="number" id="operadorLogPct-c2" value="0" step="0.1" oninput="renderAll()"><span class="unit-sym">%</span></div>
+            <div class="field-hint">Equivalente em R$/mes: <span id="operador-log-rs-c2">&#8212;</span></div>
+          </div>
+          <div class="field">
+            <label>Custo atual da operacao logistica</label>
+            <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="custoLogAtual-c2" value="0" step="100" oninput="renderAll()"></div>
+          </div>
+          <div class="field field-markup">
+            <label>Diferenca de logistica (operador ES - atual)</label>
+            <div id="logistica-diff-badge-c2" class="markup-badge">&#8212;</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Consultoria (% da economia bruta)</label>
+          <div class="input-row"><input type="number" id="consultoriaPct-c2" value="6" step="0.1" oninput="renderAll()"><span class="unit-sym">%</span></div>
+        </div>
+        <div class="field">
+          <label>Consultoria — minimo mensal</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="consultoriaMin-c2" value="0" step="100" oninput="renderAll()"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
+      <table>
+        <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+        <tbody id="calc-table-body-c2"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+      <div class="waterfall-wrap">
+        <svg id="waterfall-svg-c2" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / mes</div>
+          <div class="kpi-value" id="kpi-mes-c2">&#8212;</div>
+          <div class="kpi-desc">Primavera Tributária</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio liquido / ano</div>
+          <div class="kpi-value" id="kpi-ano-c2">&#8212;</div>
+          <div class="kpi-desc">Primavera Tributária x 12</div>
+        </div>
+        <div class="kpi-card" id="kpi-veredicto-card-c2">
+          <div class="kpi-title">Veredicto</div>
+          <div class="kpi-value" id="kpi-veredicto-c2">&#8212;</div>
+          <div class="kpi-desc">migracao SP -> ES</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+      <div class="gauge-grid">
+        <div class="gauge-card">
+          <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+          <div class="gauge-card-body">
+            <div class="gauge-ring-wrap">
+              <svg viewBox="0 0 140 140">
+                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+                <circle id="gauge-liquido-fg-c2" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-pct" id="gauge-liquido-pct-c2">&#8212;</div>
+              </div>
+            </div>
+            <div class="gauge-desc">
+              O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-c2">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
+        <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
+          <span>Meses ate Jan/2029: <input type="number" id="mesesAte2029-c2" value="30" min="1" max="120" class="months-inp-reform" oninput="renderAll()"></span>
+        </div>
+      </div>
+      <div class="proj-scroll" style="max-height:none;">
+        <table class="proj-table">
+          <thead>
+            <tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr>
+          </thead>
+          <tbody id="proj-table-body-c2"></tbody>
+        </table>
+      </div>
+      <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+        A partir de Jan/2029 o beneficio do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
+      <div class="input-grid">
+        <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
+        <div class="field">
+          <label>% Shampoo (saida 18%)</label>
+          <div class="input-row"><input type="number" id="pctShampoo-c2" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
+        </div>
+        <div class="field">
+          <label>% Demais produtos (saida 25%)</label>
+          <div class="input-row"><input type="number" id="pctDemais-c2" value="50" step="1" min="0" max="100" disabled><span class="unit-sym">%</span></div>
+          <div class="field-hint">Calculado automaticamente (100% - % shampoo)</div>
+        </div>
+        <div class="field">
+          <label>% faturamento para clientes LP</label>
+          <div class="input-row"><input type="number" id="pctClientesLP-c2" value="70" step="1" min="0" max="100" oninput="renderAll()"><span class="unit-sym">%</span></div>
+          <div class="field-hint">Clientes Simples Nacional ja estao em 18%/25% — nao sobem no Pós Primavera.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera (18% shampoo / 25% demais)</span></div>
+      <div class="compare-visual">
+        <div class="compare-card sp">
+          <div class="compare-label">ICMS SP Pós Primavera</div>
+          <div class="compare-value" id="cmp-icmssp-c2">&#8212;</div>
+          <div class="compare-sub" id="cmp-aliqsp-c2">&#8212;</div>
+        </div>
+        <div class="compare-arrow">
+          <div class="compare-arrow-glyph">&#8594;</div>
+          <div class="compare-arrow-label">Migração ES</div>
+        </div>
+        <div class="compare-card es">
+          <div class="compare-label">ICMS ES (Compete)</div>
+          <div class="compare-value" id="cmp-icmses-c2">&#8212;</div>
+          <div class="compare-sub" id="cmp-aliqes-c2">&#8212;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-title">Economia Bruta ICMS / mês</div>
+          <div class="kpi-value" id="kpi-econ-mes-c2">&#8212;</div>
+          <div class="kpi-desc">sem descontar custos operacionais</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Economia Bruta ICMS / ano</div>
+          <div class="kpi-value" id="kpi-econ-ano-c2">&#8212;</div>
+          <div class="kpi-desc">projeção anual Pós Primavera</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">% de Redução sobre ICMS SP</div>
+          <div class="kpi-value" id="kpi-econ-pct-c2">&#8212;</div>
+          <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
+      <div class="proj-scroll" style="max-height:none;">
+        <table class="proj-table">
+          <thead>
+            <tr>
+              <th>Ano</th>
+              <th>Fase</th>
+              <th class="right">Fator</th>
+              <th class="right">Econ. Bruta ICMS / mês</th>
+              <th class="right">Econ. Bruta ICMS / ano</th>
+              <th class="right">Acumulado</th>
+            </tr>
+          </thead>
+          <tbody id="proj-table-body-pos-c2"></tbody>
         </table>
       </div>
       <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
@@ -768,7 +944,242 @@ footer {
 
   </div><!-- /tab2-content -->
 
-</div>
+</div><!-- /wrap -->
+
+<!-- ============================================================ -->
+<!-- PDF — os 2 cenarios empilhados                                -->
+<!-- ============================================================ -->
+<div id="print-report">
+
+  <h1 class="print-heading" id="print-heading-c1">Cenário 1</h1>
+
+  <div class="panel">
+    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
+    <table>
+      <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+      <tbody id="calc-table-body-print-c1"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+    <div class="waterfall-wrap">
+      <svg id="waterfall-svg-print-c1" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / mes</div>
+        <div class="kpi-value" id="kpi-mes-print-c1">&#8212;</div>
+        <div class="kpi-desc">Primavera Tributária</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / ano</div>
+        <div class="kpi-value" id="kpi-ano-print-c1">&#8212;</div>
+        <div class="kpi-desc">Primavera Tributária x 12</div>
+      </div>
+      <div class="kpi-card" id="kpi-veredicto-card-print-c1">
+        <div class="kpi-title">Veredicto</div>
+        <div class="kpi-value" id="kpi-veredicto-print-c1">&#8212;</div>
+        <div class="kpi-desc">migracao SP -> ES</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+    <div class="gauge-grid">
+      <div class="gauge-card">
+        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+        <div class="gauge-card-body">
+          <div class="gauge-ring-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+              <circle id="gauge-liquido-fg-print-c1" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" id="gauge-liquido-pct-print-c1">&#8212;</div>
+            </div>
+          </div>
+          <div class="gauge-desc">
+            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-c1">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span></div>
+    <table class="proj-table">
+      <thead><tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr></thead>
+      <tbody id="proj-table-body-print-c1"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera</span></div>
+    <div class="compare-visual">
+      <div class="compare-card sp">
+        <div class="compare-label">ICMS SP Pós Primavera</div>
+        <div class="compare-value" id="cmp-icmssp-print-c1">&#8212;</div>
+        <div class="compare-sub" id="cmp-aliqsp-print-c1">&#8212;</div>
+      </div>
+      <div class="compare-arrow">
+        <div class="compare-arrow-glyph">&#8594;</div>
+        <div class="compare-arrow-label">Migração ES</div>
+      </div>
+      <div class="compare-card es">
+        <div class="compare-label">ICMS ES (Compete)</div>
+        <div class="compare-value" id="cmp-icmses-print-c1">&#8212;</div>
+        <div class="compare-sub" id="cmp-aliqes-print-c1">&#8212;</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Economia Bruta ICMS / mês</div>
+        <div class="kpi-value" id="kpi-econ-mes-print-c1">&#8212;</div>
+        <div class="kpi-desc">sem descontar custos operacionais</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Economia Bruta ICMS / ano</div>
+        <div class="kpi-value" id="kpi-econ-ano-print-c1">&#8212;</div>
+        <div class="kpi-desc">projeção anual Pós Primavera</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">% de Redução sobre ICMS SP</div>
+        <div class="kpi-value" id="kpi-econ-pct-print-c1">&#8212;</div>
+        <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
+    <table class="proj-table">
+      <thead>
+        <tr>
+          <th>Ano</th><th>Fase</th><th class="right">Fator</th>
+          <th class="right">Econ. Bruta ICMS / mês</th><th class="right">Econ. Bruta ICMS / ano</th><th class="right">Acumulado</th>
+        </tr>
+      </thead>
+      <tbody id="proj-table-body-pos-print-c1"></tbody>
+    </table>
+  </div>
+
+  <h1 class="print-heading" id="print-heading-c2">Cenário 2</h1>
+
+  <div class="panel">
+    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
+    <table>
+      <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
+      <tbody id="calc-table-body-print-c2"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
+    <div class="waterfall-wrap">
+      <svg id="waterfall-svg-print-c2" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / mes</div>
+        <div class="kpi-value" id="kpi-mes-print-c2">&#8212;</div>
+        <div class="kpi-desc">Primavera Tributária</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Beneficio liquido / ano</div>
+        <div class="kpi-value" id="kpi-ano-print-c2">&#8212;</div>
+        <div class="kpi-desc">Primavera Tributária x 12</div>
+      </div>
+      <div class="kpi-card" id="kpi-veredicto-card-print-c2">
+        <div class="kpi-title">Veredicto</div>
+        <div class="kpi-value" id="kpi-veredicto-print-c2">&#8212;</div>
+        <div class="kpi-desc">migracao SP -> ES</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
+    <div class="gauge-grid">
+      <div class="gauge-card">
+        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
+        <div class="gauge-card-body">
+          <div class="gauge-ring-wrap">
+            <svg viewBox="0 0 140 140">
+              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
+              <circle id="gauge-liquido-fg-print-c2" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" id="gauge-liquido-pct-print-c2">&#8212;</div>
+            </div>
+          </div>
+          <div class="gauge-desc">
+            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-c2">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span></div>
+    <table class="proj-table">
+      <thead><tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr></thead>
+      <tbody id="proj-table-body-print-c2"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera</span></div>
+    <div class="compare-visual">
+      <div class="compare-card sp">
+        <div class="compare-label">ICMS SP Pós Primavera</div>
+        <div class="compare-value" id="cmp-icmssp-print-c2">&#8212;</div>
+        <div class="compare-sub" id="cmp-aliqsp-print-c2">&#8212;</div>
+      </div>
+      <div class="compare-arrow">
+        <div class="compare-arrow-glyph">&#8594;</div>
+        <div class="compare-arrow-label">Migração ES</div>
+      </div>
+      <div class="compare-card es">
+        <div class="compare-label">ICMS ES (Compete)</div>
+        <div class="compare-value" id="cmp-icmses-print-c2">&#8212;</div>
+        <div class="compare-sub" id="cmp-aliqes-print-c2">&#8212;</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Economia Bruta ICMS / mês</div>
+        <div class="kpi-value" id="kpi-econ-mes-print-c2">&#8212;</div>
+        <div class="kpi-desc">sem descontar custos operacionais</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Economia Bruta ICMS / ano</div>
+        <div class="kpi-value" id="kpi-econ-ano-print-c2">&#8212;</div>
+        <div class="kpi-desc">projeção anual Pós Primavera</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">% de Redução sobre ICMS SP</div>
+        <div class="kpi-value" id="kpi-econ-pct-print-c2">&#8212;</div>
+        <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
+    <table class="proj-table">
+      <thead>
+        <tr>
+          <th>Ano</th><th>Fase</th><th class="right">Fator</th>
+          <th class="right">Econ. Bruta ICMS / mês</th><th class="right">Econ. Bruta ICMS / ano</th><th class="right">Acumulado</th>
+        </tr>
+      </thead>
+      <tbody id="proj-table-body-pos-print-c2"></tbody>
+    </table>
+  </div>
+
+</div><!-- /print-report -->
 
 <footer>
   Fluir Consultoria &middot; Estudo de viabilidade fiscal ES v2 &middot; Sujeito a validacao contabil.<br>
@@ -778,11 +1189,12 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, faturamentoPos: 0, compras: 0, comprasPos: 0, icmsSpedAtual: 0, icmsSpedAtualPos: 0,
+  faturamento: 0, compras: 0, icmsSpedAtual: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70
+  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70,
+  mesesAte2029: 30
 };
 
 function fmtBRL(v) {
@@ -792,18 +1204,15 @@ function fmtPct(v) {
   return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 }
 
-function getInputs() {
-  const num = id => parseFloat(document.getElementById(id).value) || 0;
-  const txt = id => document.getElementById(id).value;
+function getInputs(suffix) {
+  const num = id => parseFloat(document.getElementById(id + suffix).value) || 0;
+  const txt = id => document.getElementById(id + suffix).value;
   return {
     empresa: txt('empresa'),
     baseSped: txt('baseSped'),
     faturamento: num('faturamento'),
-    faturamentoPos: num('faturamentoPos'),
     compras: num('compras'),
-    comprasPos: num('comprasPos'),
     icmsSpedAtual: num('icmsSpedAtual'),
-    icmsSpedAtualPos: num('icmsSpedAtualPos'),
     destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
@@ -820,19 +1229,15 @@ function getInputs() {
 }
 
 function calcScenario(scenario, inp) {
-  const base = scenario === 'primavera' ? inp.faturamento : (inp.faturamentoPos || inp.faturamento);
+  const base = inp.faturamento;
 
   const rSP = scenario === 'primavera'
     ? 12
     : (inp.pctShampoo / 100) * 18 + ((100 - inp.pctShampoo) / 100) * 25;
 
-  let icmsSP;
-  if (scenario === 'primavera') {
-    icmsSP = inp.icmsSpedAtual;
-  } else {
-    const icmsBase = inp.icmsSpedAtualPos || inp.icmsSpedAtual;
-    icmsSP = icmsBase + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
-  }
+  const icmsSP = scenario === 'primavera'
+    ? inp.icmsSpedAtual
+    : inp.icmsSpedAtual + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
 
   const icmsES = (inp.cargaEfetivaES / 100) * base;
   const economiaBruta = icmsSP - icmsES;
@@ -849,14 +1254,8 @@ function calcScenario(scenario, inp) {
     consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base };
 }
 
-function renderCalcTable(r, scenario, inp, suffix) {
-  suffix = suffix || '';
-  let icmsSPLabel;
-  if (scenario === 'primavera') {
-    icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
-  } else {
-    icmsSPLabel = 'ICMS SP Pós Primavera - SPED atual + ' + fmtPct(inp.pctClientesLP) + ' clientes LP x Fat. x (' + fmtPct(r.rSP) + ' - 12%)';
-  }
+function renderCalcTable(r, inp, suffix) {
+  const icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
   const consultoriaLabel = 'Consultoria (' + fmtPct(inp.consultoriaPct) + ' da economia, min. ' + fmtBRL(inp.consultoriaMin) + ')';
 
   const deltaLogIsGain = r.deltaLogRS < 0;
@@ -890,7 +1289,6 @@ function renderCalcTable(r, scenario, inp, suffix) {
 }
 
 function renderWaterfall(r, suffix) {
-  suffix = suffix || '';
   const svg = document.getElementById('waterfall-svg' + suffix);
   const W = 1100, H = 420;
   const margin = { top: 40, right: 30, bottom: 90, left: 30 };
@@ -962,7 +1360,6 @@ function renderWaterfall(r, suffix) {
 }
 
 function renderKpis(r, suffix) {
-  suffix = suffix || '';
   document.getElementById('kpi-mes' + suffix).textContent = fmtBRL(r.beneficioMes);
   document.getElementById('kpi-ano' + suffix).textContent = fmtBRL(r.beneficioAno);
   const card = document.getElementById('kpi-veredicto-card' + suffix);
@@ -974,12 +1371,6 @@ function renderKpis(r, suffix) {
     card.className = 'kpi-card verdict-bad';
     veredicto.textContent = 'INVIAVEL';
   }
-}
-
-function renderSubtitle(inp) {
-  const empresa = inp.empresa || '{Empresa analisada}';
-  const base = inp.baseSped || '{mes/ano}';
-  document.getElementById('dynamic-subtitle').textContent = empresa + ' · base SPED ' + base;
 }
 
 function setGauge(fgId, pctId, textId, percent) {
@@ -996,7 +1387,6 @@ function setGauge(fgId, pctId, textId, percent) {
 }
 
 function renderGauges(r, suffix) {
-  suffix = suffix || '';
   if (!r.economiaBruta) {
     setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, 0);
     return;
@@ -1005,96 +1395,48 @@ function renderGauges(r, suffix) {
   setGauge('gauge-liquido-fg' + suffix, 'gauge-liquido-pct' + suffix, 'gauge-liquido-texto' + suffix, pctLiquido);
 }
 
-function renderMarkup(inp) {
-  const badge = document.getElementById('markup-badge');
-  const hint = document.getElementById('markup-hint');
-  if (!inp.compras || inp.compras === 0) { badge.textContent = '-'; hint.textContent = ''; }
+function renderMarkup(inp, suffix) {
+  const badge = document.getElementById('markup-badge' + suffix);
+  const hint = document.getElementById('markup-hint' + suffix);
+  if (!inp.compras) { badge.textContent = '-'; hint.textContent = ''; }
   else {
     const pct = ((inp.faturamento / inp.compras) - 1) * 100;
     badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
     hint.textContent = '';
   }
-  const badgePos = document.getElementById('markup-badge-pos');
-  if (badgePos) {
-    const cp = inp.comprasPos || inp.compras;
-    const fp = inp.faturamentoPos || inp.faturamento;
-    if (!cp) { badgePos.textContent = '-'; }
-    else { badgePos.textContent = (((fp / cp) - 1) * 100).toFixed(1).replace('.', ',') + '%'; }
-  }
 }
 
-function renderFreteLogistica(inp) {
+function renderFreteLogistica(inp, suffix) {
   const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
   const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
   const freteDiff = freteNovoTotal - freteAtualTotal;
-  document.getElementById('frete-diff-badge').textContent =
+  document.getElementById('frete-diff-badge' + suffix).textContent =
     (freteDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(freteDiff));
   const operadorRS = (inp.operadorLogPct / 100) * inp.faturamento;
-  document.getElementById('operador-log-rs').textContent = fmtBRL(operadorRS);
+  document.getElementById('operador-log-rs' + suffix).textContent = fmtBRL(operadorRS);
   const logDiff = operadorRS - inp.custoLogAtual;
-  document.getElementById('logistica-diff-badge').textContent =
+  document.getElementById('logistica-diff-badge' + suffix).textContent =
     (logDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(logDiff));
 }
 
-function salvarEstudo() {
-  const inp = getInputs();
-  const rPrimavera = calcScenario('primavera', inp);
-  const rFim = calcScenario('fim', inp);
-  renderCalcTable(rPrimavera, 'primavera', inp, '-print-primavera');
-  renderWaterfall(rPrimavera, '-print-primavera');
-  renderKpis(rPrimavera, '-print-primavera');
-  renderGauges(rPrimavera, '-print-primavera');
-  renderCalcTable(rFim, 'fim', inp, '-print-fim');
-  document.title = 'Estudo de Viabilidade Fiscal v2 - ' + (inp.empresa || 'Prospect') + ' - ' + (inp.baseSped || '');
-  window.print();
+function renderCompareFim(r, inp, suffix) {
+  document.getElementById('cmp-icmssp' + suffix).textContent = fmtBRL(r.icmsSP);
+  document.getElementById('cmp-aliqsp' + suffix).textContent = 'Alíquota blendada: ' + fmtPct(r.rSP);
+  document.getElementById('cmp-icmses' + suffix).textContent = fmtBRL(r.icmsES);
+  document.getElementById('cmp-aliqes' + suffix).textContent = 'Carga efetiva Compete: ' + fmtPct(inp.cargaEfetivaES);
 }
 
-function setPageTab(tab) {
-  document.getElementById('page-tab1-btn').classList.toggle('active', tab === 'tab1');
-  document.getElementById('page-tab2-btn').classList.toggle('active', tab === 'tab2');
-  document.getElementById('dados-fin-tab1').style.display = tab === 'tab1' ? 'contents' : 'none';
-  document.getElementById('dados-fin-tab2').style.display = tab === 'tab2' ? 'contents' : 'none';
-  document.getElementById('tab1-content').classList.toggle('active', tab === 'tab1');
-  document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
+function renderKpisEnxutos(r, suffix) {
+  document.getElementById('kpi-econ-mes' + suffix).textContent = fmtBRL(r.economiaBruta);
+  document.getElementById('kpi-econ-ano' + suffix).textContent = fmtBRL(r.economiaBruta * 12);
+  const pctReducao = r.icmsSP ? (r.economiaBruta / r.icmsSP) * 100 : 0;
+  document.getElementById('kpi-econ-pct' + suffix).textContent = fmtPct(pctReducao);
 }
 
-function render() {
-  const inp = getInputs();
-  renderSubtitle(inp);
-  renderMarkup(inp);
-  renderFreteLogistica(inp);
-  const rPrimavera = calcScenario('primavera', inp);
-  renderCalcTable(rPrimavera, 'primavera', inp);
-  renderWaterfall(rPrimavera);
-  renderKpis(rPrimavera);
-  renderGauges(rPrimavera);
-  renderProjectionPrimavera(inp);
-  renderProjectionPos(inp);
-  const rFim = calcScenario('fim', inp);
-  renderCalcTable(rFim, 'fim', inp, '-fim');
-  renderKpisEnxutos(rFim);
-
-}
-
-function renderProjectionPrimavera(inp) {
-  const calcPrimavera = calcScenario('primavera', inp);
-  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
-
-  const startTotal = 2029 * 12 - mesesAte2029;
-  let monthIdx = startTotal % 12;
-  let year = Math.floor(startTotal / 12);
-
-  let acumulado = 0;
-  let rows = '';
-
-  for (let i = 0; i < mesesAte2029; i++) {
-    const beneficio = calcPrimavera.beneficioMes;
-    acumulado += beneficio;
-    rows += '<tr class="tag-primavera"><td>' + monthNames[monthIdx] + '/' + year + '</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
-    monthIdx = (monthIdx + 1) % 12;
-    if (monthIdx === 0) year++;
-  }
+function renderProjectionPrimavera(rPrimavera, mesesAte2029, suffix) {
+  const beneficio = rPrimavera.beneficioMes;
+  let acumulado = beneficio * mesesAte2029;
+  let rows = '<tr class="tag-primavera"><td>Primavera Tributária (' + mesesAte2029 + ' meses)</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
 
   const periodosReforma = [
     { label: '2029 (12 meses)', fator: 0.9, alt: false },
@@ -1103,7 +1445,7 @@ function renderProjectionPrimavera(inp) {
     { label: '2032 (12 meses)', fator: 0.6, alt: true }
   ];
   periodosReforma.forEach(function(p) {
-    const mensal = calcPrimavera.beneficioMes * p.fator;
+    const mensal = beneficio * p.fator;
     const subtotal = mensal * 12;
     acumulado += subtotal;
     const cls = p.alt ? ' class="proj-reform-alt"' : '';
@@ -1111,12 +1453,11 @@ function renderProjectionPrimavera(inp) {
   });
 
   rows += '<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
-  document.getElementById('proj-table-body').innerHTML = rows;
+  document.getElementById('proj-table-body' + suffix).innerHTML = rows;
 }
 
-function renderProjectionPos(inp) {
-  const calcFim = calcScenario('fim', inp);
-  const econBrutaMes = calcFim.economiaBruta;
+function renderProjectionPos(rFim, suffix) {
+  const econBrutaMes = rFim.economiaBruta;
 
   const anos = [
     { label: '2027 (12 meses)', fase: 'Pós Primavera', fator: 1.0, meses: 12, alt: false },
@@ -1148,49 +1489,116 @@ function renderProjectionPos(inp) {
   });
 
   rows += '<tr class="proj-total-row"><td colspan="5">TOTAL ACUMULADO (2027 – 2032)</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
-  document.getElementById('proj-table-body-pos').innerHTML = rows;
+  document.getElementById('proj-table-body-pos' + suffix).innerHTML = rows;
 }
 
-function renderKpisEnxutos(r) {
-  document.getElementById('kpi-econ-mes-fim').textContent = fmtBRL(r.economiaBruta);
-  document.getElementById('kpi-econ-ano-fim').textContent = fmtBRL(r.economiaBruta * 12);
+function renderScenario(suffix) {
+  const inp = getInputs(suffix);
+  renderMarkup(inp, suffix);
+  renderFreteLogistica(inp, suffix);
+
+  const rPrimavera = calcScenario('primavera', inp);
+  renderCalcTable(rPrimavera, inp, suffix);
+  renderWaterfall(rPrimavera, suffix);
+  renderKpis(rPrimavera, suffix);
+  renderGauges(rPrimavera, suffix);
+
+  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029' + suffix).value) || 1));
+  renderProjectionPrimavera(rPrimavera, mesesAte2029, suffix);
+
+  const rFim = calcScenario('fim', inp);
+  renderCompareFim(rFim, inp, suffix);
+  renderKpisEnxutos(rFim, suffix);
+  renderProjectionPos(rFim, suffix);
+
+  return inp;
 }
 
-function clearAll() {
-  document.getElementById('empresa').value = DEFAULTS.empresa;
-  document.getElementById('baseSped').value = DEFAULTS.baseSped;
-  document.getElementById('faturamento').value = DEFAULTS.faturamento;
-  document.getElementById('faturamentoPos').value = DEFAULTS.faturamentoPos;
-  document.getElementById('compras').value = DEFAULTS.compras;
-  document.getElementById('comprasPos').value = DEFAULTS.comprasPos;
-  document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
-  document.getElementById('icmsSpedAtualPos').value = DEFAULTS.icmsSpedAtualPos;
-  document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
-  document.getElementById('destaqueSaidaES').value = DEFAULTS.destaqueSaidaES;
-  document.getElementById('cargaEfetivaES').value = DEFAULTS.cargaEfetivaES;
-  document.getElementById('pctShampoo').value = DEFAULTS.pctShampoo;
-  document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
-  document.getElementById('freteIndMatriz').value = DEFAULTS.freteIndMatriz;
-  document.getElementById('freteMatrizCliente').value = DEFAULTS.freteMatrizCliente;
-  document.getElementById('freteIndFilial').value = DEFAULTS.freteIndFilial;
-  document.getElementById('freteFilialCliente').value = DEFAULTS.freteFilialCliente;
-  document.getElementById('operadorLogPct').value = DEFAULTS.operadorLogPct;
-  document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
-  document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
-  document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
-  document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
-  setPageTab('tab1');
-  render();
+function updateHeaderSubtitle() {
+  const activeSuffix = document.getElementById('tab1-content').classList.contains('active') ? '-c1' : '-c2';
+  const inp = getInputs(activeSuffix);
+  const empresa = inp.empresa || '{Empresa analisada}';
+  const base = inp.baseSped || '{mes/ano}';
+  document.getElementById('dynamic-subtitle').textContent = empresa + ' · base SPED ' + base;
 }
 
-document.getElementById('pctShampoo').addEventListener('input', function() {
-  const v = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
-  document.getElementById('pctDemais').value = (100 - v).toFixed(0);
-  render();
+function renderAll() {
+  renderScenario('-c1');
+  renderScenario('-c2');
+  updateHeaderSubtitle();
+}
+
+function setPageTab(tab) {
+  document.getElementById('page-tab1-btn').classList.toggle('active', tab === 'tab1');
+  document.getElementById('page-tab2-btn').classList.toggle('active', tab === 'tab2');
+  document.getElementById('tab1-content').classList.toggle('active', tab === 'tab1');
+  document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
+  updateHeaderSubtitle();
+}
+
+function salvarEstudo() {
+  ['c1', 'c2'].forEach(function(key) {
+    const suffix = '-' + key;
+    const printSuffix = '-print-' + key;
+    const inp = getInputs(suffix);
+
+    const rPrimavera = calcScenario('primavera', inp);
+    renderCalcTable(rPrimavera, inp, printSuffix);
+    renderWaterfall(rPrimavera, printSuffix);
+    renderKpis(rPrimavera, printSuffix);
+    renderGauges(rPrimavera, printSuffix);
+
+    const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029' + suffix).value) || 1));
+    renderProjectionPrimavera(rPrimavera, mesesAte2029, printSuffix);
+
+    const rFim = calcScenario('fim', inp);
+    renderCompareFim(rFim, inp, printSuffix);
+    renderKpisEnxutos(rFim, printSuffix);
+    renderProjectionPos(rFim, printSuffix);
+
+    const heading = 'Cenário ' + (key === 'c1' ? '1' : '2') + (inp.empresa ? ' — ' + inp.empresa : '') + ' — Faturamento ' + fmtBRL(inp.faturamento) + '/mês';
+    document.getElementById('print-heading-' + key).textContent = heading;
+  });
+
+  const empresaAtiva = getInputs(document.getElementById('tab1-content').classList.contains('active') ? '-c1' : '-c2').empresa;
+  document.title = 'Estudo de Viabilidade Fiscal v2 - ' + (empresaAtiva || 'Prospect');
+  window.print();
+}
+
+function clearAll(suffix) {
+  document.getElementById('empresa' + suffix).value = DEFAULTS.empresa;
+  document.getElementById('baseSped' + suffix).value = DEFAULTS.baseSped;
+  document.getElementById('faturamento' + suffix).value = DEFAULTS.faturamento;
+  document.getElementById('compras' + suffix).value = DEFAULTS.compras;
+  document.getElementById('icmsSpedAtual' + suffix).value = DEFAULTS.icmsSpedAtual;
+  document.getElementById('creditoEntradaES' + suffix).value = DEFAULTS.creditoEntradaES;
+  document.getElementById('destaqueSaidaES' + suffix).value = DEFAULTS.destaqueSaidaES;
+  document.getElementById('cargaEfetivaES' + suffix).value = DEFAULTS.cargaEfetivaES;
+  document.getElementById('pctShampoo' + suffix).value = DEFAULTS.pctShampoo;
+  document.getElementById('pctDemais' + suffix).value = 100 - DEFAULTS.pctShampoo;
+  document.getElementById('freteIndMatriz' + suffix).value = DEFAULTS.freteIndMatriz;
+  document.getElementById('freteMatrizCliente' + suffix).value = DEFAULTS.freteMatrizCliente;
+  document.getElementById('freteIndFilial' + suffix).value = DEFAULTS.freteIndFilial;
+  document.getElementById('freteFilialCliente' + suffix).value = DEFAULTS.freteFilialCliente;
+  document.getElementById('operadorLogPct' + suffix).value = DEFAULTS.operadorLogPct;
+  document.getElementById('custoLogAtual' + suffix).value = DEFAULTS.custoLogAtual;
+  document.getElementById('consultoriaPct' + suffix).value = DEFAULTS.consultoriaPct;
+  document.getElementById('consultoriaMin' + suffix).value = DEFAULTS.consultoriaMin;
+  document.getElementById('pctClientesLP' + suffix).value = DEFAULTS.pctClientesLP;
+  document.getElementById('mesesAte2029' + suffix).value = DEFAULTS.mesesAte2029;
+  renderAll();
+}
+
+['-c1', '-c2'].forEach(function(suffix) {
+  document.getElementById('pctShampoo' + suffix).addEventListener('input', function() {
+    const v = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+    document.getElementById('pctDemais' + suffix).value = (100 - v).toFixed(0);
+    renderAll();
+  });
+  document.getElementById('pctDemais' + suffix).value = 100 - DEFAULTS.pctShampoo;
 });
 
-document.getElementById('pctDemais').value = 100 - DEFAULTS.pctShampoo;
-render();
+renderAll();
 </script>
 
 </body>
