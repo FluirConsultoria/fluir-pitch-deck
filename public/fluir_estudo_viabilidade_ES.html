@@ -871,11 +871,6 @@ footer {
           <label>% das vendas a clientes creditantes</label>
           <div class="input-row"><input type="number" id="pctCreditantes" value="100" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
         </div>
-        <div class="field">
-          <label>% faturamento para clientes LP / Médio Porte (hoje em 12%)</label>
-          <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
-          <div class="field-hint">Clientes Simples Nacional já estão em 18%/25% — não sobem no Pós Primavera.</div>
-        </div>
       </div>
     </div>
 
@@ -1021,7 +1016,7 @@ const DEFAULTS = {
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70
+  consultoriaPct: 6, consultoriaMin: 0
 };
 
 function fmtBRL(v) {
@@ -1053,8 +1048,7 @@ function getInputs() {
     operadorLogPct: num('operadorLogPct'),
     custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
-    consultoriaMin: num('consultoriaMin'),
-    pctClientesLP: num('pctClientesLP')
+    consultoriaMin: num('consultoriaMin')
   };
 }
 
@@ -1073,8 +1067,8 @@ function calcScenario(scenario, inp) {
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
   } else {
-    // Só clientes LP saem de 12% → rSP; Simples já estão em rSP
-    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * faturamento * (rSP - 12) / 100;
+    // Débito − crédito puro: faturamento e compras já são os próprios da Pós Primavera
+    icmsSP = faturamento * (rSP / 100) - compras * 0.12;
   }
 
   const descontoCliente = base * (inp.pctCreditantes / 100) *
@@ -1102,7 +1096,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
   } else {
-    icmsSPLabel = `ICMS SP Pós Primavera — SPED atual + ${fmtPct(inp.pctClientesLP)} clientes LP × Fat. × (${fmtPct(r.rSP)} − 12%)`;
+    icmsSPLabel = `ICMS SP Pós Primavera — Faturamento × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   }
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
 
@@ -1477,7 +1471,6 @@ function clearAll() {
   document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
-  document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
   setPageTab('tab1');
 }
 
