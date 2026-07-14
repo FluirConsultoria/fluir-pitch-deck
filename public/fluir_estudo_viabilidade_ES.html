@@ -306,8 +306,9 @@ tr.final-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-si
 
 /* ===== PROJECTION ===== */
 .proj-scroll { max-height: 420px; overflow-y: auto; }
-#proj-table th { position: sticky; top: 0; }
+#proj-table th, #proj-table-fim th { position: sticky; top: 0; }
 tr.tag-primavera td.tag { color: #1e4080; font-weight: 700; }
+tr.tag-pos td.tag { color: #7a3fa0; font-weight: 700; }
 tr.tag-fim td.tag { color: #c9a227; font-weight: 700; background: #0b1a35; }
 .proj-total-row td { background: #0b1a35; color: #c9a227; font-weight: 700; font-size: 13px; }
 
@@ -396,6 +397,12 @@ footer {
 
 <div class="wrap">
 
+  <!-- ===== PAGE TABS ===== -->
+  <div class="page-tab-bar">
+    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributária</div>
+    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Pós Primavera</div>
+  </div>
+
   <!-- ===== INPUTS ===== -->
   <div class="panel" id="input-panel">
     <div class="panel-header">
@@ -419,10 +426,12 @@ footer {
       <div class="field">
         <label>Faturamento mensal (BC Saídas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000"></div>
+        <div class="field-hint">Usado no cenário Primavera Tributária</div>
       </div>
       <div class="field">
         <label>Compras (BC Entradas)</label>
         <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000"></div>
+        <div class="field-hint">Usado no cenário Primavera Tributária</div>
       </div>
       <div class="field field-markup">
         <label>Markup (Faturamento / Compras)</label>
@@ -499,12 +508,6 @@ footer {
       </div>
 
     </div>
-  </div>
-
-  <!-- ===== PAGE TABS ===== -->
-  <div class="page-tab-bar">
-    <div class="page-tab-btn active" id="page-tab1-btn" onclick="setPageTab('tab1')">Primavera Tributária</div>
-    <div class="page-tab-btn" id="page-tab2-btn" onclick="setPageTab('tab2')">Fim da Primavera</div>
   </div>
 
   <!-- TAB 1: Simulação Atual -->
@@ -713,7 +716,7 @@ footer {
       </div>
     </div>
 
-    <h2>Cenário: Fim da Primavera (mix de produtos)</h2>
+    <h2>Cenário: Pós Primavera (mix de produtos)</h2>
     <div class="panel">
       <table>
         <thead>
@@ -755,12 +758,12 @@ footer {
         <div class="kpi-card">
           <div class="kpi-title">Benefício líquido / mês</div>
           <div class="kpi-value" id="kpi-mes-print-fim">—</div>
-          <div class="kpi-desc">cenário Fim da Primavera</div>
+          <div class="kpi-desc">cenário Pós Primavera</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Benefício líquido / ano</div>
           <div class="kpi-value" id="kpi-ano-print-fim">—</div>
-          <div class="kpi-desc">cenário Fim da Primavera × 12</div>
+          <div class="kpi-desc">cenário Pós Primavera × 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-print-fim">
           <div class="kpi-title">Veredicto</div>
@@ -810,10 +813,10 @@ footer {
     </div>
   </div>
 
-  <!-- ===== PROJECTION UNIFICADA (até Reforma 2029-2032) ===== -->
+  <!-- ===== PROJECTION — PRIMAVERA TRIBUTÁRIA (até Reforma 2029-2032) ===== -->
   <div class="panel">
     <div class="panel-header">
-      <span>Projeção de Benefício até a Reforma Tributária (2029 – 2032)</span>
+      <span>Projeção de Benefício até a Reforma Tributária (2029 – 2032) — Primavera Tributária</span>
       <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
         <span>Meses até Jan/2029: <input type="number" id="mesesAte2029" value="30" min="1" max="120" class="months-inp-reform" oninput="render()"></span>
       </div>
@@ -833,14 +836,29 @@ footer {
 
   </div><!-- /tab1-content -->
 
-  <!-- TAB 2: Fim da Primavera (mix + cálculo + reprecificação) -->
+  <!-- TAB 2: Pós Primavera (mix + cálculo + reprecificação) -->
   <div id="tab2-content" class="page-tab-content">
 
     <!-- Mix de Produtos -->
     <div class="panel">
-      <div class="panel-header"><span>Mix de Produtos — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
-        <div class="input-group-title">Alíquotas SP — Fim da Primavera</div>
+        <div class="input-group-title">Dados Financeiros — Pós Primavera</div>
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoFim" value="0" step="1000"></div>
+          <div class="field-hint">Independente do valor usado no cenário Primavera Tributária</div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasFim" value="0" step="1000"></div>
+          <div class="field-hint">Independente do valor usado no cenário Primavera Tributária</div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge-fim" class="markup-badge">—</div>
+        </div>
+        <div class="input-group-title">Alíquotas SP — Pós Primavera</div>
         <div class="field">
           <label>% Shampoo (saída 18%)</label>
           <div class="input-row"><input type="number" id="pctShampoo" value="50" step="1" min="0" max="100"><span class="unit-sym">%</span></div>
@@ -857,7 +875,7 @@ footer {
         <div class="field">
           <label>% faturamento para clientes LP / Médio Porte (hoje em 12%)</label>
           <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
-          <div class="field-hint">Clientes Simples Nacional já estão em 18%/25% — não sobem no Fim da Primavera.</div>
+          <div class="field-hint">Clientes Simples Nacional já estão em 18%/25% — não sobem no Pós Primavera.</div>
         </div>
         <div class="input-group-title">Repreci&#64257;ca&#231;&#227;o do Mercado (opcional)</div>
         <div class="field">
@@ -872,9 +890,9 @@ footer {
       </div>
     </div>
 
-    <!-- Fim da Primavera: Calc Table -->
+    <!-- Pós Primavera: Calc Table -->
     <div class="panel">
-      <div class="panel-header"><span>Cálculo ICMS — Fim da Primavera (18% shampoo / 25% demais)</span></div>
+      <div class="panel-header"><span>Cálculo ICMS — Pós Primavera (18% shampoo / 25% demais)</span></div>
       <table>
         <thead>
           <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
@@ -883,17 +901,17 @@ footer {
       </table>
     </div>
 
-    <!-- Fim da Primavera: Waterfall -->
+    <!-- Pós Primavera: Waterfall -->
     <div class="panel">
-      <div class="panel-header"><span>Cascata do Benefício Líquido — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Cascata do Benefício Líquido — Pós Primavera</span></div>
       <div class="waterfall-wrap">
         <svg id="waterfall-svg-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
     </div>
 
-    <!-- Fim da Primavera: Parity -->
+    <!-- Pós Primavera: Parity -->
     <div class="panel">
-      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido (Fim da Primavera)</span></div>
+      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido (Pós Primavera)</span></div>
       <div class="parity-grid">
         <div class="parity-col">
           <div class="parity-head sp">Comprando do concorrente (SP)</div>
@@ -915,30 +933,30 @@ footer {
       </div>
     </div>
 
-    <!-- Fim da Primavera: KPIs -->
+    <!-- Pós Primavera: KPIs -->
     <div class="panel">
       <div class="kpi-cards">
         <div class="kpi-card">
           <div class="kpi-title">Benefício líquido / mês</div>
           <div class="kpi-value" id="kpi-mes-fim">—</div>
-          <div class="kpi-desc">cenário Fim da Primavera</div>
+          <div class="kpi-desc">cenário Pós Primavera</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-title">Benefício líquido / ano</div>
           <div class="kpi-value" id="kpi-ano-fim">—</div>
-          <div class="kpi-desc">cenário Fim da Primavera × 12</div>
+          <div class="kpi-desc">cenário Pós Primavera × 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-fim">
           <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-fim">—</div>
-          <div class="kpi-desc">migração SP → ES (Fim da Primavera)</div>
+          <div class="kpi-desc">migração SP → ES (Pós Primavera)</div>
         </div>
       </div>
     </div>
 
-    <!-- Fim da Primavera: Gauges -->
+    <!-- Pós Primavera: Gauges -->
     <div class="panel">
-      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real — Fim da Primavera</span></div>
+      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real — Pós Primavera</span></div>
       <div class="gauge-grid">
         <div class="gauge-card">
           <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
@@ -977,6 +995,27 @@ footer {
       </div>
     </div>
 
+    <!-- ===== PROJECTION — PÓS PRIMAVERA (até Reforma 2029-2032) ===== -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>Projeção de Benefício até a Reforma Tributária (2029 – 2032) — Pós Primavera</span>
+        <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
+          <span>Meses até Jan/2029: <input type="number" id="mesesAte2029Fim" value="24" min="1" max="24" class="months-inp-reform" oninput="render()"></span>
+        </div>
+      </div>
+      <div class="proj-scroll">
+        <table id="proj-table-fim">
+          <thead>
+            <tr><th>Período</th><th>Cenário</th><th class="right">Benefício / Mês</th><th class="right">Acumulado</th></tr>
+          </thead>
+          <tbody id="proj-table-body-fim"></tbody>
+        </table>
+      </div>
+      <div class="note-box" style="margin:0;border-radius:0 0 4px 4px;border-top:none;">
+        ⚠️ O cenário Pós Primavera só é aplicável a partir de Jan/2027 (máximo 24 meses até Jan/2029). A partir de Jan/2029 o benefício do Compete Atacadista ES reduz 10% a.a.: 90% em 2029, 80% em 2030, 70% em 2031, 60% em 2032.
+      </div>
+    </div>
+
   </div><!-- /tab2-content -->
 
 </div>
@@ -989,7 +1028,7 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, compras: 0, icmsSpedAtual: 0,
+  faturamento: 0, compras: 0, faturamentoFim: 0, comprasFim: 0, icmsSpedAtual: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
@@ -1012,6 +1051,8 @@ function getInputs() {
     baseSped: txt('baseSped'),
     faturamento: num('faturamento'),
     compras: num('compras'),
+    faturamentoFim: num('faturamentoFim'),
+    comprasFim: num('comprasFim'),
     icmsSpedAtual: num('icmsSpedAtual'),
     destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
@@ -1031,8 +1072,12 @@ function getInputs() {
 }
 
 function calcScenario(scenario, inp) {
+  // Faturamento e Compras são independentes por cenário — cada aba simula sua própria base.
+  const faturamento = scenario === 'fim' ? inp.faturamentoFim : inp.faturamento;
+  const compras = scenario === 'fim' ? inp.comprasFim : inp.compras;
+
   const novaBCSaidaAtiva = scenario === 'fim' && inp.novaBCSaida > 0;
-  const base = novaBCSaidaAtiva ? inp.novaBCSaida : inp.faturamento;
+  const base = novaBCSaidaAtiva ? inp.novaBCSaida : faturamento;
 
   const rSP = scenario === 'primavera'
     ? 12
@@ -1043,10 +1088,10 @@ function calcScenario(scenario, inp) {
     icmsSP = inp.icmsSpedAtual;
   } else if (novaBCSaidaAtiva) {
     // Reprecificação: nova BC aplica para todos — débito integral menos crédito entrada
-    icmsSP = base * (rSP / 100) - inp.compras * 0.12;
+    icmsSP = base * (rSP / 100) - compras * 0.12;
   } else {
     // Sem reprecificação: só clientes LP saem de 12% → rSP; Simples já estão em rSP
-    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * inp.faturamento * (rSP - 12) / 100;
+    icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * faturamento * (rSP - 12) / 100;
   }
 
   const descontoCliente = base * (inp.pctCreditantes / 100) *
@@ -1064,7 +1109,7 @@ function calcScenario(scenario, inp) {
   const beneficioMes = economiaBruta - descontoCliente - consultoria - deltaLogRS - deltaFreteRS;
   const beneficioAno = beneficioMes * 12;
 
-  return { scenario, rSP, icmsSP, descontoCliente, faturamentoES, icmsES, economiaBruta,
+  return { scenario, faturamento, compras, rSP, icmsSP, descontoCliente, faturamentoES, icmsES, economiaBruta,
     consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base, novaBCSaidaAtiva };
 }
 
@@ -1076,7 +1121,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   } else if (r.novaBCSaidaAtiva) {
     icmsSPLabel = `ICMS SP líquido — Nova BC × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   } else {
-    icmsSPLabel = `ICMS SP Fim da Primavera — SPED atual + ${fmtPct(inp.pctClientesLP)} clientes LP × Fat. × (${fmtPct(r.rSP)} − 12%)`;
+    icmsSPLabel = `ICMS SP Pós Primavera — SPED atual + ${fmtPct(inp.pctClientesLP)} clientes LP × Fat. × (${fmtPct(r.rSP)} − 12%)`;
   }
   const consultoriaLabel = `Consultoria (${fmtPct(inp.consultoriaPct)} da economia, mín. ${fmtBRL(inp.consultoriaMin)})`;
 
@@ -1086,7 +1131,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaFreteRS));
 
   const baseRow = r.novaBCSaidaAtiva
-    ? [['', `Base: Nova BC de Saída reprecificada (faturamento atual: ${fmtBRL(inp.faturamento)})`, '', true, false]]
+    ? [['', `Base: Nova BC de Saída reprecificada (faturamento atual: ${fmtBRL(r.faturamento)})`, '', true, false]]
     : [];
 
   const rows = [
@@ -1189,8 +1234,8 @@ function renderWaterfall(r, suffix = '') {
 }
 
 function renderParity(r, inp, suffix = '') {
-  const spPreco = inp.faturamento;
-  const spCredito = (r.rSP / 100) * inp.faturamento;
+  const spPreco = r.faturamento;
+  const spCredito = (r.rSP / 100) * r.faturamento;
   const spLiquido = spPreco - spCredito;
 
   const esPreco = r.faturamentoES;
@@ -1206,7 +1251,7 @@ function renderParity(r, inp, suffix = '') {
 
   const diff = spLiquido - esLiquido;
   const resultEl = document.getElementById('parity-result' + suffix);
-  if (Math.abs(diff) < Math.max(1, inp.faturamento * 0.005)) {
+  if (Math.abs(diff) < Math.max(1, r.faturamento * 0.005)) {
     resultEl.className = 'parity-result parity-ok';
     resultEl.textContent = `Paridade confirmada — diferença de custo líquido: ${fmtBRL(diff)} (≈ R$ 0)`;
   } else {
@@ -1274,6 +1319,17 @@ function renderMarkup(inp) {
   hint.textContent = '';
 }
 
+function renderMarkupFim(inp) {
+  const badge = document.getElementById('markup-badge-fim');
+  if (!badge) return;
+  if (!inp.comprasFim || inp.comprasFim === 0) {
+    badge.textContent = '—';
+    return;
+  }
+  const pct = ((inp.faturamentoFim / inp.comprasFim) - 1) * 100;
+  badge.textContent = pct.toFixed(1).replace('.', ',') + '%';
+}
+
 function renderFreteLogistica(inp) {
   const freteAtualTotal = inp.freteIndMatriz + inp.freteMatrizCliente;
   const freteNovoTotal = inp.freteIndFilial + inp.freteFilialCliente;
@@ -1322,6 +1378,7 @@ function render() {
   const inp = getInputs();
   renderSubtitle(inp);
   renderMarkup(inp);
+  renderMarkupFim(inp);
   renderFreteLogistica(inp);
   const rPrimavera = calcScenario('primavera', inp);
   renderCalcTable(rPrimavera, 'primavera', inp);
@@ -1329,18 +1386,18 @@ function render() {
   renderParity(rPrimavera, inp);
   renderKpis(rPrimavera);
   renderGauges(rPrimavera);
-  renderProjectionUnified(inp);
   const rFim = calcScenario('fim', inp);
   renderCalcTable(rFim, 'fim', inp, '-fim');
   renderWaterfall(rFim, '-fim');
   renderParity(rFim, inp, '-fim');
   renderKpis(rFim, '-fim');
   renderGauges(rFim, '-fim');
+  renderProjections(inp, rPrimavera, rFim);
   // badge de variação da nova BC de Saída
   const badge = document.getElementById('nova-bc-badge');
   if (badge) {
-    if (inp.novaBCSaida > 0 && inp.faturamento > 0) {
-      const pctVar = ((inp.novaBCSaida / inp.faturamento) - 1) * 100;
+    if (inp.novaBCSaida > 0 && inp.faturamentoFim > 0) {
+      const pctVar = ((inp.novaBCSaida / inp.faturamentoFim) - 1) * 100;
       badge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
     } else {
       badge.textContent = '—';
@@ -1348,43 +1405,60 @@ function render() {
   }
 }
 
-function renderProjectionUnified(inp) {
-  const calcPrimavera = calcScenario('primavera', inp);
-  const calcFim = calcScenario('fim', inp);
-  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const now = new Date();
-  const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+const PROJ_MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const PROJ_PERIODOS_REFORMA = [
+  { label: '2029 (12 meses)', fator: 0.9, alt: false },
+  { label: '2030 (12 meses)', fator: 0.8, alt: true },
+  { label: '2031 (12 meses)', fator: 0.7, alt: false },
+  { label: '2032 (12 meses)', fator: 0.6, alt: true },
+];
 
-  // Tabela SEMPRE termina em Dez/2028 (Jan/2029 = início da regressão do incentivo)
-  // Reduzir mesesAte2029 avança o início (come meses pelo começo, não pelo fim)
-  const startTotal = 2029 * 12 - mesesAte2029;   // offset absoluto em meses
-  let monthIdx = startTotal % 12;
-  let year = Math.floor(startTotal / 12);
-  // Primavera Tributária = meses desde o início da tabela até Jan/2027
-  const mesesPrimavera = Math.max(0, 2027 * 12 - startTotal);
+const PROJ_REFORM_START = 2029 * 12; // Jan/2029 — início da regressão do incentivo
 
+function getMesesAte2029() {
+  return Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029').value) || 1));
+}
+
+function getMesesAte2029Fim() {
+  // Independente do campo da Primavera — limitado a 24 (Jan/2027 é o piso, Jan/2029 é o teto).
+  return Math.max(1, Math.min(24, Math.round(parseFloat(document.getElementById('mesesAte2029Fim').value) || 1)));
+}
+
+function monthLabel(total) {
+  const monthIdx = ((total % 12) + 12) % 12;
+  const year = Math.floor(total / 12);
+  return `${PROJ_MONTH_NAMES[monthIdx]}/${year}`;
+}
+
+// Renderiza a projeção de um único cenário (sem mistura entre Primavera e Pós Primavera):
+// - do início (startTotal) até o fim do ano corrente: linha por mês (ano parcial)
+// - anos cheios seguintes (ex.: 2027, 2028): 1 linha resumida por ano, igual ao padrão já usado em 2029-2032
+// - de endTotal (Jan/2029) em diante: linhas de reforma com a queda gradual do Compete
+function renderProjectionScenario(tbodyId, r, startTotal, endTotal, tagClass, tagText) {
   let acumulado = 0;
   let rows = '';
+  let cur = startTotal;
 
-  for (let i = 0; i < mesesAte2029; i++) {
-    const isPrimavera = i < mesesPrimavera;
-    const beneficio = isPrimavera ? calcPrimavera.beneficioMes : calcFim.beneficioMes;
-    acumulado += beneficio;
-    const tagClass = isPrimavera ? 'tag-primavera' : 'tag-fim';
-    const tagText = isPrimavera ? 'Primavera' : 'Fim da Primavera';
-    rows += `<tr class="${tagClass}"><td>${monthNames[monthIdx]}/${year}</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(beneficio)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
-    monthIdx = (monthIdx + 1) % 12;
-    if (monthIdx === 0) year++;
+  if (cur % 12 !== 0) {
+    const partialEnd = Math.min((Math.floor(cur / 12) + 1) * 12, endTotal);
+    for (let m = cur; m < partialEnd; m++) {
+      const beneficio = r.beneficioMes;
+      acumulado += beneficio;
+      rows += `<tr class="${tagClass}"><td>${monthLabel(m)}</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(beneficio)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+    }
+    cur = partialEnd;
   }
 
-  const periodosReforma = [
-    { label: '2029 (12 meses)', fator: 0.9, alt: false },
-    { label: '2030 (12 meses)', fator: 0.8, alt: true },
-    { label: '2031 (12 meses)', fator: 0.7, alt: false },
-    { label: '2032 (12 meses)', fator: 0.6, alt: true },
-  ];
-  periodosReforma.forEach(p => {
-    const mensal = calcFim.beneficioMes * p.fator;
+  while (cur < endTotal) {
+    const year = Math.floor(cur / 12);
+    const mensal = r.beneficioMes;
+    acumulado += mensal * 12;
+    rows += `<tr class="${tagClass}"><td>${year} (12 meses)</td><td class="tag">${tagText}</td><td class="right">${fmtBRL(mensal)}</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
+    cur += 12;
+  }
+
+  PROJ_PERIODOS_REFORMA.forEach(p => {
+    const mensal = r.beneficioMes * p.fator;
     const subtotal = mensal * 12;
     acumulado += subtotal;
     const cls = p.alt ? ' class="proj-reform-alt"' : '';
@@ -1392,7 +1466,18 @@ function renderProjectionUnified(inp) {
   });
 
   rows += `<tr class="proj-total-row"><td colspan="3">TOTAL ACUMULADO</td><td class="right">${fmtBRL(acumulado)}</td></tr>`;
-  document.getElementById('proj-table-body').innerHTML = rows;
+  document.getElementById(tbodyId).innerHTML = rows;
+}
+
+function renderProjections(inp, calcPrimavera, calcFim) {
+  const mesesAte2029 = getMesesAte2029();
+  const startPrimavera = PROJ_REFORM_START - mesesAte2029;
+  renderProjectionScenario('proj-table-body', calcPrimavera, startPrimavera, PROJ_REFORM_START, 'tag-primavera', 'Primavera Tributária');
+
+  // Pós Primavera tem seu próprio campo "Meses até Jan/2029" (máx. 24 — nunca antes de Jan/2027).
+  const mesesAte2029Fim = getMesesAte2029Fim();
+  const startPos = PROJ_REFORM_START - mesesAte2029Fim;
+  renderProjectionScenario('proj-table-body-fim', calcFim, startPos, PROJ_REFORM_START, 'tag-pos', 'Pós Primavera');
 }
 
 function clearAll() {
@@ -1400,6 +1485,8 @@ function clearAll() {
   document.getElementById('baseSped').value = DEFAULTS.baseSped;
   document.getElementById('faturamento').value = DEFAULTS.faturamento;
   document.getElementById('compras').value = DEFAULTS.compras;
+  document.getElementById('faturamentoFim').value = DEFAULTS.faturamentoFim;
+  document.getElementById('comprasFim').value = DEFAULTS.comprasFim;
   document.getElementById('icmsSpedAtual').value = DEFAULTS.icmsSpedAtual;
   document.getElementById('creditoEntradaES').value = DEFAULTS.creditoEntradaES;
   document.getElementById('destaqueSaidaES').value = DEFAULTS.destaqueSaidaES;
