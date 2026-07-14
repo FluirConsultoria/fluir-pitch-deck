@@ -96,6 +96,14 @@ body {
   margin-top: 6px;
 }
 .input-group-title:first-child { margin-top: 0; }
+.scenario-subtitle {
+  grid-column: 1 / -1;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #c9a227;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .field { display: flex; flex-direction: column; gap: 4px; }
 .field label { font-size: 11px; color: #2a3a52; font-weight: 600; }
 .field .input-row { display: flex; align-items: center; gap: 6px; }
@@ -346,18 +354,19 @@ footer {
   .header-text { text-align: center; }
 }
 
-#print-report { display: none; }
-
 @media print {
   @page { margin: 12mm; }
-  #input-panel, #screen-report, .page-tab-bar { display: none; }
-  #print-report { display: block; }
+  .page-tab-bar, #input-panel .btn { display: none; }
   body { background: #fff; padding-bottom: 0; }
   .wrap { max-width: 100%; padding: 0; }
   .panel { break-inside: avoid; box-shadow: none; }
   .kpi-cards, .gauge-grid, .parity-grid { break-inside: avoid; }
-  h2 { break-before: page; margin: 0 0 12px; font-size: 16px; color: #0b1a35; }
-  #print-report h2:first-child { break-before: avoid; }
+  /* Impressão mostra as duas abas completas, empilhadas, mesmo layout da tela */
+  .page-tab-content { display: block !important; }
+  #bc-fields-primavera, #bc-fields-pos,
+  #frete-fields-primavera, #frete-fields-pos { display: contents !important; }
+  #tab2-content { break-before: page; }
+  .proj-scroll { max-height: none; overflow: visible; }
 }
 
 /* ===== PAGE-LEVEL TABS ===== */
@@ -428,8 +437,9 @@ footer {
         <input type="text" id="baseSped" placeholder="ex: Mar/2026">
       </div>
 
-      <div class="input-group-title" id="bc-group-title">Dados Financeiros (Etapa 1 — SPED) — Primavera Tributária</div>
+      <div class="input-group-title" id="bc-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
       <div id="bc-fields-primavera" style="display:contents;">
+        <div class="scenario-subtitle">Primavera Tributária</div>
         <div class="field">
           <label>Faturamento mensal (BC Saídas)</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" autocomplete="off"></div>
@@ -450,6 +460,7 @@ footer {
         </div>
       </div>
       <div id="bc-fields-pos" style="display:none;">
+        <div class="scenario-subtitle">Pós Primavera</div>
         <div class="field">
           <label>Faturamento mensal (BC Saídas)</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoFim" value="0" step="1000" autocomplete="off"></div>
@@ -485,8 +496,9 @@ footer {
         <div class="input-row"><input type="number" id="cargaEfetivaES" value="1.14" step="0.01"><span class="unit-sym">%</span></div>
       </div>
 
-      <div class="input-group-title" id="frete-group-title">Frete, Logística e Consultoria — Primavera Tributária</div>
+      <div class="input-group-title" id="frete-group-title">Frete, Logística e Consultoria</div>
       <div id="frete-fields-primavera" style="display:contents;">
+        <div class="scenario-subtitle">Primavera Tributária</div>
         <div class="subgrid subgrid-5">
           <div class="field">
             <label>Frete Indústria → Matriz</label>
@@ -534,6 +546,7 @@ footer {
         </div>
       </div>
       <div id="frete-fields-pos" style="display:none;">
+        <div class="scenario-subtitle">Pós Primavera</div>
         <div class="subgrid subgrid-5">
           <div class="field">
             <label>Frete Indústria → Matriz</label>
@@ -691,200 +704,6 @@ footer {
       </div>
     </div>
   </div>
-  </div>
-
-  <div id="print-report">
-    <h2>Cenário: Primavera Tributária</h2>
-    <div class="panel">
-      <table>
-        <thead>
-          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
-        </thead>
-        <tbody id="calc-table-body-print-primavera"></tbody>
-      </table>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Cascata do Benefício Líquido</span></div>
-      <div class="waterfall-wrap">
-        <svg id="waterfall-svg-print-primavera" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido</span></div>
-      <div class="parity-grid">
-        <div class="parity-col">
-          <div class="parity-head sp">Comprando do concorrente (SP)</div>
-          <table>
-            <tr><td>Preço pago</td><td class="right" id="par-sp-preco-print-primavera">—</td></tr>
-            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-sp-credito-print-primavera">—</td></tr>
-            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido-print-primavera">—</strong></td></tr>
-          </table>
-        </div>
-        <div class="parity-col">
-          <div class="parity-head es">Comprando da empresa (ES)</div>
-          <table>
-            <tr><td>Preço pago</td><td class="right" id="par-es-preco-print-primavera">—</td></tr>
-            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-es-credito-print-primavera">—</td></tr>
-            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido-print-primavera">—</strong></td></tr>
-          </table>
-        </div>
-        <div class="parity-result" id="parity-result-print-primavera">—</div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="kpi-cards">
-        <div class="kpi-card">
-          <div class="kpi-title">Benefício líquido / mês</div>
-          <div class="kpi-value" id="kpi-mes-print-primavera">—</div>
-          <div class="kpi-desc">cenário Primavera</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Benefício líquido / ano</div>
-          <div class="kpi-value" id="kpi-ano-print-primavera">—</div>
-          <div class="kpi-desc">cenário Primavera × 12</div>
-        </div>
-        <div class="kpi-card" id="kpi-veredicto-card-print-primavera">
-          <div class="kpi-title">Veredicto</div>
-          <div class="kpi-value" id="kpi-veredicto-print-primavera">—</div>
-          <div class="kpi-desc">migração SP → ES</div>
-        </div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real</span></div>
-      <div class="gauge-grid">
-        <div class="gauge-card">
-          <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
-          <div class="gauge-card-body">
-            <div class="gauge-ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-liquido-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-liquido-pct-print-primavera">—</div>
-              </div>
-            </div>
-            <div class="gauge-desc">
-              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-primavera">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
-            </div>
-          </div>
-        </div>
-        <div class="gauge-card">
-          <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
-          <div class="gauge-card-body">
-            <div class="gauge-ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-desconto-fg-print-primavera" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-desconto-pct-print-primavera">—</div>
-              </div>
-            </div>
-            <div class="gauge-desc">
-              O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto-print-primavera">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h2>Cenário: Pós Primavera (mix de produtos)</h2>
-    <div class="panel">
-      <table>
-        <thead>
-          <tr><th>Linha de cálculo</th><th class="right">Valor</th></tr>
-        </thead>
-        <tbody id="calc-table-body-print-fim"></tbody>
-      </table>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Cascata do Benefício Líquido</span></div>
-      <div class="waterfall-wrap">
-        <svg id="waterfall-svg-print-fim" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Lado do Cliente — Paridade de Custo Líquido</span></div>
-      <div class="parity-grid">
-        <div class="parity-col">
-          <div class="parity-head sp">Comprando do concorrente (SP)</div>
-          <table>
-            <tr><td>Preço pago</td><td class="right" id="par-sp-preco-print-fim">—</td></tr>
-            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-sp-credito-print-fim">—</td></tr>
-            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-sp-liquido-print-fim">—</strong></td></tr>
-          </table>
-        </div>
-        <div class="parity-col">
-          <div class="parity-head es">Comprando da empresa (ES)</div>
-          <table>
-            <tr><td>Preço pago</td><td class="right" id="par-es-preco-print-fim">—</td></tr>
-            <tr><td>(−) Crédito de ICMS</td><td class="right" id="par-es-credito-print-fim">—</td></tr>
-            <tr><td><strong>Custo líquido</strong></td><td class="right"><strong id="par-es-liquido-print-fim">—</strong></td></tr>
-          </table>
-        </div>
-        <div class="parity-result" id="parity-result-print-fim">—</div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="kpi-cards">
-        <div class="kpi-card">
-          <div class="kpi-title">Benefício líquido / mês</div>
-          <div class="kpi-value" id="kpi-mes-print-fim">—</div>
-          <div class="kpi-desc">cenário Pós Primavera</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-title">Benefício líquido / ano</div>
-          <div class="kpi-value" id="kpi-ano-print-fim">—</div>
-          <div class="kpi-desc">cenário Pós Primavera × 12</div>
-        </div>
-        <div class="kpi-card" id="kpi-veredicto-card-print-fim">
-          <div class="kpi-title">Veredicto</div>
-          <div class="kpi-value" id="kpi-veredicto-print-fim">—</div>
-          <div class="kpi-desc">migração SP → ES</div>
-        </div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span>Quanto da Economia Bruta Vira Benefício Real</span></div>
-      <div class="gauge-grid">
-        <div class="gauge-card">
-          <div class="gauge-card-head">Benefício Líquido / Economia Bruta</div>
-          <div class="gauge-card-body">
-            <div class="gauge-ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-liquido-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-liquido-pct-print-fim">—</div>
-              </div>
-            </div>
-            <div class="gauge-desc">
-              O <strong>benefício líquido</strong> representa <strong id="gauge-liquido-texto-print-fim">—</strong> da economia bruta de ICMS — o restante foi consumido por custos operacionais.
-            </div>
-          </div>
-        </div>
-        <div class="gauge-card">
-          <div class="gauge-card-head">Desconto ao Cliente / Economia Bruta</div>
-          <div class="gauge-card-body">
-            <div class="gauge-ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-                <circle id="gauge-desconto-fg-print-fim" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#1e4080"></circle>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="gauge-desconto-pct-print-fim">—</div>
-              </div>
-            </div>
-            <div class="gauge-desc">
-              O <strong>desconto de compensação ao cliente</strong> consome <strong id="gauge-desconto-texto-print-fim">—</strong> da economia bruta — quanto menor essa fatia, mais margem fica para o distribuidor.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ===== PROJECTION — PRIMAVERA TRIBUTÁRIA (até Reforma 2029-2032) ===== -->
@@ -1401,21 +1220,7 @@ function renderFreteLogistica(inp) {
 
 function salvarEstudo() {
   const inp = getInputs();
-  const rPrimavera = calcScenario('primavera', inp);
-  const rFim = calcScenario('fim', inp);
-
-  renderCalcTable(rPrimavera, 'primavera', inp, '-print-primavera');
-  renderWaterfall(rPrimavera, '-print-primavera');
-  renderParity(rPrimavera, inp, '-print-primavera');
-  renderKpis(rPrimavera, '-print-primavera');
-  renderGauges(rPrimavera, '-print-primavera');
-
-  renderCalcTable(rFim, 'fim', inp, '-print-fim');
-  renderWaterfall(rFim, '-print-fim');
-  renderParity(rFim, inp, '-print-fim');
-  renderKpis(rFim, '-print-fim');
-  renderGauges(rFim, '-print-fim');
-
+  render();
   document.title = `Estudo de Viabilidade Fiscal - ${inp.empresa || 'Prospect'} - ${inp.baseSped || ''}`;
   window.print();
 }
@@ -1427,14 +1232,8 @@ function setPageTab(tab) {
   document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
   document.getElementById('bc-fields-primavera').style.display = tab === 'tab1' ? 'contents' : 'none';
   document.getElementById('bc-fields-pos').style.display = tab === 'tab2' ? 'contents' : 'none';
-  document.getElementById('bc-group-title').textContent = tab === 'tab1'
-    ? 'Dados Financeiros (Etapa 1 — SPED) — Primavera Tributária'
-    : 'Dados Financeiros (Etapa 1 — SPED) — Pós Primavera';
   document.getElementById('frete-fields-primavera').style.display = tab === 'tab1' ? 'contents' : 'none';
   document.getElementById('frete-fields-pos').style.display = tab === 'tab2' ? 'contents' : 'none';
-  document.getElementById('frete-group-title').textContent = tab === 'tab1'
-    ? 'Frete, Logística e Consultoria — Primavera Tributária'
-    : 'Frete, Logística e Consultoria — Pós Primavera';
   render();
 }
 
