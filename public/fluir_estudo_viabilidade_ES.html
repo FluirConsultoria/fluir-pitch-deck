@@ -354,21 +354,6 @@ footer {
   .header-text { text-align: center; }
 }
 
-@media print {
-  @page { margin: 12mm; }
-  .page-tab-bar, #input-panel .btn { display: none; }
-  body { background: #fff; padding-bottom: 0; }
-  .wrap { max-width: 100%; padding: 0; }
-  .panel { break-inside: avoid; box-shadow: none; }
-  .kpi-cards, .gauge-grid, .parity-grid { break-inside: avoid; }
-  /* Impressão mostra as duas abas completas, empilhadas, mesmo layout da tela */
-  .page-tab-content { display: block !important; }
-  #bc-fields-primavera, #bc-fields-pos,
-  #frete-fields-primavera, #frete-fields-pos { display: contents !important; }
-  #tab2-content { break-before: page; }
-  .proj-scroll { max-height: none; overflow: visible; }
-}
-
 /* ===== PAGE-LEVEL TABS ===== */
 .page-tab-bar {
   display: flex;
@@ -396,6 +381,29 @@ footer {
 }
 .page-tab-content { display: none; }
 .page-tab-content.active { display: block; }
+
+/* ===== IMPRESSÃO / PDF =====
+   Este bloco fica DE PROPÓSITO no final do <style>: em CSS, media query não aumenta
+   especificidade — se ficasse no meio do arquivo, uma regra incondicional mais abaixo
+   (ex.: ".page-tab-bar { display:flex }") vencia o empate e a barra de abas voltava a
+   aparecer no PDF. Ficando por último, estas regras sempre vencem. */
+@media print {
+  @page { margin: 10mm; }
+  .page-tab-bar, #input-panel .btn { display: none !important; }
+  body { background: #fff; padding-bottom: 0; }
+  .wrap { max-width: 100%; padding: 0; }
+  .panel { break-inside: avoid; page-break-inside: avoid; box-shadow: none; }
+  .kpi-cards, .gauge-grid, .parity-grid,
+  .field, .subgrid, tr { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Impressão mostra as duas abas completas, cada cenário begins numa página nova */
+  .page-tab-content { display: block !important; }
+  #bc-fields-primavera, #bc-fields-pos,
+  #frete-fields-primavera, #frete-fields-pos { display: contents !important; }
+  #input-panel-pos-print { display: block !important; }
+  #tab2-content { break-before: page; page-break-before: always; }
+  .proj-scroll { max-height: none; overflow: visible; }
+}
 </style>
 </head>
 <body>
@@ -731,6 +739,12 @@ footer {
 
   <!-- TAB 2: Pós Primavera (mix + cálculo + reprecificação) -->
   <div id="tab2-content" class="page-tab-content">
+
+    <!-- Dados de Entrada — Pós Primavera: só existe/aparece no PDF; campos reais são movidos para cá via JS ao imprimir (mesmos inputs, sem duplicar) -->
+    <div class="panel" id="input-panel-pos-print" style="display:none;">
+      <div class="panel-header"><span>Dados de Entrada — Pós Primavera</span></div>
+      <div class="input-grid" id="input-grid-pos-print"></div>
+    </div>
 
     <!-- Mix de Produtos -->
     <div class="panel">
@@ -1218,10 +1232,55 @@ function renderFreteLogistica(inp) {
   renderFreteLogisticaScenario(inp, '-fim', inp.faturamentoFim, inp.freteIndMatrizFim, inp.freteMatrizClienteFim, inp.freteIndFilialFim, inp.freteFilialClienteFim, inp.operadorLogPctFim, inp.custoLogAtualFim);
 }
 
+let printAnchorBcPos = null;
+let printAnchorFretePos = null;
+
+// No PDF os campos "Pós Primavera" saem do painel único de cima e migram para dentro
+// do bloco Pós Primavera (aba 2), assim cada cenário fica 100% completo antes do outro
+// começar. Move os nós reais (não clona) para não duplicar ids/valores; volta ao lugar
+// original depois de imprimir, para a tela seguir funcionando normalmente.
+function moveFieldsForPrint() {
+  const bcPos = document.getElementById('bc-fields-pos');
+  const fretePos = document.getElementById('frete-fields-pos');
+  if (!bcPos || !fretePos) return;
+
+  printAnchorBcPos = document.createComment('bc-fields-pos-anchor');
+  bcPos.parentNode.insertBefore(printAnchorBcPos, bcPos);
+  printAnchorFretePos = document.createComment('frete-fields-pos-anchor');
+  fretePos.parentNode.insertBefore(printAnchorFretePos, fretePos);
+
+  const grid = document.getElementById('input-grid-pos-print');
+  grid.innerHTML = '';
+  const bcTitle = document.createElement('div');
+  bcTitle.className = 'input-group-title';
+  bcTitle.textContent = 'Dados Financeiros (Etapa 1 — SPED)';
+  grid.appendChild(bcTitle);
+  grid.appendChild(bcPos);
+  const freteTitle = document.createElement('div');
+  freteTitle.className = 'input-group-title';
+  freteTitle.textContent = 'Frete, Logística e Consultoria';
+  grid.appendChild(freteTitle);
+  grid.appendChild(fretePos);
+}
+
+function restoreFieldsAfterPrint() {
+  if (!printAnchorBcPos || !printAnchorFretePos) return;
+  printAnchorBcPos.parentNode.insertBefore(document.getElementById('bc-fields-pos'), printAnchorBcPos);
+  printAnchorBcPos.remove();
+  printAnchorFretePos.parentNode.insertBefore(document.getElementById('frete-fields-pos'), printAnchorFretePos);
+  printAnchorFretePos.remove();
+  printAnchorBcPos = null;
+  printAnchorFretePos = null;
+  document.getElementById('input-grid-pos-print').innerHTML = '';
+}
+
+window.addEventListener('afterprint', restoreFieldsAfterPrint);
+
 function salvarEstudo() {
   const inp = getInputs();
   render();
   document.title = `Estudo de Viabilidade Fiscal - ${inp.empresa || 'Prospect'} - ${inp.baseSped || ''}`;
+  moveFieldsForPrint();
   window.print();
 }
 
