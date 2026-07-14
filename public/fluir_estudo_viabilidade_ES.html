@@ -437,6 +437,11 @@ footer {
           <div id="markup-badge" class="markup-badge">—</div>
           <div id="markup-hint" class="field-hint"></div>
         </div>
+        <div class="field">
+          <label>ICMS efetivamente recolhido hoje (SPED)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100"></div>
+          <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
+        </div>
       </div>
       <div id="bc-fields-pos" style="display:none;">
         <div class="field">
@@ -451,11 +456,11 @@ footer {
           <label>Markup (Faturamento / Compras)</label>
           <div id="markup-badge-fim" class="markup-badge">—</div>
         </div>
-      </div>
-      <div class="field">
-        <label>ICMS efetivamente recolhido hoje (SPED)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual" value="0" step="100"></div>
-        <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
+        <div class="field">
+          <label>ICMS SP calculado (débito − crédito, alíquota blendada)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><div id="icms-sp-pos-display" class="markup-badge" style="flex:1;text-align:left;">—</div></div>
+          <div class="field-hint">Calculado — Faturamento × alíquota blendada − Compras × 12%</div>
+        </div>
       </div>
 
       <div class="input-group-title">Parâmetros Fiscais</div>
@@ -1372,6 +1377,8 @@ function render() {
   renderKpis(rFim, '-fim');
   renderGauges(rFim, '-fim');
   renderProjections(inp, rPrimavera, rFim);
+  const icmsSpPosDisplay = document.getElementById('icms-sp-pos-display');
+  if (icmsSpPosDisplay) icmsSpPosDisplay.textContent = fmtBRL(rFim.icmsSP);
 }
 
 const PROJ_MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
