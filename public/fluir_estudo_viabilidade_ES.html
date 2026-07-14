@@ -665,7 +665,6 @@ footer {
         <div class="kpi-desc">cenário selecionado × 12</div>
       </div>
       <div class="kpi-card" id="kpi-veredicto-card">
-        <div class="kpi-title">Veredicto</div>
         <div class="kpi-value" id="kpi-veredicto">—</div>
         <div class="kpi-desc">migração SP → ES</div>
       </div>
@@ -824,7 +823,6 @@ footer {
           <div class="kpi-desc">cenário Pós Primavera × 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-fim">
-          <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-fim">—</div>
           <div class="kpi-desc">migração SP → ES (Pós Primavera)</div>
         </div>
@@ -896,11 +894,6 @@ footer {
   </div><!-- /tab2-content -->
 
 </div>
-
-<footer>
-  Fluir Consultoria · Estudo de viabilidade fiscal ES · Sujeito a validação contábil.<br>
-  Logística e frete consideram apenas o incremental sobre a operação atual. O desconto ao cliente é o repasse máximo para igualar o custo líquido; ajustável conforme negociação e % de clientes creditantes.
-</footer>
 
 <script>
 const DEFAULTS = {
@@ -1020,7 +1013,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   const rows = [
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
-    ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(r.descontoCliente), false, true],
+    ['2', 'Compensação de crédito de ICMS', '− ' + fmtBRL(r.descontoCliente), false, true],
     ['3', 'Faturamento ES', fmtBRL(r.faturamentoES), false, false],
     ['4', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['5', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
