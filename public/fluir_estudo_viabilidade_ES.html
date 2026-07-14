@@ -422,21 +422,35 @@ footer {
         <input type="text" id="baseSped" placeholder="ex: Mar/2026">
       </div>
 
-      <div class="input-group-title">Dados Financeiros (Etapa 1 — SPED)</div>
-      <div class="field">
-        <label>Faturamento mensal Primavera Tributária (BC Saídas)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" autocomplete="off"></div>
-        <div class="field-hint">Usado só no cenário Primavera Tributária</div>
+      <div class="input-group-title" id="bc-group-title">Dados Financeiros (Etapa 1 — SPED) — Primavera Tributária</div>
+      <div id="bc-fields-primavera" style="display:contents;">
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamento" value="0" step="1000" autocomplete="off"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" autocomplete="off"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge" class="markup-badge">—</div>
+          <div id="markup-hint" class="field-hint"></div>
+        </div>
       </div>
-      <div class="field">
-        <label>Compras Primavera Tributária (BC Entradas)</label>
-        <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras" value="0" step="1000" autocomplete="off"></div>
-        <div class="field-hint">Usado só no cenário Primavera Tributária</div>
-      </div>
-      <div class="field field-markup">
-        <label>Markup (Faturamento / Compras)</label>
-        <div id="markup-badge" class="markup-badge">—</div>
-        <div id="markup-hint" class="field-hint"></div>
+      <div id="bc-fields-pos" style="display:none;">
+        <div class="field">
+          <label>Faturamento mensal (BC Saídas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoFim" value="0" step="1000" autocomplete="off"></div>
+        </div>
+        <div class="field">
+          <label>Compras (BC Entradas)</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasFim" value="0" step="1000" autocomplete="off"></div>
+        </div>
+        <div class="field field-markup">
+          <label>Markup (Faturamento / Compras)</label>
+          <div id="markup-badge-fim" class="markup-badge">—</div>
+        </div>
       </div>
       <div class="field">
         <label>ICMS efetivamente recolhido hoje (SPED)</label>
@@ -843,21 +857,6 @@ footer {
     <div class="panel">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
-        <div class="input-group-title">Dados Financeiros — Pós Primavera</div>
-        <div class="field">
-          <label>Faturamento mensal Pós Primavera (BC Saídas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="faturamentoFim" value="0" step="1000" autocomplete="off"></div>
-          <div class="field-hint">Independente do valor usado no cenário Primavera Tributária</div>
-        </div>
-        <div class="field">
-          <label>Compras Pós Primavera (BC Entradas)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="comprasFim" value="0" step="1000" autocomplete="off"></div>
-          <div class="field-hint">Independente do valor usado no cenário Primavera Tributária</div>
-        </div>
-        <div class="field field-markup">
-          <label>Markup (Faturamento / Compras)</label>
-          <div id="markup-badge-fim" class="markup-badge">—</div>
-        </div>
         <div class="input-group-title">Alíquotas SP — Pós Primavera</div>
         <div class="field">
           <label>% Shampoo (saída 18%)</label>
@@ -1371,6 +1370,11 @@ function setPageTab(tab) {
   document.getElementById('page-tab2-btn').classList.toggle('active', tab === 'tab2');
   document.getElementById('tab1-content').classList.toggle('active', tab === 'tab1');
   document.getElementById('tab2-content').classList.toggle('active', tab === 'tab2');
+  document.getElementById('bc-fields-primavera').style.display = tab === 'tab1' ? 'contents' : 'none';
+  document.getElementById('bc-fields-pos').style.display = tab === 'tab2' ? 'contents' : 'none';
+  document.getElementById('bc-group-title').textContent = tab === 'tab1'
+    ? 'Dados Financeiros (Etapa 1 — SPED) — Primavera Tributária'
+    : 'Dados Financeiros (Etapa 1 — SPED) — Pós Primavera';
 }
 
 
