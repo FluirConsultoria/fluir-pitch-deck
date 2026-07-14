@@ -876,16 +876,6 @@ footer {
           <div class="input-row"><input type="number" id="pctClientesLP" value="70" step="1" min="0" max="100" oninput="render()"><span class="unit-sym">%</span></div>
           <div class="field-hint">Clientes Simples Nacional já estão em 18%/25% — não sobem no Pós Primavera.</div>
         </div>
-        <div class="input-group-title">Repreci&#64257;ca&#231;&#227;o do Mercado (opcional)</div>
-        <div class="field">
-          <label>Nova BC de Sa&#237;da (mercado reprecificado)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="novaBCSaida" value="0" step="1000"></div>
-          <div class="field-hint">Deixe 0 para calcular com faturamento atual. Preencha se o mercado repreci&#64257;car ap&#243;s a reforma.</div>
-        </div>
-        <div class="field field-markup">
-          <label>Varia&#231;&#227;o vs. faturamento atual</label>
-          <div id="nova-bc-badge" class="markup-badge">&#8212;</div>
-        </div>
       </div>
     </div>
 
@@ -1031,8 +1021,7 @@ const DEFAULTS = {
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50, pctCreditantes: 100,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
-  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70,
-  novaBCSaida: 0
+  consultoriaPct: 6, consultoriaMin: 0, pctClientesLP: 70
 };
 
 function fmtBRL(v) {
@@ -1065,7 +1054,6 @@ function getInputs() {
     custoLogAtual: num('custoLogAtual'),
     consultoriaPct: num('consultoriaPct'),
     consultoriaMin: num('consultoriaMin'),
-    novaBCSaida: num('novaBCSaida'),
     pctClientesLP: num('pctClientesLP')
   };
 }
@@ -1075,8 +1063,7 @@ function calcScenario(scenario, inp) {
   const faturamento = scenario === 'fim' ? inp.faturamentoFim : inp.faturamento;
   const compras = scenario === 'fim' ? inp.comprasFim : inp.compras;
 
-  const novaBCSaidaAtiva = scenario === 'fim' && inp.novaBCSaida > 0;
-  const base = novaBCSaidaAtiva ? inp.novaBCSaida : faturamento;
+  const base = faturamento;
 
   const rSP = scenario === 'primavera'
     ? 12
@@ -1085,11 +1072,8 @@ function calcScenario(scenario, inp) {
   let icmsSP;
   if (scenario === 'primavera') {
     icmsSP = inp.icmsSpedAtual;
-  } else if (novaBCSaidaAtiva) {
-    // Reprecificação: nova BC aplica para todos — débito integral menos crédito entrada
-    icmsSP = base * (rSP / 100) - compras * 0.12;
   } else {
-    // Sem reprecificação: só clientes LP saem de 12% → rSP; Simples já estão em rSP
+    // Só clientes LP saem de 12% → rSP; Simples já estão em rSP
     icmsSP = inp.icmsSpedAtual + (inp.pctClientesLP / 100) * faturamento * (rSP - 12) / 100;
   }
 
@@ -1109,7 +1093,7 @@ function calcScenario(scenario, inp) {
   const beneficioAno = beneficioMes * 12;
 
   return { scenario, faturamento, compras, rSP, icmsSP, descontoCliente, faturamentoES, icmsES, economiaBruta,
-    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base, novaBCSaidaAtiva };
+    consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base };
 }
 
 
@@ -1117,8 +1101,6 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   let icmsSPLabel;
   if (scenario === 'primavera') {
     icmsSPLabel = 'ICMS SP a pagar (valor auditado SPED)';
-  } else if (r.novaBCSaidaAtiva) {
-    icmsSPLabel = `ICMS SP líquido — Nova BC × ${fmtPct(r.rSP)} (débito) − 12% × Compras (crédito entrada)`;
   } else {
     icmsSPLabel = `ICMS SP Pós Primavera — SPED atual + ${fmtPct(inp.pctClientesLP)} clientes LP × Fat. × (${fmtPct(r.rSP)} − 12%)`;
   }
@@ -1129,12 +1111,7 @@ function renderCalcTable(r, scenario, inp, suffix = '') {
   const deltaLogVal = (deltaLogIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaLogRS));
   const deltaFreteVal = (deltaFreteIsGain ? '+ ' : '− ') + fmtBRL(Math.abs(r.deltaFreteRS));
 
-  const baseRow = r.novaBCSaidaAtiva
-    ? [['', `Base: Nova BC de Saída reprecificada (faturamento atual: ${fmtBRL(r.faturamento)})`, '', true, false]]
-    : [];
-
   const rows = [
-    ...baseRow,
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
     ['', `Alíquota SP blendada: ${fmtPct(r.rSP)}`, '', true, false],
     ['2', 'Desconto de compensação ao cliente', '− ' + fmtBRL(r.descontoCliente), false, true],
@@ -1401,16 +1378,6 @@ function render() {
   renderKpis(rFim, '-fim');
   renderGauges(rFim, '-fim');
   renderProjections(inp, rPrimavera, rFim);
-  // badge de variação da nova BC de Saída
-  const badge = document.getElementById('nova-bc-badge');
-  if (badge) {
-    if (inp.novaBCSaida > 0 && inp.faturamentoFim > 0) {
-      const pctVar = ((inp.novaBCSaida / inp.faturamentoFim) - 1) * 100;
-      badge.textContent = (pctVar >= 0 ? '+' : '') + pctVar.toFixed(1).replace('.', ',') + '%';
-    } else {
-      badge.textContent = '—';
-    }
-  }
 }
 
 const PROJ_MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1510,7 +1477,6 @@ function clearAll() {
   document.getElementById('custoLogAtual').value = DEFAULTS.custoLogAtual;
   document.getElementById('consultoriaPct').value = DEFAULTS.consultoriaPct;
   document.getElementById('consultoriaMin').value = DEFAULTS.consultoriaMin;
-  document.getElementById('novaBCSaida').value = 0;
   document.getElementById('pctClientesLP').value = DEFAULTS.pctClientesLP;
   setPageTab('tab1');
 }
