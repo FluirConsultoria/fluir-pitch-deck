@@ -1336,7 +1336,10 @@ function renderFreteLogistica(inp) {
   document.getElementById('frete-diff-badge').textContent =
     (freteDiff >= 0 ? '+ ' : '− ') + fmtBRL(Math.abs(freteDiff));
 
-  const operadorRS = (inp.operadorLogPct / 100) * inp.faturamento;
+  // Operador Logístico é % do faturamento — usa o faturamento do cenário ativo na tela.
+  const abaAtivaPos = document.getElementById('tab2-content').classList.contains('active');
+  const faturamentoAtivo = abaAtivaPos ? inp.faturamentoFim : inp.faturamento;
+  const operadorRS = (inp.operadorLogPct / 100) * faturamentoAtivo;
   document.getElementById('operador-log-rs').textContent = fmtBRL(operadorRS);
 
   const logDiff = operadorRS - inp.custoLogAtual;
@@ -1375,6 +1378,7 @@ function setPageTab(tab) {
   document.getElementById('bc-group-title').textContent = tab === 'tab1'
     ? 'Dados Financeiros (Etapa 1 — SPED) — Primavera Tributária'
     : 'Dados Financeiros (Etapa 1 — SPED) — Pós Primavera';
+  render();
 }
 
 
