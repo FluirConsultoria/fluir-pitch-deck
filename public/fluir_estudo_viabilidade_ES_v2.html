@@ -387,9 +387,9 @@ footer {
   /* Mix de Produtos e ICMS SP x ICMS ES sao complementares: nunca separar
      em paginas diferentes. */
   .panel-mix-produtos { break-after: avoid; page-break-after: avoid; }
-  /* Nome da empresa ja aparece no Cenario 1 (e no cabecalho da pagina) - nao
-     precisa repetir no Cenario 2. */
-  .field-empresa-c2 { display: none !important; }
+  /* Identificacao (empresa + mes/ano SPED) ja aparece no Cenario 1 (e no
+     cabecalho da pagina) - Cenario 2 so muda os dados financeiros. */
+  .identificacao-c2 { display: none !important; }
 
   /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
   .page-tab-content { display: block !important; }
@@ -703,12 +703,12 @@ footer {
       </div>
       <div class="input-grid">
 
-        <div class="input-group-title">Identificacao</div>
-        <div class="field field-empresa-c2">
+        <div class="input-group-title identificacao-c2">Identificacao</div>
+        <div class="field identificacao-c2">
           <label>Empresa analisada</label>
           <input type="text" id="empresa-c2" placeholder="Nome do prospect" oninput="renderAll()">
         </div>
-        <div class="field">
+        <div class="field identificacao-c2">
           <label>Mes/ano base SPED</label>
           <input type="text" id="baseSped-c2" placeholder="ex: Mar/2026" oninput="renderAll()">
         </div>
