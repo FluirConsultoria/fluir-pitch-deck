@@ -538,7 +538,6 @@ footer {
           <div class="kpi-desc">Primavera Tributária x 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-c1">
-          <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-c1">&#8212;</div>
           <div class="kpi-desc">migracao SP -> ES</div>
         </div>
@@ -809,7 +808,6 @@ footer {
           <div class="kpi-desc">Primavera Tributária x 12</div>
         </div>
         <div class="kpi-card" id="kpi-veredicto-card-c2">
-          <div class="kpi-title">Veredicto</div>
           <div class="kpi-value" id="kpi-veredicto-c2">&#8212;</div>
           <div class="kpi-desc">migracao SP -> ES</div>
         </div>
@@ -979,7 +977,6 @@ footer {
         <div class="kpi-desc">Primavera Tributária x 12</div>
       </div>
       <div class="kpi-card" id="kpi-veredicto-card-print-c1">
-        <div class="kpi-title">Veredicto</div>
         <div class="kpi-value" id="kpi-veredicto-print-c1">&#8212;</div>
         <div class="kpi-desc">migracao SP -> ES</div>
       </div>
@@ -1093,7 +1090,6 @@ footer {
         <div class="kpi-desc">Primavera Tributária x 12</div>
       </div>
       <div class="kpi-card" id="kpi-veredicto-card-print-c2">
-        <div class="kpi-title">Veredicto</div>
         <div class="kpi-value" id="kpi-veredicto-print-c2">&#8212;</div>
         <div class="kpi-desc">migracao SP -> ES</div>
       </div>
@@ -1437,10 +1433,38 @@ function renderKpisEnxutos(r, suffix) {
   document.getElementById('kpi-econ-pct' + suffix).textContent = fmtPct(pctReducao);
 }
 
+const PROJ_MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const PROJ_REFORM_START = 2029 * 12; // Jan/2029 - inicio da regressao do incentivo
+
+function monthLabel(total) {
+  const monthIdx = ((total % 12) + 12) % 12;
+  const year = Math.floor(total / 12);
+  return PROJ_MONTH_NAMES[monthIdx] + '/' + year;
+}
+
 function renderProjectionPrimavera(rPrimavera, mesesAte2029, suffix) {
   const beneficio = rPrimavera.beneficioMes;
-  let acumulado = beneficio * mesesAte2029;
-  let rows = '<tr class="tag-primavera"><td>Primavera Tributária (' + mesesAte2029 + ' meses)</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+  let acumulado = 0;
+  let rows = '';
+  let cur = PROJ_REFORM_START - mesesAte2029;
+
+  // Ano corrente (parcial): mes a mes ate o fim do ano.
+  if (cur % 12 !== 0) {
+    const partialEnd = Math.min((Math.floor(cur / 12) + 1) * 12, PROJ_REFORM_START);
+    for (let m = cur; m < partialEnd; m++) {
+      acumulado += beneficio;
+      rows += '<tr class="tag-primavera"><td>' + monthLabel(m) + '</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+    }
+    cur = partialEnd;
+  }
+
+  // Anos cheios seguintes (ex.: 2027, 2028): 1 linha resumida por ano.
+  while (cur < PROJ_REFORM_START) {
+    const year = Math.floor(cur / 12);
+    acumulado += beneficio * 12;
+    rows += '<tr class="tag-primavera"><td>' + year + ' (12 meses)</td><td class="tag">Primavera</td><td class="right">' + fmtBRL(beneficio) + '</td><td class="right">' + fmtBRL(acumulado) + '</td></tr>';
+    cur += 12;
+  }
 
   const periodosReforma = [
     { label: '2029 (12 meses)', fator: 0.9, alt: false },
