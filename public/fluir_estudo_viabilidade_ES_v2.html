@@ -377,6 +377,10 @@ footer {
      empurrar tudo pra próxima (as linhas continuam protegidas pelo "tr" acima). */
   .panel-proj { break-inside: auto; page-break-inside: auto; }
   .panel-proj thead { display: table-header-group; }
+  /* Nao deixa a nota final ficar orfa sozinha numa pagina nova: puxa junto
+     com a ultima parte da tabela em vez de quebrar bem na emenda. */
+  .panel-proj .note-box { break-before: avoid; page-break-before: avoid; }
+  .panel-proj tbody tr:last-child { break-after: avoid; page-break-after: avoid; }
 
   /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
   .page-tab-content { display: block !important; }
