@@ -373,6 +373,10 @@ footer {
   .panel { break-inside: avoid; page-break-inside: avoid; box-shadow: none; }
   .kpi-cards, .gauge-grid, .compare-visual,
   .field, .subgrid, tr { break-inside: avoid; page-break-inside: avoid; }
+  /* Tabelas de projeção são longas: deixa o quadro fluir entre páginas em vez de
+     empurrar tudo pra próxima (as linhas continuam protegidas pelo "tr" acima). */
+  .panel-proj { break-inside: auto; page-break-inside: auto; }
+  .panel-proj thead { display: table-header-group; }
 
   /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
   .page-tab-content { display: block !important; }
@@ -569,7 +573,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-proj">
       <div class="panel-header">
         <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
         <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
@@ -650,7 +654,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-proj">
       <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
       <div class="proj-scroll" style="max-height:none;">
         <table class="proj-table">
@@ -839,7 +843,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-proj">
       <div class="panel-header">
         <span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span>
         <div style="display:flex;align-items:center;gap:12px;font-size:11px;font-weight:400;color:#fff;">
@@ -920,7 +924,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-proj">
       <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
       <div class="proj-scroll" style="max-height:none;">
         <table class="proj-table">
