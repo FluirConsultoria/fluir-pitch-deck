@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Estudo de Viabilidade Fiscal v2 — Fluir ES</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 body {
   font-family: Arial, sans-serif;
@@ -329,14 +329,6 @@ footer {
   .header-text { text-align: center; }
 }
 
-#print-report { display: none; }
-
-@media print {
-  .wrap { display: none; }
-  #print-report { display: block; }
-  body { background: #fff; }
-}
-
 /* ===== PAGE-LEVEL TABS ===== */
 .page-tab-bar {
   display: flex;
@@ -368,15 +360,25 @@ footer {
 }
 .page-tab-content { display: none; }
 .page-tab-content.active { display: block; }
-.print-heading {
-  color: #0b1a35;
-  font-size: 18px;
-  font-weight: 700;
-  margin: 24px 0 12px;
-  padding-bottom: 6px;
-  border-bottom: 3px solid #c9a227;
+
+/* ===== IMPRESSAO / PDF =====
+   Fica de proposito no final do <style>: media query nao aumenta especificidade,
+   entao uma regra incondicional mais abaixo no arquivo venceria o empate se este
+   bloco ficasse no meio. Ficando por ultimo, estas regras sempre vencem. */
+@media print {
+  @page { margin: 10mm; }
+  .page-tab-bar, .panel .btn { display: none !important; }
+  body { background: #fff; padding-bottom: 0; }
+  .wrap { max-width: 100%; padding: 0; }
+  .panel { break-inside: avoid; page-break-inside: avoid; box-shadow: none; }
+  .kpi-cards, .gauge-grid, .compare-visual,
+  .field, .subgrid, tr { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
+  .page-tab-content { display: block !important; }
+  #tab2-content { break-before: page; page-break-before: always; }
+  .proj-scroll { max-height: none; overflow: visible; }
 }
-.print-heading:first-child { margin-top: 0; }
 </style>
 </head>
 <body>
@@ -944,239 +946,6 @@ footer {
 
 </div><!-- /wrap -->
 
-<!-- ============================================================ -->
-<!-- PDF — os 2 cenarios empilhados                                -->
-<!-- ============================================================ -->
-<div id="print-report">
-
-  <h1 class="print-heading" id="print-heading-c1">Cenário 1</h1>
-
-  <div class="panel">
-    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
-    <table>
-      <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
-      <tbody id="calc-table-body-print-c1"></tbody>
-    </table>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
-    <div class="waterfall-wrap">
-      <svg id="waterfall-svg-print-c1" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="kpi-cards">
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / mes</div>
-        <div class="kpi-value" id="kpi-mes-print-c1">&#8212;</div>
-        <div class="kpi-desc">Primavera Tributária</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / ano</div>
-        <div class="kpi-value" id="kpi-ano-print-c1">&#8212;</div>
-        <div class="kpi-desc">Primavera Tributária x 12</div>
-      </div>
-      <div class="kpi-card" id="kpi-veredicto-card-print-c1">
-        <div class="kpi-value" id="kpi-veredicto-print-c1">&#8212;</div>
-        <div class="kpi-desc">migracao SP -> ES</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
-    <div class="gauge-grid">
-      <div class="gauge-card">
-        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
-        <div class="gauge-card-body">
-          <div class="gauge-ring-wrap">
-            <svg viewBox="0 0 140 140">
-              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-              <circle id="gauge-liquido-fg-print-c1" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-            </svg>
-            <div class="gauge-center">
-              <div class="gauge-pct" id="gauge-liquido-pct-print-c1">&#8212;</div>
-            </div>
-          </div>
-          <div class="gauge-desc">
-            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-c1">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span></div>
-    <table class="proj-table">
-      <thead><tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr></thead>
-      <tbody id="proj-table-body-print-c1"></tbody>
-    </table>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera</span></div>
-    <div class="compare-visual">
-      <div class="compare-card sp">
-        <div class="compare-label">ICMS SP Pós Primavera</div>
-        <div class="compare-value" id="cmp-icmssp-print-c1">&#8212;</div>
-        <div class="compare-sub" id="cmp-aliqsp-print-c1">&#8212;</div>
-      </div>
-      <div class="compare-arrow">
-        <div class="compare-arrow-glyph">&#8594;</div>
-        <div class="compare-arrow-label">Migração ES</div>
-      </div>
-      <div class="compare-card es">
-        <div class="compare-label">ICMS ES (Compete)</div>
-        <div class="compare-value" id="cmp-icmses-print-c1">&#8212;</div>
-        <div class="compare-sub" id="cmp-aliqes-print-c1">&#8212;</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="kpi-cards">
-      <div class="kpi-card">
-        <div class="kpi-title">Economia Bruta ICMS / mês</div>
-        <div class="kpi-value" id="kpi-econ-mes-print-c1">&#8212;</div>
-        <div class="kpi-desc">sem descontar custos operacionais</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Economia Bruta ICMS / ano</div>
-        <div class="kpi-value" id="kpi-econ-ano-print-c1">&#8212;</div>
-        <div class="kpi-desc">projeção anual Pós Primavera</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">% de Redução sobre ICMS SP</div>
-        <div class="kpi-value" id="kpi-econ-pct-print-c1">&#8212;</div>
-        <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
-    <table class="proj-table">
-      <thead>
-        <tr>
-          <th>Ano</th><th>Fase</th><th class="right">Fator</th>
-          <th class="right">Econ. Bruta ICMS / mês</th><th class="right">Econ. Bruta ICMS / ano</th><th class="right">Acumulado</th>
-        </tr>
-      </thead>
-      <tbody id="proj-table-body-pos-print-c1"></tbody>
-    </table>
-  </div>
-
-  <h1 class="print-heading" id="print-heading-c2">Cenário 2</h1>
-
-  <div class="panel">
-    <div class="panel-header"><span>Calculo ICMS — Primavera Tributaria</span></div>
-    <table>
-      <thead><tr><th>Linha de calculo</th><th class="right">Valor</th></tr></thead>
-      <tbody id="calc-table-body-print-c2"></tbody>
-    </table>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Cascata do Beneficio Liquido</span></div>
-    <div class="waterfall-wrap">
-      <svg id="waterfall-svg-print-c2" viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="kpi-cards">
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / mes</div>
-        <div class="kpi-value" id="kpi-mes-print-c2">&#8212;</div>
-        <div class="kpi-desc">Primavera Tributária</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Beneficio liquido / ano</div>
-        <div class="kpi-value" id="kpi-ano-print-c2">&#8212;</div>
-        <div class="kpi-desc">Primavera Tributária x 12</div>
-      </div>
-      <div class="kpi-card" id="kpi-veredicto-card-print-c2">
-        <div class="kpi-value" id="kpi-veredicto-print-c2">&#8212;</div>
-        <div class="kpi-desc">migracao SP -> ES</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Quanto da Economia Bruta Vira Beneficio Real</span></div>
-    <div class="gauge-grid">
-      <div class="gauge-card">
-        <div class="gauge-card-head">Beneficio Liquido / Economia Bruta</div>
-        <div class="gauge-card-body">
-          <div class="gauge-ring-wrap">
-            <svg viewBox="0 0 140 140">
-              <circle class="gauge-bg" cx="70" cy="70" r="58" stroke-width="14"></circle>
-              <circle id="gauge-liquido-fg-print-c2" class="gauge-fg" cx="70" cy="70" r="58" stroke-width="14" stroke="#c9a227"></circle>
-            </svg>
-            <div class="gauge-center">
-              <div class="gauge-pct" id="gauge-liquido-pct-print-c2">&#8212;</div>
-            </div>
-          </div>
-          <div class="gauge-desc">
-            O <strong>beneficio liquido</strong> representa <strong id="gauge-liquido-texto-print-c2">&#8212;</strong> da economia bruta de ICMS &#8212; o restante foi consumido por custos operacionais.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Projecao de Beneficio ate a Reforma Tributaria (2029 - 2032)</span></div>
-    <table class="proj-table">
-      <thead><tr><th>Periodo</th><th>Cenario</th><th class="right">Beneficio / Mes</th><th class="right">Acumulado</th></tr></thead>
-      <tbody id="proj-table-body-print-c2"></tbody>
-    </table>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>ICMS SP × ICMS ES — Pós Primavera</span></div>
-    <div class="compare-visual">
-      <div class="compare-card sp">
-        <div class="compare-label">ICMS SP Pós Primavera</div>
-        <div class="compare-value" id="cmp-icmssp-print-c2">&#8212;</div>
-        <div class="compare-sub" id="cmp-aliqsp-print-c2">&#8212;</div>
-      </div>
-      <div class="compare-arrow">
-        <div class="compare-arrow-glyph">&#8594;</div>
-        <div class="compare-arrow-label">Migração ES</div>
-      </div>
-      <div class="compare-card es">
-        <div class="compare-label">ICMS ES (Compete)</div>
-        <div class="compare-value" id="cmp-icmses-print-c2">&#8212;</div>
-        <div class="compare-sub" id="cmp-aliqes-print-c2">&#8212;</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="kpi-cards">
-      <div class="kpi-card">
-        <div class="kpi-title">Economia Bruta ICMS / mês</div>
-        <div class="kpi-value" id="kpi-econ-mes-print-c2">&#8212;</div>
-        <div class="kpi-desc">sem descontar custos operacionais</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Economia Bruta ICMS / ano</div>
-        <div class="kpi-value" id="kpi-econ-ano-print-c2">&#8212;</div>
-        <div class="kpi-desc">projeção anual Pós Primavera</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">% de Redução sobre ICMS SP</div>
-        <div class="kpi-value" id="kpi-econ-pct-print-c2">&#8212;</div>
-        <div class="kpi-desc">ICMS ES vs. ICMS SP</div>
-      </div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span>Projeção de Economia ICMS até a Reforma Tributária (2027 – 2032)</span></div>
-    <table class="proj-table">
-      <thead>
-        <tr>
-          <th>Ano</th><th>Fase</th><th class="right">Fator</th>
-          <th class="right">Econ. Bruta ICMS / mês</th><th class="right">Econ. Bruta ICMS / ano</th><th class="right">Acumulado</th>
-        </tr>
-      </thead>
-      <tbody id="proj-table-body-pos-print-c2"></tbody>
-    </table>
-  </div>
-
-</div><!-- /print-report -->
-
 
 <script>
 const DEFAULTS = {
@@ -1561,29 +1330,7 @@ function setPageTab(tab) {
 }
 
 function salvarEstudo() {
-  ['c1', 'c2'].forEach(function(key) {
-    const suffix = '-' + key;
-    const printSuffix = '-print-' + key;
-    const inp = getInputs(suffix);
-
-    const rPrimavera = calcScenario('primavera', inp);
-    renderCalcTable(rPrimavera, inp, printSuffix);
-    renderWaterfall(rPrimavera, printSuffix);
-    renderKpis(rPrimavera, printSuffix);
-    renderGauges(rPrimavera, printSuffix);
-
-    const mesesAte2029 = Math.max(1, Math.round(parseFloat(document.getElementById('mesesAte2029' + suffix).value) || 1));
-    renderProjectionPrimavera(rPrimavera, mesesAte2029, printSuffix);
-
-    const rFim = calcScenario('fim', inp);
-    renderCompareFim(rFim, inp, printSuffix);
-    renderKpisEnxutos(rFim, printSuffix);
-    renderProjectionPos(rFim, printSuffix);
-
-    const heading = 'Cenário ' + (key === 'c1' ? '1' : '2') + (inp.empresa ? ' — ' + inp.empresa : '') + ' — Faturamento ' + fmtBRL(inp.faturamento) + '/mês';
-    document.getElementById('print-heading-' + key).textContent = heading;
-  });
-
+  renderAll();
   const empresaAtiva = getInputs(document.getElementById('tab1-content').classList.contains('active') ? '-c1' : '-c2').empresa;
   document.title = 'Estudo de Viabilidade Fiscal v2 - ' + (empresaAtiva || 'Prospect');
   window.print();
