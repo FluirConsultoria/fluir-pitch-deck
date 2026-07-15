@@ -387,6 +387,9 @@ footer {
   /* Mix de Produtos e ICMS SP x ICMS ES sao complementares: nunca separar
      em paginas diferentes. */
   .panel-mix-produtos { break-after: avoid; page-break-after: avoid; }
+  /* Nome da empresa ja aparece no Cenario 1 (e no cabecalho da pagina) - nao
+     precisa repetir no Cenario 2. */
+  .field-empresa-c2 { display: none !important; }
 
   /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
   .page-tab-content { display: block !important; }
@@ -701,7 +704,7 @@ footer {
       <div class="input-grid">
 
         <div class="input-group-title">Identificacao</div>
-        <div class="field">
+        <div class="field field-empresa-c2">
           <label>Empresa analisada</label>
           <input type="text" id="empresa-c2" placeholder="Nome do prospect" oninput="renderAll()">
         </div>
