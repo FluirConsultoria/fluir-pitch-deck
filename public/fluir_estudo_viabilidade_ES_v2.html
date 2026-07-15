@@ -457,11 +457,6 @@ footer {
           <div id="markup-badge-c1" class="markup-badge">&#8212;</div>
           <div id="markup-hint-c1" class="field-hint"></div>
         </div>
-        <div class="field">
-          <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual-c1" value="0" step="100" oninput="renderAll()"></div>
-          <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
-        </div>
 
         <div class="input-group-title">Parametros Fiscais</div>
         <div class="field">
@@ -727,11 +722,6 @@ footer {
           <div id="markup-badge-c2" class="markup-badge">&#8212;</div>
           <div id="markup-hint-c2" class="field-hint"></div>
         </div>
-        <div class="field">
-          <label>ICMS efetivamente recolhido hoje (SPED)</label>
-          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSpedAtual-c2" value="0" step="100" oninput="renderAll()"></div>
-          <div class="field-hint">Valor auditado — usado no cenário Primavera</div>
-        </div>
 
         <div class="input-group-title">Parametros Fiscais</div>
         <div class="field">
@@ -967,7 +957,7 @@ footer {
 <script>
 const DEFAULTS = {
   empresa: '', baseSped: '',
-  faturamento: 0, compras: 0, icmsSpedAtual: 0,
+  faturamento: 0, compras: 0,
   creditoEntradaES: 7, destaqueSaidaES: 12, cargaEfetivaES: 1.14,
   pctShampoo: 50,
   freteIndMatriz: 0, freteMatrizCliente: 0, freteIndFilial: 0, freteFilialCliente: 0, operadorLogPct: 0, custoLogAtual: 0,
@@ -990,7 +980,6 @@ function getInputs(suffix) {
     baseSped: txt('baseSped'),
     faturamento: num('faturamento'),
     compras: num('compras'),
-    icmsSpedAtual: num('icmsSpedAtual'),
     destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
@@ -1017,9 +1006,10 @@ function calcScenario(scenario, inp) {
     ? (inp.pctClientesLP / 100) * 12 + ((100 - inp.pctClientesLP) / 100) * rProduto
     : rProduto;
 
-  const icmsSP = scenario === 'primavera'
-    ? base * (rSP / 100) - inp.compras * 0.12
-    : inp.icmsSpedAtual + (inp.pctClientesLP / 100) * base * (rSP - 12) / 100;
+  // Pós Primavera (reforma): o benefício da Primavera acaba pra todo mundo -
+  // faturamento inteiro passa a pagar a aliquota cheia do produto (rSP = rProduto),
+  // débito - crédito puro, sem depender de valor auditado do SPED.
+  const icmsSP = base * (rSP / 100) - inp.compras * 0.12;
 
   const icmsES = (inp.cargaEfetivaES / 100) * base;
   const economiaBruta = icmsSP - icmsES;
@@ -1358,7 +1348,6 @@ function clearAll(suffix) {
   document.getElementById('baseSped' + suffix).value = DEFAULTS.baseSped;
   document.getElementById('faturamento' + suffix).value = DEFAULTS.faturamento;
   document.getElementById('compras' + suffix).value = DEFAULTS.compras;
-  document.getElementById('icmsSpedAtual' + suffix).value = DEFAULTS.icmsSpedAtual;
   document.getElementById('creditoEntradaES' + suffix).value = DEFAULTS.creditoEntradaES;
   document.getElementById('destaqueSaidaES' + suffix).value = DEFAULTS.destaqueSaidaES;
   document.getElementById('cargaEfetivaES' + suffix).value = DEFAULTS.cargaEfetivaES;
