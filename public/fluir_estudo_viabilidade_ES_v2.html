@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Estudo de Viabilidade Fiscal v2 — Fluir ES</title>
+<title>Estudo de Viabilidade Fiscal — Fluir ES</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
@@ -404,7 +404,7 @@ footer {
   <div class="header-inner">
     <img class="fluir-logo" src="fluir-logo.png" alt="Fluir">
     <div class="header-text">
-      <div class="header-title">Estudo de Viabilidade Fiscal v2 — Espirito Santo</div>
+      <div class="header-title">Estudo de Viabilidade Fiscal — Espirito Santo</div>
       <div class="header-subtitle" id="dynamic-subtitle">{Empresa analisada} · base SPED {mes/ano}</div>
     </div>
   </div>
@@ -971,6 +971,9 @@ function fmtBRL(v) {
 function fmtPct(v) {
   return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 }
+function fmtPctPrecise(v) {
+  return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 3 }) + '%';
+}
 
 function getInputs(suffix) {
   const num = id => parseFloat(document.getElementById(id + suffix).value) || 0;
@@ -1037,7 +1040,7 @@ function renderCalcTable(r, inp, suffix) {
 
   const rows = [
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
-    ['', 'Aliquota SP blendada: ' + fmtPct(r.rSP), '', true, false],
+    ['', 'Aliquota SP blendada: ' + fmtPctPrecise(r.rSP), '', true, false],
     ['2', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['3', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
     ['4', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
@@ -1193,7 +1196,7 @@ function renderFreteLogistica(inp, suffix) {
 
 function renderCompareFim(r, inp, suffix) {
   document.getElementById('cmp-icmssp' + suffix).textContent = fmtBRL(r.icmsSP);
-  document.getElementById('cmp-aliqsp' + suffix).textContent = 'Alíquota blendada: ' + fmtPct(r.rSP);
+  document.getElementById('cmp-aliqsp' + suffix).textContent = 'Alíquota blendada: ' + fmtPctPrecise(r.rSP);
   document.getElementById('cmp-icmses' + suffix).textContent = fmtBRL(r.icmsES);
   document.getElementById('cmp-aliqes' + suffix).textContent = 'Carga efetiva Compete: ' + fmtPct(inp.cargaEfetivaES);
 }
@@ -1339,7 +1342,7 @@ function setPageTab(tab) {
 function salvarEstudo() {
   renderAll();
   const empresaAtiva = getInputs(document.getElementById('tab1-content').classList.contains('active') ? '-c1' : '-c2').empresa;
-  document.title = 'Estudo de Viabilidade Fiscal v2 - ' + (empresaAtiva || 'Prospect');
+  document.title = 'Estudo de Viabilidade Fiscal - ' + (empresaAtiva || 'Prospect');
   window.print();
 }
 
