@@ -381,6 +381,12 @@ footer {
      com a ultima parte da tabela em vez de quebrar bem na emenda. */
   .panel-proj .note-box { break-before: avoid; page-break-before: avoid; }
   .panel-proj tbody tr:last-child { break-after: avoid; page-break-after: avoid; }
+  /* Cabecalho da tabela de projecao nunca pode ficar cortado ao meio nem
+     separado da tabela que vem logo abaixo. */
+  .panel-proj .panel-header { break-inside: avoid; page-break-inside: avoid; break-after: avoid; page-break-after: avoid; }
+  /* Mix de Produtos e ICMS SP x ICMS ES sao complementares: nunca separar
+     em paginas diferentes. */
+  .panel-mix-produtos { break-after: avoid; page-break-after: avoid; }
 
   /* Mostra as duas abas completas, uma embaixo da outra, mesmo layout da tela */
   .page-tab-content { display: block !important; }
@@ -597,7 +603,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-mix-produtos">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
         <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
@@ -867,7 +873,7 @@ footer {
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel panel-mix-produtos">
       <div class="panel-header"><span>Mix de Produtos — Pós Primavera</span></div>
       <div class="input-grid">
         <div class="input-group-title">Aliquotas SP — Pós Primavera</div>
