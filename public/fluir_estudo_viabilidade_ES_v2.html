@@ -452,6 +452,11 @@ footer {
           <label>Compras (BC Entradas)</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras-c1" value="0" step="1000" oninput="renderAll()"></div>
         </div>
+        <div class="field">
+          <label>ICMS SP real (SPED) — opcional</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSPReal-c1" value="" step="100" oninput="renderAll()"></div>
+          <div class="field-hint">Se preenchido, substitui o cálculo nominal (12% blendado) pelo valor apurado real do SPED</div>
+        </div>
         <div class="field field-markup">
           <label>Markup (Faturamento / Compras)</label>
           <div id="markup-badge-c1" class="markup-badge">&#8212;</div>
@@ -716,6 +721,11 @@ footer {
         <div class="field">
           <label>Compras (BC Entradas)</label>
           <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="compras-c2" value="0" step="1000" oninput="renderAll()"></div>
+        </div>
+        <div class="field">
+          <label>ICMS SP real (SPED) — opcional</label>
+          <div class="input-row"><span class="unit-sym">R$</span><input type="number" id="icmsSPReal-c2" value="" step="100" oninput="renderAll()"></div>
+          <div class="field-hint">Se preenchido, substitui o cálculo nominal (12% blendado) pelo valor apurado real do SPED</div>
         </div>
         <div class="field field-markup">
           <label>Markup (Faturamento / Compras)</label>
@@ -983,6 +993,7 @@ function getInputs(suffix) {
     baseSped: txt('baseSped'),
     faturamento: num('faturamento'),
     compras: num('compras'),
+    icmsSPRealStr: txt('icmsSPReal'),
     destaqueSaidaES: num('destaqueSaidaES'),
     cargaEfetivaES: num('cargaEfetivaES'),
     pctShampoo: num('pctShampoo'),
@@ -1012,7 +1023,9 @@ function calcScenario(scenario, inp) {
   // Pós Primavera (reforma): o benefício da Primavera acaba pra todo mundo -
   // faturamento inteiro passa a pagar a aliquota cheia do produto (rSP = rProduto),
   // débito - crédito puro, sem depender de valor auditado do SPED.
-  const icmsSP = base * (rSP / 100) - inp.compras * 0.12;
+  const icmsSPNominal = base * (rSP / 100) - inp.compras * 0.12;
+  const temOverride = scenario === 'primavera' && inp.icmsSPRealStr !== '' && !isNaN(parseFloat(inp.icmsSPRealStr));
+  const icmsSP = temOverride ? parseFloat(inp.icmsSPRealStr) : icmsSPNominal;
 
   const icmsES = (inp.cargaEfetivaES / 100) * base;
   const economiaBruta = icmsSP - icmsES;
@@ -1025,12 +1038,17 @@ function calcScenario(scenario, inp) {
   const beneficioMes = economiaBruta - consultoria - deltaLogRS - deltaFreteRS;
   const beneficioAno = beneficioMes * 12;
 
-  return { scenario, rSP, icmsSP, icmsES, economiaBruta,
+  return { scenario, rSP, icmsSP, icmsSPNominal, temOverride, icmsES, economiaBruta,
     consultoria, deltaLogRS, deltaFreteRS, beneficioMes, beneficioAno, base };
 }
 
 function renderCalcTable(r, inp, suffix) {
-  const icmsSPLabel = 'ICMS SP a pagar (débito − crédito, alíquota blendada LP/Simples)';
+  const icmsSPLabel = r.temOverride
+    ? 'ICMS SP a pagar (valor real informado do SPED)'
+    : 'ICMS SP a pagar (débito − crédito, alíquota blendada LP/Simples)';
+  const icmsSPSubLabel = r.temOverride
+    ? 'Nominal calculado (referência, sem créditos extras): ' + fmtBRL(r.icmsSPNominal)
+    : 'Aliquota SP blendada: ' + fmtPctPrecise(r.rSP);
   const consultoriaLabel = 'Consultoria (' + fmtPct(inp.consultoriaPct) + ' da economia, min. ' + fmtBRL(inp.consultoriaMin) + ')';
 
   const deltaLogIsGain = r.deltaLogRS < 0;
@@ -1040,7 +1058,7 @@ function renderCalcTable(r, inp, suffix) {
 
   const rows = [
     ['1', icmsSPLabel, fmtBRL(r.icmsSP), false, false],
-    ['', 'Aliquota SP blendada: ' + fmtPctPrecise(r.rSP), '', true, false],
+    ['', icmsSPSubLabel, '', true, false],
     ['2', 'ICMS ES (carga efetiva Compete)', fmtBRL(r.icmsES), false, false],
     ['3', 'Economia bruta de ICMS', fmtBRL(r.economiaBruta), false, false, true],
     ['4', consultoriaLabel, '− ' + fmtBRL(r.consultoria), false, true],
@@ -1351,6 +1369,7 @@ function clearAll(suffix) {
   document.getElementById('baseSped' + suffix).value = DEFAULTS.baseSped;
   document.getElementById('faturamento' + suffix).value = DEFAULTS.faturamento;
   document.getElementById('compras' + suffix).value = DEFAULTS.compras;
+  document.getElementById('icmsSPReal' + suffix).value = '';
   document.getElementById('creditoEntradaES' + suffix).value = DEFAULTS.creditoEntradaES;
   document.getElementById('destaqueSaidaES' + suffix).value = DEFAULTS.destaqueSaidaES;
   document.getElementById('cargaEfetivaES' + suffix).value = DEFAULTS.cargaEfetivaES;
