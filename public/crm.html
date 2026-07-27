@@ -206,7 +206,12 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
 
 <div id="view-leads">
   <div class="toolbar">
-    <div class="ttl">Funil comercial</div>
+    <div class="ttl" id="funilTitle">Funil comercial</div>
+    <div style="display:flex;gap:6px">
+      <button class="chip" id="fase-prevenda" onclick="setFase('pre')">Pré-venda</button>
+      <button class="chip active" id="fase-venda" onclick="setFase('venda')">Venda</button>
+      <button class="chip" id="fase-posvenda" onclick="setFase('pos')">Pós-venda</button>
+    </div>
     <label style="font-size:12px;color:var(--muted);font-weight:600">Segmento:</label>
     <select id="segFilter" onchange="render()"></select>
     <input type="search" id="searchLead" placeholder="Buscar…" oninput="render()" style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;background:#fff;width:150px">
@@ -366,8 +371,9 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const N8N={fl01:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pre-viabilidade",fl02:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pos-proposta"};
 const STORAGE_BUCKET="crm-anexos";
 const STAGES=["Prospecção","Qualificação","Pré-viabilidade","Proposta","Negociação","Contrato","Kickoff","Implementação","Operação ativa"];
+const FASES={pre:{label:"Funil de Pré-venda",stages:STAGES.slice(0,2)},venda:{label:"Funil comercial",stages:STAGES.slice(2,6)},pos:{label:"Funil de Pós-venda",stages:STAGES.slice(6)}};
 const PTYPES=["Contador","Operador logístico","Transportadora","Outro"];
-let leads=[], parceiros=[], pFilter="Todos", _extraContacts=[];
+let leads=[], parceiros=[], pFilter="Todos", _extraContacts=[], funilFase="venda";
 
 /* ===== helpers ===== */
 function uid(){ return (crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)); }
@@ -479,6 +485,12 @@ function daysTo(d){ if(!d) return null; const dt=new Date(d+"T00:00:00"),n=new D
 function leadTemp(l){if(l.etapa==="Operação ativa")return{color:"var(--green)",title:"Operação ativa"};const d=daysTo(l.proxdata);if(d===null||d===undefined)return{color:"var(--line)",title:"Sem follow-up agendado"};if(d<0)return{color:"var(--red)",title:`Atrasado ${-d} dia(s)`};if(d<=2)return{color:"#f97316",title:"Ação urgente — próximos 2 dias"};if(d<=7)return{color:"var(--amber)",title:`Follow-up em ${d} dias`};return{color:"var(--line)",title:`Follow-up em ${d} dias`};}
 function stageColor(i){if(i<=1)return"#609DFF";if(i<=4)return"var(--amber)";if(i<=7)return"var(--violet)";return"var(--green)";}
 
+function setFase(f){
+  funilFase=f;
+  ["pre","venda","pos"].forEach(k=>document.getElementById("fase-"+(k==="pre"?"prevenda":k==="pos"?"posvenda":"venda")).classList.toggle("active",k===f));
+  document.getElementById("funilTitle").textContent=FASES[f].label;
+  render();
+}
 function refreshSegFilter(){
   const sel=document.getElementById("segFilter"); const cur=sel.value||"Todos";
   const segs=[...new Set(leads.map(l=>l.segmento).filter(Boolean))].sort();
@@ -491,7 +503,8 @@ function render(){
   refreshSegFilter();
   const segF=document.getElementById("segFilter").value||"Todos";
   const q=(document.getElementById("searchLead")?.value||"").toLowerCase();
-  const view=(segF==="Todos"?leads:leads.filter(l=>l.segmento===segF)).filter(l=>!q||l.empresa?.toLowerCase().includes(q)||l.contato?.toLowerCase().includes(q));
+  const faseStages=FASES[funilFase].stages;
+  const view=(segF==="Todos"?leads:leads.filter(l=>l.segmento===segF)).filter(l=>!q||l.empresa?.toLowerCase().includes(q)||l.contato?.toLowerCase().includes(q)).filter(l=>faseStages.includes(l.etapa));
   const ativos=view.filter(l=>l.etapa!=="Operação ativa");
   const ecoTotal=ativos.reduce((a,l)=>a+(Number(l.economia)||0),0);
   const ecoOp=view.filter(l=>l.etapa==="Operação ativa").reduce((a,l)=>a+(Number(l.economia)||0),0);
@@ -506,6 +519,7 @@ function render(){
   document.getElementById("emptyNote").style.display=view.length?"none":"block";
   const board=document.getElementById("board"); board.innerHTML="";
   STAGES.forEach((st,i)=>{
+    if(!faseStages.includes(st)) return;
     const col=document.createElement("div"); col.className="col";
     const inS=view.filter(l=>l.etapa===st).sort((a,b)=>(a.ordem||0)-(b.ordem||0));
     col.style.borderTop=`3px solid ${stageColor(i)}`;
@@ -588,7 +602,7 @@ function openModal(id){
   document.getElementById("f_link_planilha").value=g("link_planilha");
   document.getElementById("f_link_proposta").value=g("link_proposta");
   if(!isE) document.getElementById("f_segmento").value="Cosméticos";
-  document.getElementById("f_etapa").value=g("etapa",STAGES[0]);
+  document.getElementById("f_etapa").value=g("etapa",FASES[funilFase].stages[0]);
   _ativLeadId=isE?id:null;
   _extraContacts=(l.contatos_extras||[]).map(c=>({...c}));
   renderExtraContacts();
