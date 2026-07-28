@@ -108,6 +108,8 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
 .pfilters{display:flex;gap:6px;padding:4px 20px 0;flex-wrap:wrap}
 .chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer}
 .chip.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.dropzone{border:2px dashed var(--line);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;transition:.2s;background:#fbfcfe}
+.dropzone:hover,.dropzone.dragover{border-color:var(--cobalt);background:var(--cobalt-l)}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:14px 20px 24px}
 .pcard{background:#fff;border:1px solid rgba(96,157,255,0.3);border-radius:12px;padding:14px;box-shadow:0 1px 4px rgba(4,25,56,.08),0 4px 14px rgba(4,25,56,.07);position:relative}
 .pcard .pname{font-weight:700;font-size:14.5px;padding-right:20px}
@@ -216,6 +218,7 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
     <select id="segFilter" onchange="render()"></select>
     <input type="search" id="searchLead" placeholder="Buscar…" oninput="render()" style="border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;background:#fff;width:150px">
     <div class="spacer"></div>
+    <button class="btn ghost sm" onclick="openImportProsp()">📊 Importar Planilha</button>
     <button class="btn primary sm" onclick="openModal()">+ Novo lead</button>
   </div>
   <div class="kpis" id="kpis"></div>
@@ -356,6 +359,45 @@ header.top button.hbtn:hover{background:rgba(96,157,255,.24);color:#fff}
       <button class="btn danger" id="delPBtn" onclick="delP()" style="display:none">Excluir</button>
       <button class="btn ghost" onclick="closeP()">Cancelar</button>
       <button class="btn primary" id="savePBtn" onclick="saveP()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal IMPORTAR PLANILHA -->
+<div class="overlay" id="overlayImport">
+  <div class="modal" style="max-width:460px">
+    <h2>📊 Importar Planilha de Prospecção</h2>
+    <div class="body" style="grid-template-columns:1fr">
+      <div class="fld full">
+        <div class="dropzone" id="prospDrop" onclick="document.getElementById('prospFile').click()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="handleProspDrop(event)">
+          <div style="font-size:32px;margin-bottom:6px">📁</div>
+          <div style="font-weight:700;font-size:13.5px">Arraste a planilha aqui</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:3px">ou clique para selecionar · .xlsx / .xls / .csv</div>
+        </div>
+        <input type="file" id="prospFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleProspFile(this.files[0])">
+      </div>
+      <div class="fld full" id="prospFileInfo" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;background:#f8fafb;border:1px solid var(--line);border-radius:8px;padding:8px 10px">
+          <span style="font-size:16px">📄</span>
+          <span style="flex:1;font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="prospFileName"></span>
+          <span class="anexo-del" onclick="clearProspFile()" style="cursor:pointer">✕</span>
+        </div>
+      </div>
+      <div class="fld full" id="prospProgressWrap" style="display:none">
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:4px"><span id="prospProgLabel">Enviando…</span><span id="prospProgPct">0%</span></div>
+        <div style="background:var(--teal-l);border-radius:99px;height:6px;overflow:hidden"><div id="prospProgBar" style="height:100%;width:0%;background:var(--teal);transition:width .3s"></div></div>
+      </div>
+      <div class="fld full" id="prospStatus" style="display:none;font-size:12.5px"></div>
+      <div class="fld full" style="font-size:11.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px">
+        Colunas obrigatórias: <b>empresa, estado, faturamento</b>. Opcionais: cnpj, segmento, cidade, contato_nome, contato_cargo, contato_email, contato_telefone, sede_es, outro_incentivo, interestadual.
+      </div>
+    </div>
+    <div class="foot">
+      <button class="btn ghost" onclick="closeImportProsp()">Fechar</button>
+      <button class="btn primary" id="prospSubmitBtn" onclick="submitProspFile()" disabled>Enviar para Score</button>
     </div>
   </div>
 </div>
@@ -897,11 +939,66 @@ async function importJSON(e){
   r.readAsText(f); e.target.value="";
 }
 
+/* ===== IMPORTAR PLANILHA DE PROSPECÇÃO (FL-P01) ===== */
+const FLP01_WEBHOOK="https://n8n.srv1567948.hstgr.cloud/webhook/fluir-prospeccao-planilha";
+let _prospFile=null;
+function openImportProsp(){ clearProspFile(); document.getElementById("overlayImport").classList.add("show"); }
+function closeImportProsp(){ document.getElementById("overlayImport").classList.remove("show"); }
+function handleProspDrop(e){
+  e.preventDefault(); document.getElementById("prospDrop").classList.remove("dragover");
+  const f=e.dataTransfer.files[0]; if(f) handleProspFile(f);
+}
+function handleProspFile(f){
+  if(!f) return;
+  if(!/\.(xlsx|xls|csv)$/i.test(f.name)){ toast("Formato inválido — use .xlsx, .xls ou .csv",true); return; }
+  _prospFile=f;
+  document.getElementById("prospFileName").textContent=f.name+" · "+(f.size/1024).toFixed(0)+" KB";
+  document.getElementById("prospFileInfo").style.display="flex";
+  document.getElementById("prospSubmitBtn").disabled=false;
+  document.getElementById("prospStatus").style.display="none";
+}
+function clearProspFile(){
+  _prospFile=null;
+  document.getElementById("prospFile").value="";
+  document.getElementById("prospFileInfo").style.display="none";
+  document.getElementById("prospProgressWrap").style.display="none";
+  document.getElementById("prospStatus").style.display="none";
+  document.getElementById("prospSubmitBtn").disabled=true;
+}
+function submitProspFile(){
+  if(!_prospFile) return;
+  const btn=document.getElementById("prospSubmitBtn"); btn.disabled=true;
+  const progWrap=document.getElementById("prospProgressWrap"), bar=document.getElementById("prospProgBar"), pct=document.getElementById("prospProgPct"), lbl=document.getElementById("prospProgLabel");
+  progWrap.style.display="block"; bar.style.width="0%"; pct.textContent="0%"; lbl.textContent="Enviando…";
+  const status=document.getElementById("prospStatus"); status.style.display="none";
+  const fd=new FormData(); fd.append("data",_prospFile,_prospFile.name);
+  const xhr=new XMLHttpRequest();
+  xhr.upload.addEventListener("progress",(e)=>{ if(e.lengthComputable){ const p=Math.round((e.loaded/e.total)*100); bar.style.width=p+"%"; pct.textContent=p+"%"; if(p>=100) lbl.textContent="Processando…"; } });
+  xhr.addEventListener("load",()=>{
+    btn.disabled=false;
+    status.style.display="block";
+    if(xhr.status>=200&&xhr.status<300){
+      status.style.color="var(--green)";
+      status.innerHTML="✅ Planilha enviada! O score e a criação dos cards rodam em segundo plano no n8n — os leads aparecem na coluna <b>Prospecção</b> em alguns segundos.";
+      toast("Planilha enviada para o scoring");
+      setFase("pre");
+      setTimeout(fetchAll,4000);
+    } else {
+      status.style.color="var(--red)";
+      status.textContent="Erro no envio: HTTP "+xhr.status+" — "+xhr.responseText;
+    }
+  });
+  xhr.addEventListener("error",()=>{ btn.disabled=false; status.style.display="block"; status.style.color="var(--red)"; status.textContent="Erro de rede ao enviar a planilha."; });
+  xhr.open("POST",FLP01_WEBHOOK);
+  xhr.send(fd);
+}
+
 /* ===== boot ===== */
 document.getElementById("overlay").addEventListener("click",e=>{ if(e.target.id==="overlay") closeModal(); });
 document.getElementById("overlayP").addEventListener("click",e=>{ if(e.target.id==="overlayP") closeP(); });
+document.getElementById("overlayImport").addEventListener("click",e=>{ if(e.target.id==="overlayImport") closeImportProsp(); });
 document.getElementById("lg_pass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closeP(); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closeP(); closeImportProsp(); } });
 initStageSelect();
 (async()=>{ const {data:{session}}=await sb.auth.getSession(); if(session) onAuthed(); })();
 </script>
