@@ -465,8 +465,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const N8N={fl01:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pre-viabilidade",fl02:"https://n8n.srv1567948.hstgr.cloud/webhook/fluir-pos-proposta"};
 const STORAGE_BUCKET="crm-anexos";
-const STAGES=["Prospecção","Qualificação","Pré-viabilidade","Proposta","Negociação","Standby","Contrato","Kickoff","Implementação","Operação ativa"];
-const FASES={pre:{label:"Funil de Pré-venda",stages:STAGES.slice(0,2)},venda:{label:"Funil comercial",stages:STAGES.slice(2,7)},pos:{label:"Funil de Pós-venda",stages:STAGES.slice(7)}};
+const STAGES=["Prospecção","Contato Inicial","Qualificação","Pré-viabilidade","Proposta","Negociação","Standby","Contrato","Kickoff","Implementação","Operação ativa"];
+const FASES={pre:{label:"Funil de Pré-venda",stages:STAGES.slice(0,3)},venda:{label:"Funil comercial",stages:STAGES.slice(3,8)},pos:{label:"Funil de Pós-venda",stages:STAGES.slice(8)}};
 const PTYPES=["Contador","Operador logístico","Transportadora","Outro"];
 let leads=[], parceiros=[], pFilter="Todos", _extraContacts=[], funilFase="venda";
 
@@ -604,7 +604,7 @@ function switchTab(w){
 function initStageSelect(){ const s=document.getElementById("f_etapa"); s.innerHTML=""; STAGES.forEach((st,i)=>{const o=document.createElement("option");o.value=st;o.textContent=(i+1)+". "+st;s.appendChild(o);}); }
 function daysTo(d){ if(!d) return null; const dt=new Date(d+"T00:00:00"),n=new Date();n.setHours(0,0,0,0);return Math.round((dt-n)/86400000); }
 function leadTemp(l){if(l.etapa==="Operação ativa")return{color:"var(--green)",title:"Operação ativa"};const d=daysTo(l.proxdata);if(d===null||d===undefined)return{color:"var(--line)",title:"Sem follow-up agendado"};if(d<0)return{color:"var(--red)",title:`Atrasado ${-d} dia(s)`};if(d<=2)return{color:"#f97316",title:"Ação urgente — próximos 2 dias"};if(d<=7)return{color:"var(--amber)",title:`Follow-up em ${d} dias`};return{color:"var(--line)",title:`Follow-up em ${d} dias`};}
-function stageColor(i){if(i<=1)return"#609DFF";if(i<=4)return"var(--amber)";if(i===5)return"#64748b";if(i<=8)return"var(--violet)";return"var(--green)";}
+function stageColor(i){if(i<=2)return"#609DFF";if(i<=5)return"var(--amber)";if(i===6)return"#64748b";if(i<=9)return"var(--violet)";return"var(--green)";}
 
 function setFase(f){
   funilFase=f;
