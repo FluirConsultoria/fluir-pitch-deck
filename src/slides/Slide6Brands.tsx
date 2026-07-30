@@ -10,13 +10,12 @@ import widicare from "@/assets/brands/widicare.png";
 import alfaparf from "@/assets/brands/alfaparf.png";
 import jequiti from "@/assets/brands/jequiti.png";
 import unilever from "@/assets/brands/unilever.png";
-import bioextratus from "@/assets/brands/bioextratus.png";
 import arvensis from "@/assets/brands/arvensis.png";
 
 const brands: { name: string; logo: string; maxHeight?: number }[] = [
   { name: "O Boticário", logo: boticario },
   { name: "Adcos", logo: adcos },
-  { name: "Bio Extratus", logo: bioextratus, maxHeight: 88 },
+  { name: "Unilever", logo: unilever },
   { name: "Amend", logo: amend },
   { name: "Lola", logo: lola },
   { name: "Revlon", logo: revlon },
@@ -73,8 +72,8 @@ export function Slide6Brands() {
       </SlideHeadline>
 
       <div className="flex-1 grid grid-cols-4 grid-rows-3 gap-6 mt-8 max-w-6xl mx-auto w-full content-center">
-        {brands.map((b) => (
-          <BrandCard key={b.name} name={b.name} logo={b.logo} maxHeight={b.maxHeight} />
+        {brands.map((b, i) => (
+          <BrandCard key={`${b.name}-${i}`} name={b.name} logo={b.logo} maxHeight={b.maxHeight} />
         ))}
       </div>
     </SlideWrapper>
