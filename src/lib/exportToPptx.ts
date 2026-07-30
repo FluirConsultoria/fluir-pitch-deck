@@ -142,7 +142,7 @@ export async function exportToPptx() {
     card(s, PX, panelY, panelW, panelH, RED);
     s.addText("SEM ES", { x: PX + 0.15, y: panelY + 0.1, w: panelW, h: 0.2, fontSize: 9, bold: true, color: RED, charSpacing: 2 });
     s.addText("ICMS Atacado / E-commerce", { x: PX + 0.15, y: panelY + 0.35, w: panelW - 0.2, h: 0.18, fontSize: 9, color: BLUE_L });
-    s.addText("12% a 18%", { x: PX + 0.15, y: panelY + 0.52, w: panelW - 0.2, h: 0.22, fontSize: 13, bold: true, color: TEXT });
+    s.addText("12% a 25%", { x: PX + 0.15, y: panelY + 0.52, w: panelW - 0.2, h: 0.22, fontSize: 13, bold: true, color: TEXT });
     s.addText("ICMS Importação (entrada)", { x: PX + 0.15, y: panelY + 0.78, w: panelW - 0.2, h: 0.18, fontSize: 9, color: BLUE_L });
     s.addText("Cobrado integral", { x: PX + 0.15, y: panelY + 0.95, w: panelW - 0.2, h: 0.22, fontSize: 13, bold: true, color: TEXT });
 
